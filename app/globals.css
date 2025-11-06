@@ -1,26 +1,163 @@
 @import "tailwindcss";
 
+/* Light mode colors (default) */
+:root.light {
+  /* Primary colors */
+  --color-primary: 226 174 43; /* #e2ae2b - Gold/Amber */
+  --color-primary-dark: 127 103 0; /* #7f6700 */
+  --color-secondary: 125 24 94; /* #7d185e - Purple */
+  --color-tertiary: 0 54 170; /* #0036aa - Navy */
+
+  /* Backgrounds */
+  --background: 255 249 246; /* #fff9f6 - Cream */
+  --background-alt: 255 255 255; /* #ffffff */
+  --surface: 255 255 255; /* for glassmorphism */
+  --surface-opacity: 0.8;
+
+  /* Text */
+  --foreground: 71 71 71; /* #474747 */
+  --text-light: 102 102 102;
+  --text-muted: 153 153 153;
+
+  /* Accent */
+  --color-accent: 0 181 221; /* #00b5dd - Cyan */
+  --color-accent-hover: 0 150 184;
+
+  /* UI Elements */
+  --border: 224 224 224;
+  --border-hover: 192 192 192;
+
+  /* Shadows */
+  --shadow: 0 0 0;
+  --shadow-opacity: 0.1;
+}
+
+/* Dark mode colors */
+:root.dark {
+  /* Primary colors */
+  --color-primary: 245 200 66; /* #f5c842 - Brighter gold */
+  --color-primary-dark: 212 165 40; /* #d4a528 */
+  --color-secondary: 181 84 159; /* #b5549f - Lighter purple */
+  --color-tertiary: 77 127 255; /* #4d7fff - Brighter blue */
+
+  /* Backgrounds */
+  --background: 10 10 10; /* #0a0a0a - Near black */
+  --background-alt: 20 20 20; /* #141414 */
+  --surface: 20 20 20; /* for glassmorphism */
+  --surface-opacity: 0.8;
+
+  /* Text */
+  --foreground: 232 232 232; /* #e8e8e8 */
+  --text-light: 184 184 184;
+  --text-muted: 136 136 136;
+
+  /* Accent */
+  --color-accent: 29 209 255; /* #1dd1ff */
+  --color-accent-hover: 0 184 230;
+
+  /* UI Elements */
+  --border: 42 42 42;
+  --border-hover: 64 64 64;
+
+  /* Shadows */
+  --shadow: 0 0 0;
+  --shadow-opacity: 0.4;
+}
+
+/* Default to dark mode */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary: 245 200 66;
+  --color-primary-dark: 212 165 40;
+  --color-secondary: 181 84 159;
+  --color-tertiary: 77 127 255;
+  --background: 10 10 10;
+  --background-alt: 20 20 20;
+  --surface: 20 20 20;
+  --surface-opacity: 0.8;
+  --foreground: 232 232 232;
+  --text-light: 184 184 184;
+  --text-muted: 136 136 136;
+  --color-accent: 29 209 255;
+  --color-accent-hover: 0 184 230;
+  --border: 42 42 42;
+  --border-hover: 64 64 64;
+  --shadow: 0 0 0;
+  --shadow-opacity: 0.4;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Colors */
+  --color-background: rgb(var(--background));
+  --color-background-alt: rgb(var(--background-alt));
+  --color-surface: rgba(var(--surface) / var(--surface-opacity));
+  --color-foreground: rgb(var(--foreground));
+  --color-text-light: rgb(var(--text-light));
+  --color-text-muted: rgb(var(--text-muted));
+  --color-primary: rgb(var(--color-primary));
+  --color-primary-dark: rgb(var(--color-primary-dark));
+  --color-secondary: rgb(var(--color-secondary));
+  --color-tertiary: rgb(var(--color-tertiary));
+  --color-accent: rgb(var(--color-accent));
+  --color-accent-hover: rgb(var(--color-accent-hover));
+  --color-border: rgb(var(--border));
+  --color-border-hover: rgb(var(--border-hover));
+
+  /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Spacing for glassmorphism */
+  --glass-blur: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism utility classes */
+.glass {
+  background: rgba(var(--surface) / var(--surface-opacity));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(var(--border) / 0.2);
+}
+
+.glass-strong {
+  background: rgba(var(--surface) / 0.95);
+  backdrop-filter: blur(calc(var(--glass-blur) * 2));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 2));
+  border: 1px solid rgba(var(--border) / 0.3);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--background-alt));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-primary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-primary-dark));
 }
