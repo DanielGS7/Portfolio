@@ -8,7 +8,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 py-8 px-4 sm:px-6 lg:px-8">
+    <footer className="relative mt-20 py-8 px-4 sm:px-6 lg:px-8 w-full">
       <div className="max-w-7xl mx-auto">
         {/* Top border with gradient */}
         <motion.div
