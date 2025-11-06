@@ -29,16 +29,16 @@ export function Skills() {
   ];
 
   return (
-    <section ref={ref} className="py-20 px-4 sm:px-6 lg:px-8 bg-[rgba(var(--color-primary)/0.03)]">
-      <div className="max-w-6xl mx-auto">
+    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.03)] to-transparent">
+      <div className="max-w-7xl mx-auto">
         {/* Title */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-20"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
               {t('title')}
             </span>
@@ -47,10 +47,10 @@ export function Skills() {
 
         {/* Skills */}
         {skillCategories.map((category, catIndex) => (
-          <div key={category.category} className="mb-12 last:mb-0">
+          <div key={category.category} className="mb-16 last:mb-0">
             {/* Category Title */}
             <motion.h3
-              className="text-2xl font-bold mb-6 text-[rgb(var(--color-primary))]"
+              className="text-3xl font-bold mb-8 text-[rgb(var(--color-primary))]"
               initial={{ opacity: 0, x: -20 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.5, delay: catIndex * 0.2 }}
@@ -59,22 +59,22 @@ export function Skills() {
             </motion.h3>
 
             {/* Skills Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {category.skills.map((skill, skillIndex) => (
                 <motion.div
                   key={skill.key}
-                  className="group relative glass-strong rounded-2xl p-6 hover:scale-105 transition-transform cursor-default"
+                  className="group relative glass-strong rounded-3xl p-8 hover:scale-105 transition-all cursor-default shadow-lg hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)]"
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{
                     duration: 0.5,
                     delay: catIndex * 0.2 + skillIndex * 0.05,
                   }}
-                  whileHover={{ y: -5 }}
+                  whileHover={{ y: -8 }}
                 >
                   {/* Background gradient on hover */}
                   <motion.div
-                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity"
+                    className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-10 transition-opacity"
                     style={{
                       background: `linear-gradient(135deg, rgb(${skill.color}), transparent)`,
                     }}
@@ -82,15 +82,15 @@ export function Skills() {
 
                   {/* Content */}
                   <div className="relative z-10">
-                    <div className="text-4xl mb-3">{skill.icon}</div>
-                    <h4 className="text-base font-semibold text-[rgb(var(--foreground))]">
+                    <div className="text-5xl mb-4">{skill.icon}</div>
+                    <h4 className="text-lg font-semibold text-[rgb(var(--foreground))]">
                       {t(`items.${skill.key}`)}
                     </h4>
                   </div>
 
                   {/* Hover effect circle */}
                   <motion.div
-                    className="absolute top-2 right-2 w-2 h-2 rounded-full"
+                    className="absolute top-3 right-3 w-3 h-3 rounded-full"
                     style={{ backgroundColor: `rgb(${skill.color})` }}
                     initial={{ scale: 0 }}
                     whileHover={{ scale: 1 }}

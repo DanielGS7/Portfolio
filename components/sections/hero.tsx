@@ -18,9 +18,13 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-20">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[rgb(var(--color-accent))] opacity-10 blur-3xl rounded-full" />
+
         <motion.div
           className="absolute top-20 right-20 w-64 h-64 text-[rgb(var(--color-primary))]"
           animate={{
@@ -51,10 +55,10 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto text-center">
+      <div className="relative z-10 max-w-6xl mx-auto text-center">
         {/* Greeting */}
         <motion.p
-          className="text-lg sm:text-xl text-[rgb(var(--text-light))] mb-4"
+          className="text-xl sm:text-2xl md:text-3xl text-[rgb(var(--color-primary))] mb-6 font-medium"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -64,29 +68,29 @@ export function Hero() {
 
         {/* Name */}
         <motion.h1
-          className="text-5xl sm:text-7xl lg:text-8xl font-bold mb-6"
+          className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] via-[rgb(var(--color-accent))] to-[rgb(var(--color-secondary))] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] via-[rgb(var(--color-accent))] to-[rgb(var(--color-secondary))] bg-clip-text text-transparent drop-shadow-lg">
             {t('name')}
           </span>
         </motion.h1>
 
         {/* Underline decoration */}
         <motion.div
-          className="flex justify-center mb-8"
+          className="flex justify-center mb-10"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <UnderlineSVG className="w-64 h-8 text-[rgb(var(--color-primary))]" />
+          <UnderlineSVG className="w-80 h-10 text-[rgb(var(--color-primary))]" />
         </motion.div>
 
         {/* Tagline */}
         <motion.p
-          className="text-xl sm:text-2xl lg:text-3xl text-[rgb(var(--text-light))] mb-12 max-w-3xl mx-auto leading-relaxed"
+          className="text-2xl sm:text-3xl lg:text-4xl text-[rgb(var(--foreground))] mb-16 max-w-4xl mx-auto leading-relaxed font-light"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -96,15 +100,15 @@ export function Hero() {
 
         {/* CTA Buttons */}
         <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <motion.button
             onClick={scrollToWork}
-            className="group relative px-8 py-4 rounded-full bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] text-white font-semibold overflow-hidden"
-            whileHover={{ scale: 1.05 }}
+            className="group relative px-10 py-5 rounded-full bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] text-white text-lg font-semibold overflow-hidden shadow-2xl shadow-[rgba(var(--color-primary)/0.4)]"
+            whileHover={{ scale: 1.05, boxShadow: '0 25px 50px -12px rgba(var(--color-primary), 0.5)' }}
             whileTap={{ scale: 0.95 }}
           >
             <span className="relative z-10 flex items-center gap-2">
@@ -121,7 +125,7 @@ export function Hero() {
 
           <motion.button
             onClick={scrollToContact}
-            className="px-8 py-4 rounded-full glass border-2 border-[rgb(var(--color-primary))] text-[rgb(var(--color-primary))] font-semibold hover:bg-[rgba(var(--color-primary)/0.1)] transition-colors"
+            className="px-10 py-5 rounded-full glass-strong border-2 border-[rgb(var(--color-primary))] text-[rgb(var(--color-primary))] text-lg font-semibold hover:bg-[rgba(var(--color-primary)/0.15)] transition-all shadow-lg"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
