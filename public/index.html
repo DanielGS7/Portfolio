@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting to Webcave...</title>
+    <meta http-equiv="refresh" content="0; url=./nl">
+    <script>window.location.href = './nl';</script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e8e8e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(245, 200, 66, 0.3);
+            border-top-color: rgb(245, 200, 66);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .container {
+            text-align: center;
+        }
+        p {
+            margin-top: 16px;
+            color: #b8b8b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <p>Redirecting to Webcave...</p>
+    </div>
+</body>
+</html>
