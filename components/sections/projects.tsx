@@ -93,7 +93,7 @@ export function Projects() {
               </div>
 
               {/* Content */}
-              <div className="p-6 sm:p-8">
+              <div className="p-10">
                 <h3 className="text-2xl sm:text-3xl font-bold mb-3 text-[rgb(var(--foreground))]">
                   {t(`${project.key}.title`)}
                 </h3>

@@ -76,11 +76,6 @@ export function Services() {
                   {t(`items.${service.key}.description`)}
                 </p>
               </div>
-
-              {/* Decorative elements */}
-              <div className="absolute top-4 right-4 w-20 h-20 rounded-full opacity-5"
-                style={{ backgroundColor: `rgb(${service.color})` }}
-              />
             </motion.div>
           ))}
         </div>

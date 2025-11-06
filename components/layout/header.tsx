@@ -3,14 +3,17 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import { ThemeToggle } from '../ui/theme-toggle';
 import { LanguageSwitcher } from '../ui/language-switcher';
 import { cn } from '@/lib/utils/cn';
+import type { Locale } from '@/lib/i18n/config';
 
 export function Header() {
   const t = useTranslations('nav');
   const pathname = usePathname();
+  const params = useParams();
+  const locale = (params?.locale as Locale) || 'nl';
   const { scrollY } = useScroll();
 
   // Transform scroll to header background opacity
@@ -18,16 +21,16 @@ export function Header() {
   const headerBlur = useTransform(scrollY, [0, 100], [12, 20]);
 
   const navItems = [
-    { href: '/', label: t('home') },
-    { href: '/contact', label: t('contact') },
-    { href: '/cv', label: t('cv') },
+    { href: `/${locale}`, label: t('home') },
+    { href: `/${locale}/contact`, label: t('contact') },
+    { href: `/${locale}/cv`, label: t('cv') },
   ];
 
   const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === '/' || pathname === '/nl' || pathname === '/en' || pathname === '/fr';
+    if (href === `/${locale}`) {
+      return pathname === `/${locale}` || pathname === '/';
     }
-    return pathname.includes(href);
+    return pathname === href;
   };
 
   return (
@@ -43,11 +46,11 @@ export function Header() {
           opacity: headerOpacity,
         }}
       >
-        <nav className="flex items-center justify-between px-6 py-3">
+        <nav className="flex items-center justify-between px-8 py-4">
           {/* Logo / Brand */}
-          <Link href="/">
+          <Link href={`/${locale}`}>
             <motion.div
-              className="text-xl font-bold bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent"
+              className="text-2xl font-bold bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent px-2"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -56,12 +59,12 @@ export function Header() {
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-3">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href}>
                 <motion.div
                   className={cn(
-                    'px-4 py-2 rounded-full text-sm font-medium transition-colors relative',
+                    'px-5 py-2.5 rounded-full text-base font-medium transition-colors relative',
                     isActive(item.href)
                       ? 'text-[rgb(var(--color-primary))]'
                       : 'text-[rgb(var(--text-light))] hover:text-[rgb(var(--foreground))]'
