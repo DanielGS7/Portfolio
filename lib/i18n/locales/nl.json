@@ -59,7 +59,8 @@
     "monogame": {
       "title": "MonoGame Project",
       "description": "Een game ontwikkeld met het MonoGame framework, met complexe gameplay mechanismen en visuele effecten.",
-      "video": "Bekijk video"
+      "video": "Bekijk video",
+      "status": "Voltooid"
     }
   },
   "services": {
@@ -94,7 +95,8 @@
     "whatsapp": "WhatsApp",
     "available": "Beschikbaar op WhatsApp",
     "copyEmail": "Kopieer e-mailadres",
-    "copyPhone": "Kopieer telefoonnummer"
+    "copyPhone": "Kopieer telefoonnummer",
+    "open": "Openen"
   },
   "cv": {
     "title": "Curriculum Vitae",

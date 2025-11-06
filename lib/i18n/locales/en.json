@@ -59,7 +59,8 @@
     "monogame": {
       "title": "MonoGame Project",
       "description": "A game developed with the MonoGame framework, featuring complex gameplay mechanics and visual effects.",
-      "video": "Watch video"
+      "video": "Watch video",
+      "status": "Completed"
     }
   },
   "services": {
@@ -94,7 +95,8 @@
     "whatsapp": "WhatsApp",
     "available": "Available on WhatsApp",
     "copyEmail": "Copy email address",
-    "copyPhone": "Copy phone number"
+    "copyPhone": "Copy phone number",
+    "open": "Open"
   },
   "cv": {
     "title": "Resume",

@@ -9,7 +9,11 @@ interface ThemeContextType {
   setTheme: (theme: ColorMode) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType>({
+  theme: 'dark',
+  toggleTheme: () => {},
+  setTheme: () => {},
+});
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -50,11 +54,6 @@ export function ThemeProvider({ children, defaultTheme = 'dark' }: ThemeProvider
     setThemeState(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
-  if (!mounted) {
-    // Prevent flash of incorrect theme
-    return <div style={{ visibility: 'hidden' }}>{children}</div>;
-  }
-
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}
@@ -64,9 +63,6 @@ export function ThemeProvider({ children, defaultTheme = 'dark' }: ThemeProvider
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
   return context;
 }
 
@@ -74,6 +70,7 @@ export function useTheme() {
  * Update CSS custom properties based on theme
  */
 function updateCSSVariables(theme: ColorMode) {
+  if (typeof document === 'undefined') return;
   const root = document.documentElement;
 
   // This will be populated from our colors constant
