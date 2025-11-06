@@ -1,0 +1,119 @@
+{
+  "nav": {
+    "home": "Home",
+    "contact": "Contact",
+    "cv": "Resume",
+    "linkedin": "LinkedIn"
+  },
+  "hero": {
+    "greeting": "Hello, I'm",
+    "name": "Daniel Garriga Segui",
+    "tagline": "Full-Stack Developer & LLM Integration Enthusiast with a knack for data migration",
+    "cta": "View my work",
+    "contact": "Get in touch"
+  },
+  "about": {
+    "title": "About me",
+    "intro": "Final year Computer Science student at AP University College with a passion for innovative technology and entrepreneurship.",
+    "entrepreneurship": {
+      "title": "Entrepreneurship",
+      "description": "CEO of Empowered by YUM, a company selling superfoods. This demonstrates my initiative and engagement in projects beyond academics."
+    },
+    "llm": {
+      "title": "LLM Expertise",
+      "description": "Interested in Large Language Models since before ChatGPT's release. Actively following the latest developments and trends in AI."
+    },
+    "youth": {
+      "title": "Youth Work",
+      "description": "Active member of De Pioniers since age 8. Led my first camp as a camp supervisor this past summer."
+    }
+  },
+  "skills": {
+    "title": "Skills",
+    "categories": {
+      "technical": "Technical Skills",
+      "services": "Services",
+      "certifications": "Certifications"
+    },
+    "items": {
+      "siteManagement": "Site Maintenance & Migration",
+      "fullStack": "Full-Stack Solutions",
+      "llmIntegration": "LLM Workflow Integration",
+      "dataManagement": "Data Migration & Management",
+      "driverLicense": "Driver's License B",
+      "firstAid": "First Aid Certificate"
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "empowered": {
+      "title": "Empowered by YUM",
+      "description": "E-commerce platform for superfoods. As CEO, responsible for the complete digital strategy and website development.",
+      "link": "Visit website"
+    },
+    "pioneers": {
+      "title": "De Pioniers Website",
+      "description": "Development of a new website for youth movement De Pioniers. Currently in production.",
+      "status": "In development"
+    },
+    "monogame": {
+      "title": "MonoGame Project",
+      "description": "A game developed with the MonoGame framework, featuring complex gameplay mechanics and visual effects.",
+      "video": "Watch video",
+      "status": "Completed"
+    }
+  },
+  "services": {
+    "title": "What I offer",
+    "subtitle": "Specialized in modern web solutions and data integration",
+    "items": {
+      "migration": {
+        "title": "Site Migration",
+        "description": "Seamless migration from legacy systems to modern platforms while maintaining data integrity."
+      },
+      "fullstack": {
+        "title": "Full-Stack Development",
+        "description": "End-to-end web application development using modern frameworks and best practices."
+      },
+      "llm": {
+        "title": "LLM Integration",
+        "description": "Implementation of AI workflows and chatbot solutions for business processes."
+      },
+      "maintenance": {
+        "title": "Website Maintenance",
+        "description": "Ongoing support, updates, and optimization for existing websites."
+      }
+    }
+  },
+  "contact": {
+    "title": "Get in touch",
+    "subtitle": "I'm open to internship opportunities and collaborations",
+    "email": "Email",
+    "phone": "Phone",
+    "linkedin": "LinkedIn",
+    "teams": "Microsoft Teams",
+    "whatsapp": "WhatsApp",
+    "available": "Available on WhatsApp",
+    "copyEmail": "Copy email address",
+    "copyPhone": "Copy phone number",
+    "open": "Open"
+  },
+  "cv": {
+    "title": "Resume",
+    "download": "Download Resume",
+    "view": "View Resume"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "built": "Built with",
+    "and": "and"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "close": "Close",
+    "open": "Open",
+    "more": "Learn more"
+  }
+}
