@@ -59,9 +59,9 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <ThemeProvider defaultTheme="dark">
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col w-full">
           <Header />
-          <main className="flex-1 pt-24">
+          <main className="flex-1 pt-24 w-full">
             {children}
           </main>
           <Footer />

@@ -17,7 +17,7 @@ export function Services() {
   ];
 
   return (
-    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.03)] to-transparent">
+    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.03)] to-transparent w-full">
       <div className="max-w-7xl mx-auto">
         {/* Title */}
         <motion.div

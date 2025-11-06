@@ -29,7 +29,7 @@ export function About() {
   ];
 
   return (
-    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.02)] to-transparent">
+    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.02)] to-transparent w-full">
       {/* Background decoration */}
       <motion.div
         className="absolute top-10 right-10 w-32 h-32 text-[rgb(var(--color-primary))]"
