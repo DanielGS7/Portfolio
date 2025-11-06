@@ -33,17 +33,17 @@ export function Projects() {
     <section
       id="projects"
       ref={ref}
-      className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
+      className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Title */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-20"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
               {t('title')}
             </span>
@@ -51,11 +51,11 @@ export function Projects() {
         </motion.div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {projects.map((project, index) => (
             <motion.div
               key={project.key}
-              className="group relative glass-strong rounded-3xl overflow-hidden hover:scale-105 transition-transform duration-500"
+              className="group relative glass-strong rounded-3xl overflow-hidden hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)]"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.15 }}
