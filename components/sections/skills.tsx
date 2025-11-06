@@ -82,20 +82,11 @@ export function Skills() {
 
                   {/* Content */}
                   <div className="relative z-10">
-                    <div className="text-5xl mb-4">{skill.icon}</div>
-                    <h4 className="text-lg font-semibold text-[rgb(var(--foreground))]">
+                    <div className="text-5xl mb-6">{skill.icon}</div>
+                    <h4 className="text-lg font-semibold text-[rgb(var(--foreground))] leading-relaxed">
                       {t(`items.${skill.key}`)}
                     </h4>
                   </div>
-
-                  {/* Hover effect circle */}
-                  <motion.div
-                    className="absolute top-3 right-3 w-3 h-3 rounded-full"
-                    style={{ backgroundColor: `rgb(${skill.color})` }}
-                    initial={{ scale: 0 }}
-                    whileHover={{ scale: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
                 </motion.div>
               ))}
             </div>
