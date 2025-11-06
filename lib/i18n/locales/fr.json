@@ -1,0 +1,117 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "contact": "Contact",
+    "cv": "CV",
+    "linkedin": "LinkedIn"
+  },
+  "hero": {
+    "greeting": "Bonjour, je suis",
+    "name": "Daniel Garriga Segui",
+    "tagline": "Développeur Full-Stack & Passionné d'intégration LLM avec un talent pour la migration de données",
+    "cta": "Voir mon travail",
+    "contact": "Me contacter"
+  },
+  "about": {
+    "title": "À propos de moi",
+    "intro": "Étudiant en dernière année d'Informatique à AP Hogeschool avec une passion pour la technologie innovante et l'entrepreneuriat.",
+    "entrepreneurship": {
+      "title": "Entrepreneuriat",
+      "description": "PDG d'Empowered by YUM, une entreprise qui vend des superaliments. Cela démontre mon initiative et mon engagement dans des projets au-delà du monde académique."
+    },
+    "llm": {
+      "title": "Expertise LLM",
+      "description": "Intéressé par les grands modèles de langage depuis avant la sortie de ChatGPT. Je suis activement les derniers développements et tendances en IA."
+    },
+    "youth": {
+      "title": "Travail de jeunesse",
+      "description": "Membre actif de De Pioniers depuis l'âge de 8 ans. J'ai dirigé mon premier camp en tant que responsable de camp cet été dernier."
+    }
+  },
+  "skills": {
+    "title": "Compétences",
+    "categories": {
+      "technical": "Compétences techniques",
+      "services": "Services",
+      "certifications": "Certifications"
+    },
+    "items": {
+      "siteManagement": "Maintenance et migration de sites",
+      "fullStack": "Solutions Full-Stack",
+      "llmIntegration": "Intégration de workflows LLM",
+      "dataManagement": "Migration et gestion de données",
+      "driverLicense": "Permis de conduire B",
+      "firstAid": "Certificat de premiers secours"
+    }
+  },
+  "projects": {
+    "title": "Projets",
+    "empowered": {
+      "title": "Empowered by YUM",
+      "description": "Plateforme e-commerce pour les superaliments. En tant que PDG, responsable de la stratégie numérique complète et du développement du site Web.",
+      "link": "Visiter le site"
+    },
+    "pioneers": {
+      "title": "Site Web De Pioniers",
+      "description": "Développement d'un nouveau site Web pour le mouvement de jeunesse De Pioniers. Actuellement en production.",
+      "status": "En développement"
+    },
+    "monogame": {
+      "title": "Projet MonoGame",
+      "description": "Un jeu développé avec le framework MonoGame, avec des mécanismes de gameplay complexes et des effets visuels.",
+      "video": "Regarder la vidéo"
+    }
+  },
+  "services": {
+    "title": "Ce que j'offre",
+    "subtitle": "Spécialisé dans les solutions web modernes et l'intégration de données",
+    "items": {
+      "migration": {
+        "title": "Migration de site",
+        "description": "Migration transparente des systèmes hérités vers des plateformes modernes tout en maintenant l'intégrité des données."
+      },
+      "fullstack": {
+        "title": "Développement Full-Stack",
+        "description": "Développement d'applications web de bout en bout utilisant des frameworks modernes et les meilleures pratiques."
+      },
+      "llm": {
+        "title": "Intégration LLM",
+        "description": "Mise en œuvre de workflows IA et de solutions chatbot pour les processus métier."
+      },
+      "maintenance": {
+        "title": "Maintenance de site Web",
+        "description": "Support continu, mises à jour et optimisation pour les sites Web existants."
+      }
+    }
+  },
+  "contact": {
+    "title": "Me contacter",
+    "subtitle": "Je suis ouvert aux opportunités de stage et aux collaborations",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "linkedin": "LinkedIn",
+    "teams": "Microsoft Teams",
+    "whatsapp": "WhatsApp",
+    "available": "Disponible sur WhatsApp",
+    "copyEmail": "Copier l'adresse e-mail",
+    "copyPhone": "Copier le numéro de téléphone"
+  },
+  "cv": {
+    "title": "Curriculum Vitae",
+    "download": "Télécharger le CV",
+    "view": "Voir le CV"
+  },
+  "footer": {
+    "rights": "Tous droits réservés",
+    "built": "Construit avec",
+    "and": "et"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "more": "En savoir plus"
+  }
+}
