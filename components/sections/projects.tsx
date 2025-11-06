@@ -33,7 +33,7 @@ export function Projects() {
     <section
       id="projects"
       ref={ref}
-      className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
+      className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden w-full"
     >
       <div className="max-w-7xl mx-auto">
         {/* Title */}
