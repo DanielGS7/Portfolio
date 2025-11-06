@@ -1,0 +1,117 @@
+'use client';
+
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { ThemeToggle } from '../ui/theme-toggle';
+import { LanguageSwitcher } from '../ui/language-switcher';
+import { cn } from '@/lib/utils/cn';
+
+export function Header() {
+  const t = useTranslations('nav');
+  const pathname = usePathname();
+  const { scrollY } = useScroll();
+
+  // Transform scroll to header background opacity
+  const headerOpacity = useTransform(scrollY, [0, 100], [0.8, 0.95]);
+  const headerBlur = useTransform(scrollY, [0, 100], [12, 20]);
+
+  const navItems = [
+    { href: '/', label: t('home') },
+    { href: '/contact', label: t('contact') },
+    { href: '/cv', label: t('cv') },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return pathname === '/' || pathname === '/nl' || pathname === '/en' || pathname === '/fr';
+    }
+    return pathname.includes(href);
+  };
+
+  return (
+    <motion.header
+      className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4"
+      style={{
+        backdropFilter: useTransform(headerBlur, (v) => `blur(${v}px)`),
+      }}
+    >
+      <motion.div
+        className="max-w-7xl mx-auto rounded-full glass-strong shadow-lg"
+        style={{
+          opacity: headerOpacity,
+        }}
+      >
+        <nav className="flex items-center justify-between px-6 py-3">
+          {/* Logo / Brand */}
+          <Link href="/">
+            <motion.div
+              className="text-xl font-bold bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              WEBCAVE
+            </motion.div>
+          </Link>
+
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-2">
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href}>
+                <motion.div
+                  className={cn(
+                    'px-4 py-2 rounded-full text-sm font-medium transition-colors relative',
+                    isActive(item.href)
+                      ? 'text-[rgb(var(--color-primary))]'
+                      : 'text-[rgb(var(--text-light))] hover:text-[rgb(var(--foreground))]'
+                  )}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {item.label}
+                  {isActive(item.href) && (
+                    <motion.div
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[rgb(var(--color-primary))]"
+                      layoutId="nav-indicator"
+                      transition={{
+                        type: 'spring',
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Right side - Theme & Language */}
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
+        </nav>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden px-6 pb-3 flex items-center justify-center gap-2">
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <motion.div
+                className={cn(
+                  'px-3 py-1.5 rounded-full text-xs font-medium transition-colors',
+                  isActive(item.href)
+                    ? 'bg-[rgba(var(--color-primary)/0.2)] text-[rgb(var(--color-primary))]'
+                    : 'text-[rgb(var(--text-light))] hover:text-[rgb(var(--foreground))]'
+                )}
+                whileTap={{ scale: 0.95 }}
+              >
+                {item.label}
+              </motion.div>
+            </Link>
+          ))}
+        </div>
+      </motion.div>
+    </motion.header>
+  );
+}
