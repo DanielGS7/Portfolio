@@ -29,7 +29,7 @@ export function About() {
   ];
 
   return (
-    <section ref={ref} className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.02)] to-transparent">
       {/* Background decoration */}
       <motion.div
         className="absolute top-10 right-10 w-32 h-32 text-[rgb(var(--color-primary))]"
@@ -39,38 +39,38 @@ export function About() {
         <SwirlSVG className="w-full h-full opacity-10" />
       </motion.div>
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Title */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-20"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
               {t('title')}
             </span>
           </h2>
-          <p className="text-lg text-[rgb(var(--text-light))] max-w-2xl mx-auto">
+          <p className="text-xl text-[rgb(var(--text-light))] max-w-3xl mx-auto leading-relaxed">
             {t('intro')}
           </p>
         </motion.div>
 
         {/* Highlights Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
           {highlights.map((highlight, index) => (
             <motion.div
               key={highlight.key}
               className="group relative"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ duration: 0.6, delay: index * 0.15 }}
             >
-              <div className="glass-strong rounded-3xl p-8 h-full hover:scale-105 transition-transform duration-300">
+              <div className="glass-strong rounded-3xl p-10 h-full hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)]">
                 {/* Icon */}
                 <motion.div
-                  className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${highlight.gradient} flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform`}
+                  className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${highlight.gradient} flex items-center justify-center text-4xl mb-8 group-hover:scale-110 transition-transform shadow-lg`}
                   whileHover={{ rotate: [0, -10, 10, -10, 0] }}
                   transition={{ duration: 0.5 }}
                 >
@@ -78,12 +78,12 @@ export function About() {
                 </motion.div>
 
                 {/* Title */}
-                <h3 className="text-2xl font-bold mb-3 text-[rgb(var(--foreground))]">
+                <h3 className="text-2xl font-bold mb-4 text-[rgb(var(--foreground))]">
                   {t(`${highlight.key}.title`)}
                 </h3>
 
                 {/* Description */}
-                <p className="text-[rgb(var(--text-light))] leading-relaxed">
+                <p className="text-[rgb(var(--text-light))] leading-relaxed text-lg">
                   {t(`${highlight.key}.description`)}
                 </p>
 
