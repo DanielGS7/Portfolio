@@ -41,7 +41,7 @@ export function Services() {
           {services.map((service, index) => (
             <motion.div
               key={service.key}
-              className="group relative glass-strong rounded-3xl p-10 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)]"
+              className="group relative glass-strong rounded-3xl p-10 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)] text-center flex flex-col items-center"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -53,7 +53,7 @@ export function Services() {
               />
 
               {/* Content */}
-              <div className="relative z-10">
+              <div className="relative z-10 flex flex-col items-center">
                 {/* Icon */}
                 <motion.div
                   className="w-20 h-20 rounded-3xl flex items-center justify-center text-5xl mb-8 shadow-lg"
@@ -67,7 +67,7 @@ export function Services() {
                 </motion.div>
 
                 {/* Title */}
-                <h3 className="text-2xl font-bold mb-4 text-[rgb(var(--foreground))]">
+                <h3 className="text-2xl font-bold mb-6 text-[rgb(var(--foreground))]">
                   {t(`items.${service.key}.title`)}
                 </h3>
 

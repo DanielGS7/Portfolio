@@ -1,16 +1,43 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { UnderlineSVG, CircleDotsSVG } from '../svg/underline';
 import { ArrowSVG } from '../svg/underline';
 import type { Locale } from '@/lib/i18n/config';
+import { useEffect, useState } from 'react';
 
 export function Hero() {
   const t = useTranslations('hero');
   const params = useParams();
   const locale = (params?.locale as Locale) || 'nl';
+  const { scrollY } = useScroll();
+  const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  // Show scroll indicator after 5 seconds of inactivity, hide after scroll
+  useEffect(() => {
+    if (hasScrolled) return; // Don't show again after user has scrolled
+
+    const timer = setTimeout(() => {
+      setShowScrollIndicator(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [hasScrolled]);
+
+  // Hide indicator when user scrolls
+  useEffect(() => {
+    const unsubscribe = scrollY.on('change', (latest) => {
+      if (latest > 50 && !hasScrolled) {
+        setHasScrolled(true);
+        setShowScrollIndicator(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [scrollY, hasScrolled]);
 
   const scrollToWork = () => {
     const projectsSection = document.getElementById('projects');
@@ -94,7 +121,7 @@ export function Hero() {
 
         {/* Tagline */}
         <motion.p
-          className="text-2xl sm:text-3xl lg:text-4xl text-[rgb(var(--foreground))] mb-16 max-w-4xl mx-auto leading-relaxed font-light"
+          className="text-2xl sm:text-3xl lg:text-4xl text-[rgb(var(--foreground))] mb-16 max-w-4xl mx-auto leading-relaxed font-light px-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -139,35 +166,29 @@ export function Hero() {
 
       </div>
 
-      {/* Scroll indicator - bottom right, appears after 5s, animates every 5s */}
-      <motion.div
-        className="fixed bottom-8 right-8 z-10"
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 0.6, scale: 1 }}
-        transition={{ delay: 5, duration: 0.5 }}
-      >
+      {/* Scroll indicator - appears after 5s, hides after scroll */}
+      {showScrollIndicator && !hasScrolled && (
         <motion.div
-          className="w-10 h-14 rounded-full border-2 border-[rgb(var(--color-primary))] flex items-start justify-center p-2 bg-[rgba(var(--background)/0.5)] backdrop-blur-sm shadow-lg"
-          animate={{ y: [0, 0, 0, 6, 0] }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            repeatDelay: 5,
-            times: [0, 0.3, 0.5, 0.7, 1]
-          }}
+          className="fixed bottom-8 right-8 z-10"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.4 }}
         >
-          <motion.div
-            className="w-2 h-2 rounded-full bg-[rgb(var(--color-primary))]"
-            animate={{ opacity: [0, 0, 1, 0.3, 0] }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatDelay: 5,
-              times: [0, 0.3, 0.5, 0.7, 1]
-            }}
-          />
+          <motion.div className="w-8 h-12 rounded-full border-2 border-[rgb(var(--color-primary))] flex items-start justify-center pt-2 bg-[rgba(var(--background)/0.5)] backdrop-blur-sm shadow-lg">
+            <motion.div
+              className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--color-primary))]"
+              animate={{ y: [0, 16, 0] }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                repeatDelay: 3,
+                ease: 'easeInOut'
+              }}
+            />
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </section>
   );
 }
