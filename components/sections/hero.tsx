@@ -2,11 +2,15 @@
 
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { UnderlineSVG, CircleDotsSVG } from '../svg/underline';
 import { ArrowSVG } from '../svg/underline';
+import type { Locale } from '@/lib/i18n/config';
 
 export function Hero() {
   const t = useTranslations('hero');
+  const params = useParams();
+  const locale = (params?.locale as Locale) || 'nl';
 
   const scrollToWork = () => {
     const projectsSection = document.getElementById('projects');
@@ -14,7 +18,7 @@ export function Hero() {
   };
 
   const scrollToContact = () => {
-    window.location.href = '/contact';
+    window.location.href = `/${locale}/contact`;
   };
 
   return (
@@ -133,26 +137,37 @@ export function Hero() {
           </motion.button>
         </motion.div>
 
-        {/* Scroll indicator */}
+      </div>
+
+      {/* Scroll indicator - bottom right, appears after 5s, animates every 5s */}
+      <motion.div
+        className="fixed bottom-8 right-8 z-10"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 0.6, scale: 1 }}
+        transition={{ delay: 5, duration: 0.5 }}
+      >
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          className="w-10 h-14 rounded-full border-2 border-[rgb(var(--color-primary))] flex items-start justify-center p-2 bg-[rgba(var(--background)/0.5)] backdrop-blur-sm shadow-lg"
+          animate={{ y: [0, 0, 0, 6, 0] }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            repeatDelay: 5,
+            times: [0, 0.3, 0.5, 0.7, 1]
+          }}
         >
           <motion.div
-            className="w-6 h-10 rounded-full border-2 border-[rgb(var(--color-primary))] flex items-start justify-center p-2"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <motion.div
-              className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--color-primary))]"
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            />
-          </motion.div>
+            className="w-2 h-2 rounded-full bg-[rgb(var(--color-primary))]"
+            animate={{ opacity: [0, 0, 1, 0.3, 0] }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatDelay: 5,
+              times: [0, 0.3, 0.5, 0.7, 1]
+            }}
+          />
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

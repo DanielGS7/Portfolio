@@ -86,11 +86,6 @@ export function About() {
                 <p className="text-[rgb(var(--text-light))] leading-relaxed text-lg">
                   {t(`${highlight.key}.description`)}
                 </p>
-
-                {/* Decorative corner */}
-                <div className="absolute top-4 right-4 w-12 h-12 opacity-20">
-                  <SwirlSVG className={`w-full h-full text-[rgb(var(--color-primary))]`} />
-                </div>
               </div>
             </motion.div>
           ))}

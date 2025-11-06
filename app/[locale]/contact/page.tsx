@@ -97,7 +97,7 @@ export default function ContactPage() {
           {contactMethods.map((method, index) => (
             <motion.div
               key={method.key}
-              className="group glass-strong rounded-3xl p-6 hover:scale-105 transition-transform"
+              className="group glass-strong rounded-3xl p-8 hover:scale-105 transition-transform shadow-lg hover:shadow-xl border border-[rgba(var(--color-primary)/0.1)]"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
