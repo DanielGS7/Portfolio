@@ -63,7 +63,7 @@ export function Skills() {
               {category.skills.map((skill, skillIndex) => (
                 <motion.div
                   key={skill.key}
-                  className="group relative glass-strong rounded-3xl p-8 hover:scale-105 transition-all cursor-default shadow-lg hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)]"
+                  className="group relative glass-strong rounded-3xl p-8 hover:scale-105 transition-all cursor-default shadow-lg hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)] text-center flex flex-col items-center"
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{
@@ -81,7 +81,7 @@ export function Skills() {
                   />
 
                   {/* Content */}
-                  <div className="relative z-10">
+                  <div className="relative z-10 flex flex-col items-center">
                     <div className="text-5xl mb-6">{skill.icon}</div>
                     <h4 className="text-lg font-semibold text-[rgb(var(--foreground))] leading-relaxed">
                       {t(`items.${skill.key}`)}

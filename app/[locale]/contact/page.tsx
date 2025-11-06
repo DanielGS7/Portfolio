@@ -97,40 +97,38 @@ export default function ContactPage() {
           {contactMethods.map((method, index) => (
             <motion.div
               key={method.key}
-              className="group glass-strong rounded-3xl p-8 hover:scale-105 transition-transform shadow-lg hover:shadow-xl border border-[rgba(var(--color-primary)/0.1)]"
+              className="group glass-strong rounded-3xl p-8 hover:scale-105 transition-transform shadow-lg hover:shadow-xl border border-[rgba(var(--color-primary)/0.1)] text-center flex flex-col items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <div className="flex items-start gap-4">
-                {/* Icon */}
-                <motion.div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-                  style={{ backgroundColor: `rgba(${method.color}/0.1)` }}
-                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {method.icon}
-                </motion.div>
+              {/* Icon */}
+              <motion.div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4"
+                style={{ backgroundColor: `rgba(${method.color}/0.1)` }}
+                whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                transition={{ duration: 0.5 }}
+              >
+                {method.icon}
+              </motion.div>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-bold mb-1 text-[rgb(var(--foreground))]">
-                    {t(method.key)}
-                  </h3>
-                  <p className="text-sm text-[rgb(var(--text-light))] mb-3 truncate">
-                    {method.value}
-                  </p>
-                  <motion.button
-                    onClick={method.action}
-                    className="text-sm font-semibold px-4 py-2 rounded-full hover:bg-[rgba(var(--color-primary)/0.1)] transition-colors"
-                    style={{ color: `rgb(${method.color})` }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {method.actionLabel}
-                  </motion.button>
-                </div>
+              {/* Content */}
+              <div className="flex-1 w-full">
+                <h3 className="text-lg font-bold mb-2 text-[rgb(var(--foreground))]">
+                  {t(method.key)}
+                </h3>
+                <p className="text-sm text-[rgb(var(--text-light))] mb-4">
+                  {method.value}
+                </p>
+                <motion.button
+                  onClick={method.action}
+                  className="text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-[rgba(var(--color-primary)/0.1)] transition-colors"
+                  style={{ color: `rgb(${method.color})` }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {method.actionLabel}
+                </motion.button>
               </div>
             </motion.div>
           ))}

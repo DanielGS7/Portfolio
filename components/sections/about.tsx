@@ -67,7 +67,7 @@ export function About() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.15 }}
             >
-              <div className="glass-strong rounded-3xl p-10 h-full hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)]">
+              <div className="glass-strong rounded-3xl p-10 h-full hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)] text-center flex flex-col items-center">
                 {/* Icon */}
                 <motion.div
                   className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${highlight.gradient} flex items-center justify-center text-4xl mb-8 group-hover:scale-110 transition-transform shadow-lg`}
@@ -78,7 +78,7 @@ export function About() {
                 </motion.div>
 
                 {/* Title */}
-                <h3 className="text-2xl font-bold mb-4 text-[rgb(var(--foreground))]">
+                <h3 className="text-2xl font-bold mb-6 text-[rgb(var(--foreground))]">
                   {t(`${highlight.key}.title`)}
                 </h3>
 
