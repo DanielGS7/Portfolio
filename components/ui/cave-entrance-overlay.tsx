@@ -20,25 +20,22 @@ export function CaveEntranceOverlay({ activeSection }: CaveEntranceOverlayProps)
     }
   }, [activeSection]);
 
-  // Calculate scale needed to make cave hole fill viewport
-  // Assuming the cave hole is roughly 30% of the image height and centered
-  // We need to scale by about 3.5x to make the hole fill the screen
-  const scale = isZoomed ? 4 : 1;
-  const opacity = isZoomed ? 0 : 1; // Fade out as we zoom past it
+  // Zoom origin: 4/9 from bottom center (55.56% from top)
+  // Scale dramatically (10x) so cave entrance fills and goes beyond viewport
+  const scale = isZoomed ? 10 : 1;
 
   return (
     <motion.div
       className="fixed inset-0 pointer-events-none z-[5]"
       animate={{
         scale,
-        opacity,
       }}
       transition={{
         duration: 1.2,
         ease: [0.43, 0.13, 0.23, 0.96],
       }}
       style={{
-        transformOrigin: 'center center',
+        transformOrigin: 'center 55.56%', // 4/9 from bottom
       }}
     >
       <div className="relative w-full h-full">
