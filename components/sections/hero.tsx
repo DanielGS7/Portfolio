@@ -1,21 +1,18 @@
 'use client';
 
-import { motion, useScroll, AnimatePresence } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { UnderlineSVG } from '../svg/underline';
 import { ArrowSVG } from '../svg/underline';
 import type { Locale } from '@/lib/i18n/config';
 import { useEffect, useState } from 'react';
-import { useTheme } from '@/lib/hooks/use-theme';
-import Image from 'next/image';
 
 export function Hero() {
   const t = useTranslations('hero');
   const params = useParams();
   const locale = (params?.locale as Locale) || 'nl';
   const { scrollY } = useScroll();
-  const { theme } = useTheme();
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -53,81 +50,6 @@ export function Hero() {
 
   return (
     <section className="relative h-screen max-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 w-full">
-      {/* Skybox background - day: light blue, night: dark with stars */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-500" />
-
-      {/* Stars for night sky */}
-      <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500 pointer-events-none">
-        {[...Array(100)].map((_, i) => {
-          const top = Math.random() * 70; // Keep stars in upper 70% of screen
-          const left = Math.random() * 100;
-          const size = Math.random() * 2 + 1;
-          const animationDelay = Math.random() * 3;
-          const animationDuration = Math.random() * 2 + 2;
-
-          return (
-            <motion.div
-              key={i}
-              className="absolute bg-white rounded-full"
-              style={{
-                top: `${top}%`,
-                left: `${left}%`,
-                width: `${size}px`,
-                height: `${size}px`,
-              }}
-              animate={{
-                opacity: [0.2, 1, 0.2],
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                duration: animationDuration,
-                repeat: Infinity,
-                delay: animationDelay,
-                ease: 'easeInOut',
-              }}
-            />
-          );
-        })}
-      </div>
-
-      {/* Sun/Moon decorative elements - top right corner */}
-      <div className="absolute top-8 right-8 sm:top-12 sm:right-12 w-24 h-24 sm:w-32 sm:h-32 pointer-events-none">
-        <AnimatePresence mode="wait">
-          {theme === 'light' ? (
-            <motion.div
-              key="sun"
-              className="absolute inset-0"
-              initial={{ scale: 0, rotate: -180, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              exit={{ scale: 0, rotate: 180, opacity: 0 }}
-              transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-            >
-              <Image
-                src="/images/sun.png"
-                alt="Sun"
-                fill
-                className="object-contain drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]"
-              />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="moon"
-              className="absolute inset-0"
-              initial={{ scale: 0, rotate: 180, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              exit={{ scale: 0, rotate: -180, opacity: 0 }}
-              transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-            >
-              <Image
-                src="/images/moon.png"
-                alt="Moon"
-                fill
-                className="object-contain drop-shadow-[0_0_20px_rgba(148,163,184,0.6)]"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
 
       {/* Gradient orbs for additional atmosphere */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

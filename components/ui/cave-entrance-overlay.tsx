@@ -28,7 +28,7 @@ export function CaveEntranceOverlay({ activeSection }: CaveEntranceOverlayProps)
 
   return (
     <motion.div
-      className="fixed inset-0 pointer-events-none z-[15]"
+      className="fixed inset-0 pointer-events-none z-[5]"
       animate={{
         scale,
         opacity,

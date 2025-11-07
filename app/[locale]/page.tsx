@@ -13,9 +13,12 @@ import { CaveEntranceOverlay } from '@/components/ui/cave-entrance-overlay';
 import { useTranslations } from 'next-intl';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/lib/hooks/use-theme';
+import Image from 'next/image';
 
 export default function Home() {
   const t = useTranslations('timeline');
+  const { theme } = useTheme();
   const [activeSection, setActiveSection] = useState('hero');
 
   // Timeline sections for homepage - using even spacing (no dates/years shown)
@@ -145,19 +148,91 @@ export default function Home() {
       {/* Cave background with depth progression */}
       <CaveBackground depth={getCurrentDepth()} maxDepth={timelineSections.length - 1} />
 
+      {/* Skybox with stars - only visible on hero section */}
+      {activeSection === 'hero' && (
+        <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 1 }}>
+          {/* Sky gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-500" />
+
+          {/* Stars for night sky */}
+          <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
+            {[...Array(100)].map((_, i) => {
+              const top = Math.random() * 70;
+              const left = Math.random() * 100;
+              const size = Math.random() * 2 + 1;
+
+              return (
+                <div
+                  key={i}
+                  className="absolute bg-white rounded-full animate-pulse"
+                  style={{
+                    top: `${top}%`,
+                    left: `${left}%`,
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    animationDuration: `${2 + Math.random() * 2}s`,
+                    animationDelay: `${Math.random() * 3}s`,
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          {/* Sun/Moon decorative elements - top right corner */}
+          <div className="absolute top-8 right-8 sm:top-12 sm:right-12 w-24 h-24 sm:w-32 sm:h-32">
+            <AnimatePresence mode="wait">
+              {theme === 'light' ? (
+                <motion.div
+                  key="sun"
+                  className="absolute inset-0"
+                  initial={{ scale: 0, rotate: -180, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  exit={{ scale: 0, rotate: 180, opacity: 0 }}
+                  transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+                >
+                  <Image
+                    src="/images/sun.png"
+                    alt="Sun"
+                    fill
+                    className="object-contain drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]"
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="moon"
+                  className="absolute inset-0"
+                  initial={{ scale: 0, rotate: 180, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  exit={{ scale: 0, rotate: -180, opacity: 0 }}
+                  transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+                >
+                  <Image
+                    src="/images/moon.png"
+                    alt="Moon"
+                    fill
+                    className="object-contain drop-shadow-[0_0_20px_rgba(148,163,184,0.6)]"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      )}
+
       {/* Overlaying sections with fade animations */}
-      <div className="relative z-10">
-        <AnimatePresence mode="wait">
+      <div className="relative">
+        <AnimatePresence initial={false}>
           {timelineSections.map(section => (
             activeSection === section.id && (
               <motion.div
                 key={section.id}
                 id={section.id}
                 className="fixed inset-0 flex items-center justify-center"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -50 }}
-                transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+                style={{ zIndex: 10 }}
               >
                 {sectionComponents[section.id as keyof typeof sectionComponents]}
               </motion.div>
