@@ -33,9 +33,9 @@ export function Projects() {
     <section
       id="projects"
       ref={ref}
-      className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden w-full"
+      className="py-32 relative overflow-hidden w-full"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title */}
         <motion.div
           className="text-center mb-20"
