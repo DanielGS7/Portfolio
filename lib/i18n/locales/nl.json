@@ -115,5 +115,12 @@
     "close": "Sluiten",
     "open": "Openen",
     "more": "Meer info"
+  },
+  "timeline": {
+    "intro": "Introductie",
+    "about": "Over mij",
+    "skills": "Vaardigheden",
+    "projects": "Projecten",
+    "services": "Diensten"
   }
 }

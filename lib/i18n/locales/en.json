@@ -115,5 +115,12 @@
     "close": "Close",
     "open": "Open",
     "more": "Learn more"
+  },
+  "timeline": {
+    "intro": "Introduction",
+    "about": "About",
+    "skills": "Skills",
+    "projects": "Projects",
+    "services": "Services"
   }
 }
