@@ -1,50 +1,55 @@
-'use client';
+"use client";
 
-import { motion, useScroll, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import {
+  motion,
+  useScroll,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 interface TimelineSection {
   id: string;
   year: string;
   label: string;
-  category?: 'story' | 'education' | 'projects' | 'work';
+  category?: "story" | "education" | "projects" | "work";
 }
 
 interface TimelineNavProps {
   sections: TimelineSection[];
 }
 
-type FilterCategory = 'all' | 'story' | 'education' | 'projects' | 'work';
+type FilterCategory = "all" | "story" | "education" | "projects" | "work";
 
 export function TimelineNav({ sections }: TimelineNavProps) {
-  const [filter, setFilter] = useState<FilterCategory>('all');
+  const [filter, setFilter] = useState<FilterCategory>("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Filter sections based on category
-  const filteredSections = filter === 'all'
-    ? sections
-    : sections.filter(s => s.category === filter);
+  const filteredSections =
+    filter === "all" ? sections : sections.filter((s) => s.category === filter);
 
   // Get section elements
   useEffect(() => {
-    sectionsRef.current = sections.map(section =>
-      document.getElementById(section.id)
-    ).filter(Boolean) as HTMLElement[];
+    sectionsRef.current = sections
+      .map((section) => document.getElementById(section.id))
+      .filter(Boolean) as HTMLElement[];
   }, [sections]);
 
   // Smooth scroll to section - position heading below header with breathing room
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const headerOffset = 100; // Header height + small breathing room
+      const headerOffset = -50; // Header height + small breathing room
       const targetScroll = element.offsetTop - headerOffset;
 
       window.scrollTo({
         top: Math.max(0, targetScroll),
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   };
@@ -59,14 +64,16 @@ export function TimelineNav({ sections }: TimelineNavProps) {
       setScrollProgress(scrollY);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll(); // Initial call
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Calculate position for each phase on the timeline
-  const getPhasePosition = (sectionIndex: number): { y: number; opacity: number } => {
+  const getPhasePosition = (
+    sectionIndex: number
+  ): { y: number; opacity: number } => {
     if (!timelineRef.current) return { y: 50, opacity: 0 };
 
     const element = sectionsRef.current[sectionIndex];
@@ -74,7 +81,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
 
     const timelineHeight = timelineRef.current.clientHeight;
     const viewportHeight = window.innerHeight;
-    const headerOffset = 100; // Header height + small breathing room
+    const headerOffset = -50; // Header height + small breathing room
 
     // The viewing position is where content appears below the header
     const viewingPosition = scrollProgress + headerOffset;
@@ -86,14 +93,17 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     // Map distance to timeline position (center of timeline = 50%)
     // Normalize by viewport height to get consistent movement
     const normalizedDistance = distanceFromViewingPosition / viewportHeight;
-    const timelinePosition = 50 + (normalizedDistance * 30); // 30% of timeline per viewport height
+    const timelinePosition = 50 + normalizedDistance * 30; // 30% of timeline per viewport height
 
     // Calculate opacity based on distance from center (fade at edges)
-    const opacity = Math.max(0, Math.min(1, 1 - Math.abs(timelinePosition - 50) / 50));
+    const opacity = Math.max(
+      0,
+      Math.min(1, 1 - Math.abs(timelinePosition - 50) / 50)
+    );
 
     return {
       y: Math.max(0, Math.min(100, timelinePosition)),
-      opacity
+      opacity,
     };
   };
 
@@ -108,7 +118,9 @@ export function TimelineNav({ sections }: TimelineNavProps) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {filter === 'all' ? 'Complete Story' : filter.charAt(0).toUpperCase() + filter.slice(1)}
+            {filter === "all"
+              ? "Complete Story"
+              : filter.charAt(0).toUpperCase() + filter.slice(1)}
             <motion.span
               className="ml-2 inline-block"
               animate={{ rotate: isDropdownOpen ? 180 : 0 }}
@@ -124,7 +136,15 @@ export function TimelineNav({ sections }: TimelineNavProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              {(['all', 'story', 'education', 'projects', 'work'] as FilterCategory[]).map((cat) => (
+              {(
+                [
+                  "all",
+                  "story",
+                  "education",
+                  "projects",
+                  "work",
+                ] as FilterCategory[]
+              ).map((cat) => (
                 <button
                   key={cat}
                   onClick={() => {
@@ -133,11 +153,13 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   }}
                   className={`w-full px-4 py-3 text-left text-sm transition-colors ${
                     filter === cat
-                      ? 'bg-[rgba(var(--color-primary)/0.2)] text-[rgb(var(--color-primary))] font-semibold'
-                      : 'text-[rgb(var(--text-light))] hover:bg-[rgba(var(--color-primary)/0.1)]'
+                      ? "bg-[rgba(var(--color-primary)/0.2)] text-[rgb(var(--color-primary))] font-semibold"
+                      : "text-[rgb(var(--text-light))] hover:bg-[rgba(var(--color-primary)/0.1)]"
                   }`}
                 >
-                  {cat === 'all' ? 'Complete Story' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  {cat === "all"
+                    ? "Complete Story"
+                    : cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </button>
               ))}
             </motion.div>
@@ -147,10 +169,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
 
       {/* Timeline Navigation */}
       <div className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
-        <div
-          ref={timelineRef}
-          className="relative h-[60vh] w-1"
-        >
+        <div ref={timelineRef} className="relative h-[60vh] w-1">
           {/* Gradient timeline bar */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[rgb(var(--color-primary))] to-transparent opacity-30">
             {/* Cylindrical shadow effect */}
@@ -163,7 +182,9 @@ export function TimelineNav({ sections }: TimelineNavProps) {
           {/* Timeline phases - moving along the bar */}
           <div className="absolute inset-0">
             {filteredSections.map((section, index) => {
-              const globalIndex = sections.findIndex(s => s.id === section.id);
+              const globalIndex = sections.findIndex(
+                (s) => s.id === section.id
+              );
               const position = getPhasePosition(globalIndex);
 
               return (
@@ -173,7 +194,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   className="absolute flex items-center gap-3 cursor-pointer px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all -translate-y-1/2"
                   style={{
                     top: `${position.y}%`,
-                    right: '1.5rem',
+                    right: "1.5rem",
                     opacity: position.opacity,
                   }}
                   whileHover={{ x: -5, scale: 1.05 }}
@@ -183,8 +204,8 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   <span
                     className={`text-left transition-all whitespace-nowrap ${
                       position.y > 45 && position.y < 55
-                        ? 'text-[rgb(var(--color-primary))] font-bold text-base'
-                        : 'text-[rgb(var(--text-muted))] text-xs'
+                        ? "text-[rgb(var(--color-primary))] font-bold text-base"
+                        : "text-[rgb(var(--text-muted))] text-xs"
                     }`}
                   >
                     {section.label}
@@ -194,8 +215,8 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   <div
                     className={`w-2 h-2 rounded-full transition-all ${
                       position.y > 45 && position.y < 55
-                        ? 'bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))]'
-                        : 'bg-[rgb(var(--text-muted))]'
+                        ? "bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))]"
+                        : "bg-[rgb(var(--text-muted))]"
                     }`}
                   />
 
@@ -203,8 +224,8 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   <span
                     className={`font-mono text-xs ${
                       position.y > 45 && position.y < 55
-                        ? 'text-[rgb(var(--color-primary))] font-semibold'
-                        : 'text-[rgb(var(--text-muted))]'
+                        ? "text-[rgb(var(--color-primary))] font-semibold"
+                        : "text-[rgb(var(--text-muted))]"
                     }`}
                   >
                     {section.year}
