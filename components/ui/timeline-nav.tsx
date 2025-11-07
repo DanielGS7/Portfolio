@@ -20,49 +20,67 @@ interface TimelineSection {
 interface TimelineNavProps {
   sections: TimelineSection[];
   mode?: 'time-based' | 'even-spacing'; // Mode for spacing calculation
+  onNavigate?: (sectionId: string) => void; // Callback for navigation (cave mode)
 }
 
 type FilterCategory = "all" | "story" | "education" | "projects" | "work";
 
-export function TimelineNav({ sections, mode = 'even-spacing' }: TimelineNavProps) {
+export function TimelineNav({ sections, mode = 'even-spacing', onNavigate }: TimelineNavProps) {
   const [filter, setFilter] = useState<FilterCategory>("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState(sections[0]?.id || 'hero');
 
   // Filter sections based on category
   const filteredSections =
     filter === "all" ? sections : sections.filter((s) => s.category === filter);
 
+  // Determine if we're in cave mode (overlay) or scroll mode
+  const isCaveMode = !!onNavigate;
+
   // Get section elements
   useEffect(() => {
-    sectionsRef.current = sections
-      .map((section) => document.getElementById(section.id))
-      .filter(Boolean) as HTMLElement[];
-  }, [sections]);
+    if (!isCaveMode) {
+      sectionsRef.current = sections
+        .map((section) => document.getElementById(section.id))
+        .filter(Boolean) as HTMLElement[];
+    }
+  }, [sections, isCaveMode]);
 
-  // Smooth scroll to section - position heading below header with breathing room
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerOffset = -50; // Header height + small breathing room
-      const targetScroll = element.offsetTop - headerOffset;
+  // Navigate to section - either scroll or call onNavigate callback
+  const navigateToSection = (sectionId: string) => {
+    if (isCaveMode) {
+      // Cave mode: use callback
+      setActiveSection(sectionId);
+      onNavigate(sectionId);
 
-      window.scrollTo({
-        top: Math.max(0, targetScroll),
-        behavior: "smooth",
-      });
+      // Emit custom event for page component to listen to
+      window.dispatchEvent(new CustomEvent('timelineNavigate', {
+        detail: { sectionId }
+      }));
+    } else {
+      // Scroll mode: traditional scrolling
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const headerOffset = -50;
+        const targetScroll = element.offsetTop - headerOffset;
+
+        window.scrollTo({
+          top: Math.max(0, targetScroll),
+          behavior: "smooth",
+        });
+      }
     }
   };
 
-  // Track scroll and update phase positions
+  // Track scroll and update phase positions (only in scroll mode)
   useEffect(() => {
+    if (isCaveMode) return; // Skip scroll tracking in cave mode
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-
       setScrollProgress(scrollY);
     };
 
@@ -70,7 +88,7 @@ export function TimelineNav({ sections, mode = 'even-spacing' }: TimelineNavProp
     handleScroll(); // Initial call
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isCaveMode]);
 
   // Calculate time-based position for each phase
   const getTimeBasedPosition = (date: Date, minDate: Date, maxDate: Date): number => {
@@ -89,26 +107,31 @@ export function TimelineNav({ sections, mode = 'even-spacing' }: TimelineNavProp
   ): { y: number; opacity: number } => {
     if (!timelineRef.current) return { y: 50, opacity: 0 };
 
-    const element = sectionsRef.current[sectionIndex];
-    if (!element) return { y: 50, opacity: 0 };
-
-    const viewportHeight = window.innerHeight;
-    const headerOffset = -50; // Header height + small breathing room
-
-    // Calculate which section is currently in view
-    const viewingPosition = scrollProgress + headerOffset;
     let activeIndex = 0;
-    let minDistance = Infinity;
 
-    sectionsRef.current.forEach((el, idx) => {
-      if (el) {
-        const distance = Math.abs(el.offsetTop - viewingPosition);
-        if (distance < minDistance) {
-          minDistance = distance;
-          activeIndex = idx;
+    if (isCaveMode) {
+      // In cave mode, use activeSection state
+      activeIndex = sections.findIndex(s => s.id === activeSection);
+      if (activeIndex === -1) activeIndex = 0;
+    } else {
+      // In scroll mode, calculate from scroll position
+      const element = sectionsRef.current[sectionIndex];
+      if (!element) return { y: 50, opacity: 0 };
+
+      const headerOffset = -50;
+      const viewingPosition = scrollProgress + headerOffset;
+      let minDistance = Infinity;
+
+      sectionsRef.current.forEach((el, idx) => {
+        if (el) {
+          const distance = Math.abs(el.offsetTop - viewingPosition);
+          if (distance < minDistance) {
+            minDistance = distance;
+            activeIndex = idx;
+          }
         }
-      }
-    });
+      });
+    }
 
     let timelinePosition: number;
 
@@ -129,7 +152,6 @@ export function TimelineNav({ sections, mode = 'even-spacing' }: TimelineNavProp
     } else {
       // Even spacing mode - position based on array index
       const totalSections = filteredSections.length;
-      const globalIndex = sections.findIndex(s => s.id === sections[sectionIndex].id);
       const filteredIndex = filteredSections.findIndex(s => s.id === sections[sectionIndex].id);
 
       // Calculate even position (10% to 90% range)
@@ -242,7 +264,7 @@ export function TimelineNav({ sections, mode = 'even-spacing' }: TimelineNavProp
               return (
                 <motion.button
                   key={section.id}
-                  onClick={() => scrollToSection(section.id)}
+                  onClick={() => navigateToSection(section.id)}
                   className="absolute flex items-center gap-3 cursor-pointer px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all -translate-y-1/2"
                   style={{
                     top: `${position.y}%`,
