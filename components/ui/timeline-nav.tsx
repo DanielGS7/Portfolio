@@ -35,14 +35,13 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     ).filter(Boolean) as HTMLElement[];
   }, [sections]);
 
-  // Smooth scroll to section - center it vertically in viewport with offset for text alignment
+  // Smooth scroll to section - center it vertically in viewport
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       const elementCenter = element.offsetTop + element.offsetHeight / 2;
       const viewportCenter = window.innerHeight / 2;
-      const textOffset = 10; // Half line height offset for text alignment
-      const targetScroll = elementCenter - viewportCenter + textOffset;
+      const targetScroll = elementCenter - viewportCenter;
 
       window.scrollTo({
         top: Math.max(0, targetScroll),
@@ -169,7 +168,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                 <motion.button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className="absolute flex items-center gap-3 cursor-pointer -mx-2 -my-1 px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all"
+                  className="absolute flex items-center gap-3 cursor-pointer -mx-2 -my-1 px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all -translate-y-1/2"
                   style={{
                     top: `${position.y}%`,
                     right: '1.5rem',
