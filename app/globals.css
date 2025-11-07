@@ -1,3 +1,15 @@
+/* CSS Reset - MUST come BEFORE Tailwind to avoid conflicts */
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 @import "tailwindcss";
 
 /* Light mode colors (default) */
@@ -110,19 +122,7 @@
   --glass-blur: 12px;
 }
 
-/* Tailwind v4 Preflight already handles box-sizing and resets */
-/* Only add our custom body styles */
-html {
-  scroll-behavior: smooth;
-}
-
-html,
-body {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
+/* Custom body styles AFTER Tailwind */
 body {
   background: rgb(var(--background));
   color: rgb(var(--foreground));
