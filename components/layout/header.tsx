@@ -35,9 +35,9 @@ export function Header() {
 
   return (
     <motion.header className="fixed inset-x-0 top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="rounded-full shadow-lg border border-[rgba(var(--border)/0.3)]"
+          className="rounded-b-3xl shadow-lg border-b border-x border-[rgba(var(--border)/0.3)]"
           style={{
             backgroundColor: useTransform(headerBgOpacity, (v) => `rgba(var(--surface), ${v})`),
             backdropFilter: useTransform(headerBlur, (v) => `blur(${v}px)`),
