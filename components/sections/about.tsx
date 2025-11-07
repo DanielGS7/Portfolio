@@ -2,13 +2,17 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRocket, faRobot, faCode } from '@fortawesome/free-solid-svg-icons';
+import { faRocket, faRobot, faCode, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { SwirlSVG } from '../svg/underline';
+import type { Locale } from '@/lib/i18n/config';
 
 export function About() {
   const t = useTranslations('about');
+  const params = useParams();
+  const locale = (params?.locale as Locale) || 'nl';
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
@@ -54,9 +58,19 @@ export function About() {
               {t('title')}
             </span>
           </h2>
-          <p className="text-xl text-[rgb(var(--text-light))] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-[rgb(var(--text-light))] max-w-3xl mx-auto leading-relaxed mb-8">
             {t('intro')}
           </p>
+          <motion.a
+            href={`/${locale}/story`}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] text-white font-semibold hover:scale-105 transition-transform shadow-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            {t('storyLink')}
+            <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
+          </motion.a>
         </motion.div>
 
         {/* Highlights Grid */}

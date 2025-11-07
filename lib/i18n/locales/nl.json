@@ -16,6 +16,7 @@
   "about": {
     "title": "Over mij",
     "intro": "Van kinds af aan gefascineerd door technologie. Student Toegepaste Informatica aan AP Hogeschool met focus op Web Development, Software Engineering en generatieve AI.",
+    "storyLink": "Lees Mijn Verhaal",
     "entrepreneurship": {
       "title": "Zaakvoerder sinds 2015",
       "description": "Zaakvoerder en webontwikkelaar bij YUM (empoweredbyyum.com), een familiebedrijf gespecialiseerd in superfoods. Verantwoordelijk voor website, visuals, contentbeheer en Google Ads."
@@ -122,10 +123,17 @@
     "about": "Over mij",
     "skills": "Vaardigheden",
     "projects": "Projecten",
-    "services": "Diensten"
+    "services": "Diensten",
+    "contact": "Contact"
   },
   "story": {
     "title": "Mijn Verhaal",
     "subtitle": "Een chronologisch overzicht van mijn reis door onderwijs, werk en ondernemerschap"
+  },
+  "cta": {
+    "title": "Klaar om te starten?",
+    "subtitle": "Laten we samenwerken aan jouw volgende project. Neem contact op en we bespreken de mogelijkheden.",
+    "button": "Neem Contact Op",
+    "info": "Meestal antwoord binnen 24 uur"
   }
 }

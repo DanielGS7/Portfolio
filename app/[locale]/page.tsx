@@ -5,6 +5,7 @@ import { About } from '@/components/sections/about';
 import { Skills } from '@/components/sections/skills';
 import { Projects } from '@/components/sections/projects';
 import { Services } from '@/components/sections/services';
+import { CTA } from '@/components/sections/cta';
 import { Footer } from '@/components/layout/footer';
 import { TimelineNav } from '@/components/ui/timeline-nav';
 import { CaveBackground } from '@/components/ui/cave-background';
@@ -23,6 +24,7 @@ export default function Home() {
     { id: 'skills', year: '', date: '2015-01-01', label: t('skills'), category: 'education' as const },
     { id: 'projects', year: '', date: '2015-09-01', label: t('projects'), category: 'projects' as const },
     { id: 'services', year: '', date: '2014-01-01', label: t('services'), category: 'work' as const },
+    { id: 'cta', year: '', date: '2013-01-01', label: t('contact'), category: 'story' as const },
   ];
 
   // Calculate depth based on section index (0 at entrance, increases as you go deeper)
@@ -64,28 +66,41 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeSection, timelineSections]);
 
-  // Mouse wheel navigation
+  // Mouse wheel navigation with delta accumulation
   useEffect(() => {
+    let scrollAccumulator = 0;
     let isScrolling = false;
+    const scrollThreshold = 50; // Require 50px of scroll to trigger
 
     const handleWheel = (e: WheelEvent) => {
-      if (isScrolling) return;
+      if (isScrolling) {
+        scrollAccumulator = 0; // Reset accumulator during transition
+        return;
+      }
+
+      scrollAccumulator += e.deltaY;
 
       const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
 
-      if (e.deltaY > 0) {
+      if (scrollAccumulator > scrollThreshold) {
         // Scrolling down - go deeper in the cave
         if (currentIndex < timelineSections.length - 1) {
           isScrolling = true;
+          scrollAccumulator = 0;
           setActiveSection(timelineSections[currentIndex + 1].id);
-          setTimeout(() => { isScrolling = false; }, 800);
+          setTimeout(() => { isScrolling = false; }, 1000);
+        } else {
+          scrollAccumulator = 0;
         }
-      } else if (e.deltaY < 0) {
+      } else if (scrollAccumulator < -scrollThreshold) {
         // Scrolling up - go back up
         if (currentIndex > 0) {
           isScrolling = true;
+          scrollAccumulator = 0;
           setActiveSection(timelineSections[currentIndex - 1].id);
-          setTimeout(() => { isScrolling = false; }, 800);
+          setTimeout(() => { isScrolling = false; }, 1000);
+        } else {
+          scrollAccumulator = 0;
         }
       }
     };
@@ -101,6 +116,7 @@ export default function Home() {
     skills: <Skills />,
     projects: <Projects />,
     services: <Services />,
+    cta: <CTA />,
   };
 
   return (
@@ -135,12 +151,14 @@ export default function Home() {
         </AnimatePresence>
       </div>
 
-      {/* Footer - always visible at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 z-20 pointer-events-none">
-        <div className="pointer-events-auto">
-          <Footer />
+      {/* Footer - only visible on last section */}
+      {activeSection === timelineSections[timelineSections.length - 1].id && (
+        <div className="fixed bottom-0 left-0 right-0 z-20 pointer-events-none">
+          <div className="pointer-events-auto">
+            <Footer />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
