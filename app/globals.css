@@ -110,20 +110,10 @@
   --glass-blur: 12px;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-/* More specific reset that doesn't interfere with Tailwind utilities */
-html,
-body,
-div,
-h1, h2, h3, h4, h5, h6,
-p {
-  margin: 0;
-  padding: 0;
+/* Tailwind v4 Preflight already handles box-sizing and resets */
+/* Only add our custom body styles */
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -131,10 +121,6 @@ body {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 body {
