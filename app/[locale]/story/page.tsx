@@ -1,7 +1,11 @@
-import { getTranslations } from 'next-intl/server';
+'use client';
 
-export default async function StoryPage() {
-  const t = await getTranslations('story');
+import { motion, useInView } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import { useRef } from 'react';
+
+export default function StoryPage() {
+  const t = useTranslations('story');
 
   // Timeline events extracted from CV - chronological order (recent first)
   const timelineEvents = [
@@ -88,61 +92,112 @@ export default async function StoryPage() {
   ];
 
   return (
-    <div className="min-h-screen py-32">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-5xl font-bold mb-16 text-center">
-          <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
-            {t('title')}
-          </span>
-        </h1>
+    <section className="min-h-screen py-32 relative overflow-hidden w-full">
+      {/* Background decoration - consistent with other pages */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />
+        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[rgb(var(--color-accent))] opacity-10 blur-3xl rounded-full" />
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Title with animation */}
+        <motion.div
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
+              {t('title')}
+            </span>
+          </h1>
+          <p className="text-xl text-[rgb(var(--text-light))] max-w-3xl mx-auto">
+            {t('subtitle')}
+          </p>
+        </motion.div>
 
         {/* Timeline */}
         <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-[rgb(var(--color-primary))] via-[rgb(var(--color-accent))] to-[rgb(var(--color-secondary))] opacity-30" />
+          {/* Vertical line with gradient animation */}
+          <motion.div
+            className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-[rgb(var(--color-primary))] via-[rgb(var(--color-accent))] to-[rgb(var(--color-secondary))] opacity-30 origin-top"
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 1, delay: 0.3 }}
+          />
 
           {/* Events */}
           <div className="space-y-12">
             {timelineEvents.map((event, index) => (
-              <div key={index} className="relative pl-24">
-                {/* Date marker */}
-                <div className="absolute left-0 flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-sm">{event.date}</span>
-                  </div>
-                </div>
-
-                {/* Content card */}
-                <div className="glass-strong rounded-2xl p-6 border border-[rgba(var(--color-primary)/0.2)] hover:border-[rgba(var(--color-primary)/0.4)] transition-all">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-2xl font-bold text-[rgb(var(--foreground))]">
-                      {event.title}
-                    </h3>
-                    <span className="text-sm text-[rgb(var(--text-muted))] whitespace-nowrap ml-4">
-                      {event.period}
-                    </span>
-                  </div>
-
-                  <p className="text-[rgb(var(--text-light))] mb-4 leading-relaxed">
-                    {event.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2">
-                    {event.tags.map((tag, tagIndex) => (
-                      <span
-                        key={tagIndex}
-                        className="px-3 py-1 rounded-full bg-[rgba(var(--color-primary)/0.1)] text-[rgb(var(--color-primary))] text-xs font-medium"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <TimelineEvent key={index} event={event} index={index} />
             ))}
           </div>
         </div>
       </div>
-    </div>
+    </section>
+  );
+}
+
+// Separate component for each timeline event with scroll-triggered animation
+function TimelineEvent({ event, index }: { event: any; index: number }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      className="relative pl-24"
+      initial={{ opacity: 0, x: -50 }}
+      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+    >
+      {/* Date marker */}
+      <motion.div
+        className="absolute left-0 flex items-center gap-4"
+        initial={{ scale: 0, rotate: -180 }}
+        animate={isInView ? { scale: 1, rotate: 0 } : {}}
+        transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
+      >
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] flex items-center justify-center shadow-lg shadow-[rgb(var(--color-primary))]">
+          <span className="text-white font-bold text-sm">{event.date}</span>
+        </div>
+      </motion.div>
+
+      {/* Content card */}
+      <motion.div
+        className="glass-strong rounded-2xl p-6 border border-[rgba(var(--color-primary)/0.2)] hover:border-[rgba(var(--color-primary)/0.4)] hover:scale-[1.02] transition-all shadow-lg"
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
+      >
+        <div className="flex items-start justify-between mb-3">
+          <h3 className="text-2xl font-bold text-[rgb(var(--foreground))]">
+            {event.title}
+          </h3>
+          <span className="text-sm text-[rgb(var(--text-muted))] whitespace-nowrap ml-4">
+            {event.period}
+          </span>
+        </div>
+
+        <p className="text-[rgb(var(--text-light))] mb-4 leading-relaxed">
+          {event.description}
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          {event.tags.map((tag: string, tagIndex: number) => (
+            <motion.span
+              key={tagIndex}
+              className="px-3 py-1 rounded-full bg-[rgba(var(--color-primary)/0.1)] text-[rgb(var(--color-primary))] text-xs font-medium"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.3, delay: index * 0.1 + 0.4 + tagIndex * 0.05 }}
+            >
+              {tag}
+            </motion.span>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
