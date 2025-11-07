@@ -3,6 +3,8 @@
 import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWrench, faLaptopCode, faBrain, faChartBar, faCar, faBriefcaseMedical } from '@fortawesome/free-solid-svg-icons';
 
 export function Skills() {
   const t = useTranslations('skills');
@@ -13,17 +15,17 @@ export function Skills() {
     {
       category: 'technical',
       skills: [
-        { key: 'siteManagement', icon: '🔧', color: 'var(--color-primary)' },
-        { key: 'fullStack', icon: '💻', color: 'var(--color-accent)' },
-        { key: 'llmIntegration', icon: '🧠', color: 'var(--color-tertiary)' },
-        { key: 'dataManagement', icon: '📊', color: 'var(--color-secondary)' },
+        { key: 'siteManagement', icon: faWrench, color: 'var(--color-primary)' },
+        { key: 'fullStack', icon: faLaptopCode, color: 'var(--color-accent)' },
+        { key: 'llmIntegration', icon: faBrain, color: 'var(--color-tertiary)' },
+        { key: 'dataManagement', icon: faChartBar, color: 'var(--color-secondary)' },
       ],
     },
     {
       category: 'certifications',
       skills: [
-        { key: 'driverLicense', icon: '🚗', color: 'var(--color-accent)' },
-        { key: 'firstAid', icon: '🏥', color: 'var(--color-primary)' },
+        { key: 'driverLicense', icon: faCar, color: 'var(--color-accent)' },
+        { key: 'firstAid', icon: faBriefcaseMedical, color: 'var(--color-primary)' },
       ],
     },
   ];
@@ -82,7 +84,7 @@ export function Skills() {
 
                   {/* Content */}
                   <div className="relative z-10 flex flex-col items-center">
-                    <div className="text-5xl mb-6">{skill.icon}</div>
+                    <FontAwesomeIcon icon={skill.icon} className="text-4xl mb-6" style={{ color: `rgb(${skill.color})` }} />
                     <h4 className="text-lg font-semibold text-[rgb(var(--foreground))] leading-relaxed">
                       {t(`items.${skill.key}`)}
                     </h4>

@@ -3,6 +3,8 @@
 import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRocket, faRobot, faCampground } from '@fortawesome/free-solid-svg-icons';
 import { SwirlSVG } from '../svg/underline';
 
 export function About() {
@@ -13,17 +15,17 @@ export function About() {
   const highlights = [
     {
       key: 'entrepreneurship',
-      icon: '🚀',
+      icon: faRocket,
       gradient: 'from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))]',
     },
     {
       key: 'llm',
-      icon: '🤖',
+      icon: faRobot,
       gradient: 'from-[rgb(var(--color-accent))] to-[rgb(var(--color-tertiary))]',
     },
     {
       key: 'youth',
-      icon: '⛺',
+      icon: faCampground,
       gradient: 'from-[rgb(var(--color-secondary))] to-[rgb(var(--color-primary))]',
     },
   ];
@@ -70,11 +72,11 @@ export function About() {
               <div className="glass-strong rounded-3xl p-10 h-full hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)] text-center flex flex-col items-center">
                 {/* Icon */}
                 <motion.div
-                  className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${highlight.gradient} flex items-center justify-center text-4xl mb-8 group-hover:scale-110 transition-transform shadow-lg`}
+                  className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${highlight.gradient} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-lg`}
                   whileHover={{ rotate: [0, -10, 10, -10, 0] }}
                   transition={{ duration: 0.5 }}
                 >
-                  {highlight.icon}
+                  <FontAwesomeIcon icon={highlight.icon} className="text-4xl text-white" />
                 </motion.div>
 
                 {/* Title */}
