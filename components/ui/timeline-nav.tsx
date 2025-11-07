@@ -35,13 +35,12 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     ).filter(Boolean) as HTMLElement[];
   }, [sections]);
 
-  // Smooth scroll to section - center it vertically in viewport
+  // Smooth scroll to section - position heading below header with breathing room
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const elementCenter = element.offsetTop + element.offsetHeight / 2;
-      const viewportCenter = window.innerHeight / 2;
-      const targetScroll = elementCenter - viewportCenter;
+      const headerOffset = 120; // Header height + breathing room
+      const targetScroll = element.offsetTop - headerOffset;
 
       window.scrollTo({
         top: Math.max(0, targetScroll),
@@ -75,15 +74,18 @@ export function TimelineNav({ sections }: TimelineNavProps) {
 
     const timelineHeight = timelineRef.current.clientHeight;
     const viewportHeight = window.innerHeight;
-    const viewportCenter = scrollProgress + viewportHeight / 2;
+    const headerOffset = 120; // Header height + breathing room
 
-    // Distance from section center to viewport center
-    const sectionCenter = element.offsetTop + element.offsetHeight / 2;
-    const distanceFromCenter = sectionCenter - viewportCenter;
+    // The viewing position is where content appears below the header
+    const viewingPosition = scrollProgress + headerOffset;
+
+    // Distance from section top to viewing position
+    const sectionTop = element.offsetTop;
+    const distanceFromViewingPosition = sectionTop - viewingPosition;
 
     // Map distance to timeline position (center of timeline = 50%)
     // Normalize by viewport height to get consistent movement
-    const normalizedDistance = distanceFromCenter / viewportHeight;
+    const normalizedDistance = distanceFromViewingPosition / viewportHeight;
     const timelinePosition = 50 + (normalizedDistance * 30); // 30% of timeline per viewport height
 
     // Calculate opacity based on distance from center (fade at edges)
@@ -168,11 +170,12 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                 <motion.button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className="absolute flex items-center gap-3 cursor-pointer -mx-2 -my-1 px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all -translate-y-1/2"
+                  className="absolute flex items-center gap-3 cursor-pointer px-2 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all"
                   style={{
                     top: `${position.y}%`,
                     right: '1.5rem',
                     opacity: position.opacity,
+                    transform: 'translateY(-40%)',
                   }}
                   whileHover={{ x: -5, scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
