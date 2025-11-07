@@ -5,6 +5,7 @@ import { About } from '@/components/sections/about';
 import { Skills } from '@/components/sections/skills';
 import { Projects } from '@/components/sections/projects';
 import { Services } from '@/components/sections/services';
+import { Footer } from '@/components/layout/footer';
 import { TimelineNav } from '@/components/ui/timeline-nav';
 import { CaveBackground } from '@/components/ui/cave-background';
 import { useTranslations } from 'next-intl';
@@ -23,6 +24,12 @@ export default function Home() {
     { id: 'projects', year: '', date: '2015-09-01', label: t('projects'), category: 'projects' as const },
     { id: 'services', year: '', date: '2014-01-01', label: t('services'), category: 'work' as const },
   ];
+
+  // Calculate depth based on section index (0 at entrance, increases as you go deeper)
+  const getCurrentDepth = () => {
+    const index = timelineSections.findIndex(s => s.id === activeSection);
+    return index >= 0 ? index : 0;
+  };
 
   // Listen for section changes from TimelineNav
   useEffect(() => {
@@ -98,11 +105,11 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Cave background */}
-      <CaveBackground />
+      {/* Cave background with depth progression */}
+      <CaveBackground depth={getCurrentDepth()} maxDepth={timelineSections.length - 1} />
 
       {/* Timeline navigation */}
-      <TimelineNav sections={timelineSections} onNavigate={setActiveSection} />
+      <TimelineNav sections={timelineSections} onNavigate={setActiveSection} activeSection={activeSection} />
 
       {/* Overlaying sections with fade animations */}
       <div className="relative z-10">
@@ -112,17 +119,27 @@ export default function Home() {
               <motion.div
                 key={section.id}
                 id={section.id}
-                className="fixed inset-0 flex items-center justify-center"
+                className="fixed inset-0 flex items-center justify-center overflow-y-auto overflow-x-hidden"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -50 }}
                 transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
               >
-                {sectionComponents[section.id as keyof typeof sectionComponents]}
+                {/* Scrollable container for section content */}
+                <div className="w-full max-h-screen overflow-y-auto overflow-x-hidden py-4">
+                  {sectionComponents[section.id as keyof typeof sectionComponents]}
+                </div>
               </motion.div>
             )
           ))}
         </AnimatePresence>
+      </div>
+
+      {/* Footer - always visible at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-20 pointer-events-none">
+        <div className="pointer-events-auto">
+          <Footer />
+        </div>
       </div>
     </div>
   );

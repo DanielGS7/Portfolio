@@ -21,21 +21,20 @@ interface TimelineNavProps {
   sections: TimelineSection[];
   mode?: 'time-based' | 'even-spacing'; // Mode for spacing calculation
   onNavigate?: (sectionId: string) => void; // Callback for navigation (cave mode)
+  activeSection?: string; // Active section from parent (cave mode)
 }
 
-type FilterCategory = "all" | "story" | "education" | "projects" | "work";
-
-export function TimelineNav({ sections, mode = 'even-spacing', onNavigate }: TimelineNavProps) {
-  const [filter, setFilter] = useState<FilterCategory>("all");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+export function TimelineNav({ sections, mode = 'even-spacing', onNavigate, activeSection: activeSectionProp }: TimelineNavProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState(sections[0]?.id || 'hero');
 
-  // Filter sections based on category
-  const filteredSections =
-    filter === "all" ? sections : sections.filter((s) => s.category === filter);
+  // Use prop if provided (cave mode), otherwise use state (scroll mode)
+  const currentActiveSection = activeSectionProp || activeSection;
+
+  // No filtering in cave mode
+  const filteredSections = sections;
 
   // Determine if we're in cave mode (overlay) or scroll mode
   const isCaveMode = !!onNavigate;
@@ -110,8 +109,8 @@ export function TimelineNav({ sections, mode = 'even-spacing', onNavigate }: Tim
     let activeIndex = 0;
 
     if (isCaveMode) {
-      // In cave mode, use activeSection state
-      activeIndex = sections.findIndex(s => s.id === activeSection);
+      // In cave mode, use currentActiveSection
+      activeIndex = sections.findIndex(s => s.id === currentActiveSection);
       if (activeIndex === -1) activeIndex = 0;
     } else {
       // In scroll mode, calculate from scroll position
@@ -183,64 +182,6 @@ export function TimelineNav({ sections, mode = 'even-spacing', onNavigate }: Tim
 
   return (
     <>
-      {/* Timeline Filter Dropdown */}
-      <div className="fixed top-32 right-8 z-50 hidden lg:block">
-        <div className="relative">
-          <motion.button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="px-4 py-2 rounded-full glass-strong text-sm font-medium text-[rgb(var(--foreground))] border border-[rgba(var(--border)/0.3)] hover:border-[rgb(var(--color-primary))] transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {filter === "all"
-              ? "Complete Story"
-              : filter.charAt(0).toUpperCase() + filter.slice(1)}
-            <motion.span
-              className="ml-2 inline-block"
-              animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-            >
-              ▼
-            </motion.span>
-          </motion.button>
-
-          {isDropdownOpen && (
-            <motion.div
-              className="absolute top-full mt-2 right-0 w-48 glass-strong rounded-2xl border border-[rgba(var(--border)/0.3)] overflow-hidden shadow-xl"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-            >
-              {(
-                [
-                  "all",
-                  "story",
-                  "education",
-                  "projects",
-                  "work",
-                ] as FilterCategory[]
-              ).map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setFilter(cat);
-                    setIsDropdownOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left text-sm transition-colors ${
-                    filter === cat
-                      ? "bg-[rgba(var(--color-primary)/0.2)] text-[rgb(var(--color-primary))] font-semibold"
-                      : "text-[rgb(var(--text-light))] hover:bg-[rgba(var(--color-primary)/0.1)]"
-                  }`}
-                >
-                  {cat === "all"
-                    ? "Complete Story"
-                    : cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </button>
-              ))}
-            </motion.div>
-          )}
-        </div>
-      </div>
-
       {/* Timeline Navigation */}
       <div className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
         <div ref={timelineRef} className="relative h-[60vh] w-1">
