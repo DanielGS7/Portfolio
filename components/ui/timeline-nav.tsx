@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useScroll, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 interface TimelineSection {
@@ -17,26 +17,18 @@ interface TimelineNavProps {
 type FilterCategory = 'all' | 'story' | 'education' | 'projects' | 'work';
 
 export function TimelineNav({ sections }: TimelineNavProps) {
-  const [activeSection, setActiveSection] = useState(0);
   const [filter, setFilter] = useState<FilterCategory>('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
-  const { scrollY } = useScroll();
-
-  // Smooth spring animation for the indicator
-  const indicatorY = useSpring(0, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   // Filter sections based on category
   const filteredSections = filter === 'all'
     ? sections
     : sections.filter(s => s.category === filter);
 
-  // Get section elements and calculate positions
+  // Get section elements
   useEffect(() => {
     sectionsRef.current = sections.map(section =>
       document.getElementById(section.id)
@@ -44,83 +36,59 @@ export function TimelineNav({ sections }: TimelineNavProps) {
   }, [sections]);
 
   // Smooth scroll to section
-  const scrollToSection = (sectionId: string, index: number) => {
+  const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      // Calculate the exact position
-      const targetY = element.offsetTop;
-
-      // Use smooth scroll with custom easing
       window.scrollTo({
-        top: targetY,
+        top: element.offsetTop,
         behavior: 'smooth'
       });
-
-      setActiveSection(index);
     }
   };
 
-  // Detect active section and sync indicator position
+  // Track scroll and update phase positions
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 3;
-      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollProgress = Math.min(window.scrollY / documentHeight, 1);
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
 
-      // Find active section
-      let newActiveSection = 0;
-      let minDistance = Infinity;
-
-      sectionsRef.current.forEach((element, index) => {
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const elementCenter = rect.top + rect.height / 2;
-          const viewportCenter = window.innerHeight / 2;
-          const distance = Math.abs(elementCenter - viewportCenter);
-
-          if (distance < minDistance) {
-            minDistance = distance;
-            newActiveSection = index;
-          }
-        }
-      });
-
-      setActiveSection(newActiveSection);
-
-      // Calculate indicator position based on actual scroll progress
-      if (timelineRef.current) {
-        const timelineHeight = timelineRef.current.clientHeight;
-        const newY = scrollProgress * timelineHeight;
-        indicatorY.set(newY);
-      }
+      setScrollProgress(scrollY);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial call
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [sections, indicatorY]);
+  }, []);
 
-  // Handle timeline drag
-  const handleDrag = (event: any, info: any) => {
-    if (!timelineRef.current) return;
+  // Calculate position for each phase on the timeline
+  const getPhasePosition = (sectionIndex: number): { y: number; opacity: number } => {
+    if (!timelineRef.current) return { y: 50, opacity: 0 };
 
-    // Get timeline bounds
-    const timelineRect = timelineRef.current.getBoundingClientRect();
-    const timelineHeight = timelineRect.height;
+    const element = sectionsRef.current[sectionIndex];
+    if (!element) return { y: 50, opacity: 0 };
 
-    // Calculate relative Y position within timeline (0 to 1)
-    const relativeY = info.point.y - timelineRect.top;
-    const dragProgress = Math.max(0, Math.min(1, relativeY / timelineHeight));
+    const timelineHeight = timelineRef.current.clientHeight;
+    const viewportHeight = window.innerHeight;
+    const viewportCenter = scrollProgress + viewportHeight / 2;
 
-    // Calculate scroll position
-    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const targetScroll = dragProgress * documentHeight;
+    // Distance from section center to viewport center
+    const sectionCenter = element.offsetTop + element.offsetHeight / 2;
+    const distanceFromCenter = sectionCenter - viewportCenter;
 
-    window.scrollTo({
-      top: targetScroll,
-      behavior: 'auto' // No smooth during drag
-    });
+    // Map distance to timeline position (center of timeline = 50%)
+    // Normalize by viewport height to get consistent movement
+    const normalizedDistance = distanceFromCenter / viewportHeight;
+    const timelinePosition = 50 + (normalizedDistance * 30); // 30% of timeline per viewport height
+
+    // Calculate opacity based on distance from center (fade at edges)
+    const opacity = Math.max(0, Math.min(1, 1 - Math.abs(timelinePosition - 50) / 50));
+
+    return {
+      y: Math.max(0, Math.min(100, timelinePosition)),
+      opacity
+    };
   };
 
   return (
@@ -183,52 +151,32 @@ export function TimelineNav({ sections }: TimelineNavProps) {
             <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-white/10" />
           </div>
 
-          {/* Draggable indicator */}
-          <motion.div
-            drag="y"
-            dragConstraints={timelineRef}
-            dragElastic={0}
-            dragMomentum={false}
-            onDrag={handleDrag}
-            className="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))] cursor-grab active:cursor-grabbing"
-            style={{
-              top: indicatorY,
-            }}
-            whileHover={{ scale: 1.3 }}
-            whileTap={{ scale: 1.1 }}
-          />
+          {/* Center indicator dot */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))]" />
 
-          {/* Timeline dates - positioned proportionally */}
+          {/* Timeline phases - moving along the bar */}
           <div className="absolute inset-0">
             {filteredSections.map((section, index) => {
               const globalIndex = sections.findIndex(s => s.id === section.id);
-              const isActive = globalIndex === activeSection;
-
-              // Calculate position based on section position in document
-              const element = sectionsRef.current[globalIndex];
-              const position = element
-                ? (element.offsetTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100
-                : (index / (filteredSections.length - 1)) * 100;
+              const position = getPhasePosition(globalIndex);
 
               return (
                 <motion.button
                   key={section.id}
-                  onClick={() => scrollToSection(section.id, globalIndex)}
+                  onClick={() => scrollToSection(section.id)}
                   className="absolute flex items-center gap-3 cursor-pointer -mx-2 -my-1 px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all"
                   style={{
-                    top: `${Math.min(95, Math.max(5, position))}%`,
+                    top: `${position.y}%`,
                     right: '1.5rem',
+                    opacity: position.opacity,
                   }}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
                   whileHover={{ x: -5, scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {/* Title (left of dot) */}
                   <span
                     className={`text-left transition-all whitespace-nowrap ${
-                      isActive
+                      position.y > 45 && position.y < 55
                         ? 'text-[rgb(var(--color-primary))] font-bold text-base'
                         : 'text-[rgb(var(--text-muted))] text-xs'
                     }`}
@@ -239,7 +187,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   {/* Dot indicator */}
                   <div
                     className={`w-2 h-2 rounded-full transition-all ${
-                      isActive
+                      position.y > 45 && position.y < 55
                         ? 'bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))]'
                         : 'bg-[rgb(var(--text-muted))]'
                     }`}
@@ -248,7 +196,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   {/* Year (right of dot) */}
                   <span
                     className={`font-mono text-xs ${
-                      isActive
+                      position.y > 45 && position.y < 55
                         ? 'text-[rgb(var(--color-primary))] font-semibold'
                         : 'text-[rgb(var(--text-muted))]'
                     }`}
