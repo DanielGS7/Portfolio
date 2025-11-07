@@ -39,7 +39,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const headerOffset = 120; // Header height + breathing room
+      const headerOffset = 100; // Header height + small breathing room
       const targetScroll = element.offsetTop - headerOffset;
 
       window.scrollTo({
@@ -74,7 +74,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
 
     const timelineHeight = timelineRef.current.clientHeight;
     const viewportHeight = window.innerHeight;
-    const headerOffset = 120; // Header height + breathing room
+    const headerOffset = 100; // Header height + small breathing room
 
     // The viewing position is where content appears below the header
     const viewingPosition = scrollProgress + headerOffset;
@@ -170,12 +170,11 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                 <motion.button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className="absolute flex items-center gap-3 cursor-pointer px-2 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all"
+                  className="absolute flex items-center gap-3 cursor-pointer px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all -translate-y-1/2"
                   style={{
                     top: `${position.y}%`,
                     right: '1.5rem',
                     opacity: position.opacity,
-                    transform: 'translateY(-40%)',
                   }}
                   whileHover={{ x: -5, scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
