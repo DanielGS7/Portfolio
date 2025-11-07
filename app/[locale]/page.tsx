@@ -155,16 +155,13 @@ export default function Home() {
               <motion.div
                 key={section.id}
                 id={section.id}
-                className="fixed inset-0 flex items-center justify-center overflow-y-auto overflow-x-hidden"
+                className="fixed inset-0 flex items-center justify-center"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -50 }}
                 transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
               >
-                {/* Scrollable container for section content */}
-                <div className="w-full max-h-screen overflow-y-auto overflow-x-hidden py-4">
-                  {sectionComponents[section.id as keyof typeof sectionComponents]}
-                </div>
+                {sectionComponents[section.id as keyof typeof sectionComponents]}
               </motion.div>
             )
           ))}

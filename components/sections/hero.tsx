@@ -1,18 +1,21 @@
 'use client';
 
-import { motion, useScroll } from 'framer-motion';
+import { motion, useScroll, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { UnderlineSVG } from '../svg/underline';
 import { ArrowSVG } from '../svg/underline';
 import type { Locale } from '@/lib/i18n/config';
 import { useEffect, useState } from 'react';
+import { useTheme } from '@/lib/hooks/use-theme';
+import Image from 'next/image';
 
 export function Hero() {
   const t = useTranslations('hero');
   const params = useParams();
   const locale = (params?.locale as Locale) || 'nl';
   const { scrollY } = useScroll();
+  const { theme } = useTheme();
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -49,10 +52,62 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-20 w-full">
-      {/* Background decorative elements */}
+    <section className="relative h-screen max-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 w-full">
+      {/* Skybox background - fills transparent areas */}
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 transition-colors duration-500" />
+
+      {/* Cave entrance background image */}
+      <div className="absolute inset-0 pointer-events-none">
+        <Image
+          src="/images/cave-entrance.png"
+          alt="Cave entrance in mountain with grass"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
+
+      {/* Sun/Moon decorative elements - top right corner */}
+      <div className="absolute top-8 right-8 sm:top-12 sm:right-12 w-24 h-24 sm:w-32 sm:h-32 pointer-events-none">
+        <AnimatePresence mode="wait">
+          {theme === 'light' ? (
+            <motion.div
+              key="sun"
+              className="absolute inset-0"
+              initial={{ scale: 0, rotate: -180, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0, rotate: 180, opacity: 0 }}
+              transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+            >
+              <Image
+                src="/images/sun.png"
+                alt="Sun"
+                fill
+                className="object-contain drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]"
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="moon"
+              className="absolute inset-0"
+              initial={{ scale: 0, rotate: 180, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0, rotate: -180, opacity: 0 }}
+              transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+            >
+              <Image
+                src="/images/moon.png"
+                alt="Moon"
+                fill
+                className="object-contain drop-shadow-[0_0_20px_rgba(148,163,184,0.6)]"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Gradient orbs for additional atmosphere */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Gradient orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[rgb(var(--color-accent))] opacity-10 blur-3xl rounded-full" />
       </div>

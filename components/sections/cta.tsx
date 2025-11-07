@@ -17,7 +17,7 @@ export function CTA() {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center py-16 relative overflow-hidden w-full">
+    <section className="h-screen max-h-screen flex items-center justify-center relative overflow-hidden w-full">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />

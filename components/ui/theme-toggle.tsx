@@ -96,7 +96,7 @@ export function ThemeToggle({ showTorch = false }: ThemeToggleProps) {
             {theme === 'dark' ? (
               showTorch ? (
                 <motion.svg
-                  key="torch"
+                  key="flashlight"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -110,12 +110,14 @@ export function ThemeToggle({ showTorch = false }: ThemeToggleProps) {
                   exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
                   transition={{ duration: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
                 >
-                  {/* Torch flame */}
-                  <path d="M12 2c-1.5 2-1.5 4-1.5 6 0 1.5.5 3 1.5 4 1-1 1.5-2.5 1.5-4 0-2 0-4-1.5-6z" />
-                  {/* Torch handle */}
-                  <rect x="10" y="12" width="4" height="10" rx="1" />
-                  <path d="M9 16h6" />
-                  <path d="M9 19h6" />
+                  {/* Flashlight body */}
+                  <path d="M8 2h8v4H8z" />
+                  <path d="M6 6h12l-2 16H8L6 6z" />
+                  {/* Light beam */}
+                  <path d="M12 10v8" />
+                  <circle cx="12" cy="4" r="1" fill="currentColor" />
+                  {/* Beam effect */}
+                  <path d="M10 22l-2 2M14 22l2 2" strokeOpacity="0.5" />
                 </motion.svg>
               ) : (
                 <motion.svg
