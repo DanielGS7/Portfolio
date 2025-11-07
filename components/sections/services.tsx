@@ -19,31 +19,31 @@ export function Services() {
   ];
 
   return (
-    <section ref={ref} className="py-32 bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.03)] to-transparent w-full">
+    <section ref={ref} className="py-16 bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.03)] to-transparent w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title */}
         <motion.div
-          className="text-center mb-20"
+          className="text-center mb-10"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
               {t('title')}
             </span>
           </h2>
-          <p className="text-xl text-[rgb(var(--text-light))] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-[rgb(var(--text-light))] max-w-3xl mx-auto">
             {t('subtitle')}
           </p>
         </motion.div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((service, index) => (
             <motion.div
               key={service.key}
-              className="group relative glass-strong rounded-3xl p-10 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)] text-center flex flex-col items-center"
+              className="group relative glass-strong rounded-3xl p-6 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border border-[rgba(var(--color-primary)/0.1)] text-center flex flex-col items-center"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -58,23 +58,23 @@ export function Services() {
               <div className="relative z-10 flex flex-col items-center">
                 {/* Icon */}
                 <motion.div
-                  className="w-20 h-20 rounded-3xl flex items-center justify-center mb-8 shadow-lg"
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 shadow-lg"
                   style={{
                     backgroundColor: `rgba(${service.color}/0.1)`,
                   }}
                   whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <FontAwesomeIcon icon={service.icon} className="text-4xl" style={{ color: `rgb(${service.color})` }} />
+                  <FontAwesomeIcon icon={service.icon} className="text-3xl" style={{ color: `rgb(${service.color})` }} />
                 </motion.div>
 
                 {/* Title */}
-                <h3 className="text-2xl font-bold mb-6 text-[rgb(var(--foreground))]">
+                <h3 className="text-xl font-bold mb-3 text-[rgb(var(--foreground))]">
                   {t(`items.${service.key}.title`)}
                 </h3>
 
                 {/* Description */}
-                <p className="text-[rgb(var(--text-light))] leading-relaxed text-lg">
+                <p className="text-[rgb(var(--text-light))] leading-relaxed text-base">
                   {t(`items.${service.key}.description`)}
                 </p>
               </div>

@@ -10,6 +10,12 @@ interface CaveBackgroundProps {
 
 export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: CaveBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const depthRef = useRef(depth);
+
+  // Update depth ref when prop changes
+  useEffect(() => {
+    depthRef.current = depth;
+  }, [depth]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -25,8 +31,8 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
     let animationId: number;
 
     // Depth animation - smoothly transition to target depth
-    let currentDepth = depth;
-    let targetDepth = depth;
+    let currentDepth = depthRef.current;
+    let targetDepth = depthRef.current;
 
     // Configuration
     const parallaxStrength = 0.05;
@@ -481,6 +487,76 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
       depthRings.forEach(ring => ring.generateRoughCircle());
     }
 
+    function drawEntranceScene() {
+      if (!ctx || currentDepth > 0.5) return; // Only draw when at entrance
+
+      const opacity = Math.max(0, 1 - currentDepth * 2); // Fade out as we enter cave
+
+      // Sky/background
+      const isDark = isDarkMode();
+      const skyColor = isDark ? 'rgba(20, 30, 50' : 'rgba(135, 206, 235';
+      const mountainColor = isDark ? 'rgba(40, 45, 55' : 'rgba(90, 100, 110';
+      const grassColor = isDark ? 'rgba(20, 40, 20' : 'rgba(60, 120, 60';
+      const caveColor = isDark ? 'rgba(10, 10, 10' : 'rgba(40, 35, 30';
+
+      ctx.save();
+      ctx.globalAlpha = opacity;
+
+      // Grass at bottom
+      const grassHeight = height * 0.15;
+      const grassGradient = ctx.createLinearGradient(0, height - grassHeight, 0, height);
+      grassGradient.addColorStop(0, grassColor + ', 0.8)');
+      grassGradient.addColorStop(1, grassColor + ', 1)');
+      ctx.fillStyle = grassGradient;
+      ctx.fillRect(0, height - grassHeight, width, grassHeight);
+
+      // Mountain rocks around cave (left side)
+      ctx.fillStyle = mountainColor + ', 0.9)';
+      ctx.beginPath();
+      ctx.moveTo(0, height - grassHeight);
+      ctx.lineTo(0, height * 0.3);
+      ctx.quadraticCurveTo(width * 0.15, height * 0.4, width * 0.25, height * 0.5);
+      ctx.lineTo(width * 0.2, height - grassHeight);
+      ctx.closePath();
+      ctx.fill();
+
+      // Mountain rocks (right side)
+      ctx.beginPath();
+      ctx.moveTo(width, height - grassHeight);
+      ctx.lineTo(width, height * 0.3);
+      ctx.quadraticCurveTo(width * 0.85, height * 0.4, width * 0.75, height * 0.5);
+      ctx.lineTo(width * 0.8, height - grassHeight);
+      ctx.closePath();
+      ctx.fill();
+
+      // Cave entrance (takes up ~2/3rds of screen)
+      const caveWidth = width * 0.55;
+      const caveHeight = height * 0.65;
+      const caveX = width / 2;
+      const caveY = height * 0.55;
+
+      // Cave opening with gradient (dark in center)
+      const caveGradient = ctx.createRadialGradient(
+        caveX, caveY, 0,
+        caveX, caveY, Math.max(caveWidth, caveHeight) / 2
+      );
+      caveGradient.addColorStop(0, caveColor + ', 1)');
+      caveGradient.addColorStop(0.7, caveColor + ', 0.8)');
+      caveGradient.addColorStop(1, mountainColor + ', 0.9)');
+
+      ctx.fillStyle = caveGradient;
+      ctx.beginPath();
+      ctx.ellipse(caveX, caveY, caveWidth / 2, caveHeight / 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Add rocky texture around cave entrance
+      ctx.strokeStyle = mountainColor + ', 0.6)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
     function animate() {
       if (!ctx) return;
 
@@ -488,7 +564,7 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
       updatePalette();
 
       // Smoothly animate depth
-      targetDepth = depth;
+      targetDepth = depthRef.current;
       currentDepth += (targetDepth - currentDepth) * 0.08;
 
       mouse.x += (mouse.targetX - mouse.x) * 0.1;
@@ -507,6 +583,9 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
       ambientGradient.addColorStop(1, `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0)`);
       ctx.fillStyle = ambientGradient;
       ctx.fillRect(0, 0, width, height);
+
+      // Draw entrance scene if at cave entrance
+      drawEntranceScene();
 
       depthRings.forEach(ring => {
         ring.update();
@@ -544,7 +623,7 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
       cancelAnimationFrame(animationId);
       observer.disconnect();
     };
-  }, [depth, maxDepth]);
+  }, []); // Only run once on mount
 
   return (
     <canvas
