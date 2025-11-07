@@ -64,7 +64,7 @@ export default async function StoryPage() {
     {
       date: '2015',
       period: '2015 - heden',
-      title: 'YUM - Oprichter & Webontwikkelaar',
+      title: 'YUM - Zaakvoerder & Webontwikkelaar',
       category: 'entrepreneurship',
       description: 'Zaakvoerder van familiebedrijf gespecialiseerd in superfoods (empoweredbyyum.com). Verantwoordelijk voor website design, visuals, contentbeheer, Google Ads, en communicatie met leveranciers en klanten.',
       tags: ['Entrepreneurship', 'WordPress', 'Squarespace', 'E-commerce', 'Google Ads']
