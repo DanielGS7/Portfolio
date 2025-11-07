@@ -16,8 +16,8 @@ export function Header() {
   const locale = (params?.locale as Locale) || 'nl';
   const { scrollY } = useScroll();
 
-  // Transform scroll to header background opacity
-  const headerOpacity = useTransform(scrollY, [0, 100], [0.8, 0.95]);
+  // Transform scroll to header background opacity and blur
+  const headerBgOpacity = useTransform(scrollY, [0, 100], [0.7, 0.95]);
   const headerBlur = useTransform(scrollY, [0, 100], [12, 20]);
 
   const navItems = [
@@ -34,17 +34,14 @@ export function Header() {
   };
 
   return (
-    <motion.header
-      className="fixed inset-x-0 top-0 z-50"
-      style={{
-        backdropFilter: useTransform(headerBlur, (v) => `blur(${v}px)`),
-      }}
-    >
+    <motion.header className="fixed inset-x-0 top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <motion.div
-          className="rounded-full glass-strong shadow-lg"
+          className="rounded-full shadow-lg border border-[rgba(var(--border)/0.3)]"
           style={{
-            opacity: headerOpacity,
+            backgroundColor: useTransform(headerBgOpacity, (v) => `rgba(var(--surface), ${v})`),
+            backdropFilter: useTransform(headerBlur, (v) => `blur(${v}px)`),
+            WebkitBackdropFilter: useTransform(headerBlur, (v) => `blur(${v}px)`),
           }}
         >
           <nav className="flex items-center justify-between px-8 py-4">
