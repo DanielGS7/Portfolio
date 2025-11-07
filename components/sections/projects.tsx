@@ -3,6 +3,8 @@
 import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faImage, faGamepad, faLightbulb } from '@fortawesome/free-solid-svg-icons';
 import { ArrowSVG } from '../svg/underline';
 
 export function Projects() {
@@ -69,14 +71,14 @@ export function Projects() {
                   <div className="text-center text-white p-8">
                     {project.type === 'video' ? (
                       <>
-                        <div className="text-6xl mb-4">🎮</div>
+                        <FontAwesomeIcon icon={faGamepad} className="text-6xl mb-4" />
                         <p className="text-sm opacity-80">
                           [Video placeholder - Upload .mp4 to /public/videos/monogame-demo.mp4]
                         </p>
                       </>
                     ) : (
                       <>
-                        <div className="text-6xl mb-4">🖼️</div>
+                        <FontAwesomeIcon icon={faImage} className="text-6xl mb-4" />
                         <p className="text-sm opacity-80">
                           [Image placeholder - Upload screenshot to /public/images/{project.key}.jpg]
                         </p>
@@ -136,7 +138,7 @@ export function Projects() {
           transition={{ delay: 0.8 }}
         >
           <p className="text-sm text-[rgb(var(--text-light))] text-center">
-            💡 <strong>Note:</strong> Upload your project images and MonoGame video to the public folder to replace placeholders
+            <FontAwesomeIcon icon={faLightbulb} className="text-[rgb(var(--color-accent))]" /> <strong>Note:</strong> Upload your project images and MonoGame video to the public folder to replace placeholders
           </p>
         </motion.div>
       </div>

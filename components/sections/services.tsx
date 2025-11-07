@@ -3,6 +3,8 @@
 import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsRotate, faBolt, faRobot, faScrewdriverWrench } from '@fortawesome/free-solid-svg-icons';
 
 export function Services() {
   const t = useTranslations('services');
@@ -10,10 +12,10 @@ export function Services() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   const services = [
-    { key: 'migration', icon: '🔄', color: 'var(--color-primary)' },
-    { key: 'fullstack', icon: '⚡', color: 'var(--color-accent)' },
-    { key: 'llm', icon: '🤖', color: 'var(--color-tertiary)' },
-    { key: 'maintenance', icon: '🛠️', color: 'var(--color-secondary)' },
+    { key: 'migration', icon: faArrowsRotate, color: 'var(--color-primary)' },
+    { key: 'fullstack', icon: faBolt, color: 'var(--color-accent)' },
+    { key: 'llm', icon: faRobot, color: 'var(--color-tertiary)' },
+    { key: 'maintenance', icon: faScrewdriverWrench, color: 'var(--color-secondary)' },
   ];
 
   return (
@@ -56,14 +58,14 @@ export function Services() {
               <div className="relative z-10 flex flex-col items-center">
                 {/* Icon */}
                 <motion.div
-                  className="w-20 h-20 rounded-3xl flex items-center justify-center text-5xl mb-8 shadow-lg"
+                  className="w-20 h-20 rounded-3xl flex items-center justify-center mb-8 shadow-lg"
                   style={{
                     backgroundColor: `rgba(${service.color}/0.1)`,
                   }}
                   whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
                   transition={{ duration: 0.5 }}
                 >
-                  {service.icon}
+                  <FontAwesomeIcon icon={service.icon} className="text-4xl" style={{ color: `rgb(${service.color})` }} />
                 </motion.div>
 
                 {/* Title */}
