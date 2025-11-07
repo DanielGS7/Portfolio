@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 interface TimelineSection {
   id: string;
   year: string; // Display year
-  date: Date; // Actual date for positioning
+  date: string; // ISO date string for positioning
   label: string;
   category?: "story" | "education" | "projects" | "work";
 }
@@ -93,13 +93,14 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     const viewportHeight = window.innerHeight;
     const headerOffset = -50; // Header height + small breathing room
 
-    // Find date range across all sections
-    const dates = sections.map(s => s.date);
+    // Find date range across all sections (convert strings to Date objects)
+    const dates = sections.map(s => new Date(s.date));
     const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
     const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
 
     // Get time-based position for this phase (0-100%)
-    const timePosition = getTimeBasedPosition(sections[sectionIndex].date, minDate, maxDate);
+    const sectionDate = new Date(sections[sectionIndex].date);
+    const timePosition = getTimeBasedPosition(sectionDate, minDate, maxDate);
 
     // Calculate which section is currently in view
     const viewingPosition = scrollProgress + headerOffset;
@@ -117,7 +118,8 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     });
 
     // Calculate scroll offset to position active phase at center
-    const activeTimePosition = getTimeBasedPosition(sections[activeIndex].date, minDate, maxDate);
+    const activeSectionDate = new Date(sections[activeIndex].date);
+    const activeTimePosition = getTimeBasedPosition(activeSectionDate, minDate, maxDate);
     const scrollOffset = 50 - activeTimePosition;
 
     // Apply scroll offset to this phase's time position
