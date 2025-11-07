@@ -35,12 +35,16 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     ).filter(Boolean) as HTMLElement[];
   }, [sections]);
 
-  // Smooth scroll to section
+  // Smooth scroll to section - center it vertically in viewport
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
+      const elementCenter = element.offsetTop + element.offsetHeight / 2;
+      const viewportCenter = window.innerHeight / 2;
+      const targetScroll = elementCenter - viewportCenter;
+
       window.scrollTo({
-        top: element.offsetTop,
+        top: Math.max(0, targetScroll),
         behavior: 'smooth'
       });
     }
