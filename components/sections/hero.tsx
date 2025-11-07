@@ -53,18 +53,41 @@ export function Hero() {
 
   return (
     <section className="relative h-screen max-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 w-full">
-      {/* Skybox background - fills transparent areas */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 transition-colors duration-500" />
+      {/* Skybox background - day: light blue, night: dark with stars */}
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-500" />
 
-      {/* Cave entrance background image */}
-      <div className="absolute inset-0 pointer-events-none">
-        <Image
-          src="/images/cave-entrance.png"
-          alt="Cave entrance in mountain with grass"
-          fill
-          className="object-cover"
-          priority
-        />
+      {/* Stars for night sky */}
+      <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500 pointer-events-none">
+        {[...Array(100)].map((_, i) => {
+          const top = Math.random() * 70; // Keep stars in upper 70% of screen
+          const left = Math.random() * 100;
+          const size = Math.random() * 2 + 1;
+          const animationDelay = Math.random() * 3;
+          const animationDuration = Math.random() * 2 + 2;
+
+          return (
+            <motion.div
+              key={i}
+              className="absolute bg-white rounded-full"
+              style={{
+                top: `${top}%`,
+                left: `${left}%`,
+                width: `${size}px`,
+                height: `${size}px`,
+              }}
+              animate={{
+                opacity: [0.2, 1, 0.2],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: animationDuration,
+                repeat: Infinity,
+                delay: animationDelay,
+                ease: 'easeInOut',
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Sun/Moon decorative elements - top right corner */}

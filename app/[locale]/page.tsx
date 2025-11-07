@@ -9,6 +9,7 @@ import { CTA } from '@/components/sections/cta';
 import { Footer } from '@/components/layout/footer';
 import { TimelineNav } from '@/components/ui/timeline-nav';
 import { CaveBackground } from '@/components/ui/cave-background';
+import { CaveEntranceOverlay } from '@/components/ui/cave-entrance-overlay';
 import { useTranslations } from 'next-intl';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -144,9 +145,6 @@ export default function Home() {
       {/* Cave background with depth progression */}
       <CaveBackground depth={getCurrentDepth()} maxDepth={timelineSections.length - 1} />
 
-      {/* Timeline navigation */}
-      <TimelineNav sections={timelineSections} onNavigate={setActiveSection} activeSection={activeSection} />
-
       {/* Overlaying sections with fade animations */}
       <div className="relative z-10">
         <AnimatePresence mode="wait">
@@ -167,6 +165,12 @@ export default function Home() {
           ))}
         </AnimatePresence>
       </div>
+
+      {/* Cave entrance overlay with zoom transition */}
+      <CaveEntranceOverlay activeSection={activeSection} />
+
+      {/* Timeline navigation */}
+      <TimelineNav sections={timelineSections} onNavigate={setActiveSection} activeSection={activeSection} />
 
       {/* Footer - only visible on last section with animation */}
       <AnimatePresence>
