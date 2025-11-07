@@ -4,7 +4,11 @@ import { useTheme } from '@/lib/hooks/use-theme';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  showTorch?: boolean;
+}
+
+export function ThemeToggle({ showTorch = false }: ThemeToggleProps) {
   const { theme, toggleTheme } = useTheme();
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -90,23 +94,48 @@ export function ThemeToggle() {
         <div className="relative w-6 h-6">
           <AnimatePresence mode="wait">
             {theme === 'dark' ? (
-              <motion.svg
-                key="moon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="absolute inset-0 text-[rgb(var(--color-primary))]"
-                initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                transition={{ duration: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
-              >
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-              </motion.svg>
+              showTorch ? (
+                <motion.svg
+                  key="torch"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="absolute inset-0 text-[rgb(var(--color-primary))]"
+                  initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                  exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
+                >
+                  {/* Torch flame */}
+                  <path d="M12 2c-1.5 2-1.5 4-1.5 6 0 1.5.5 3 1.5 4 1-1 1.5-2.5 1.5-4 0-2 0-4-1.5-6z" />
+                  {/* Torch handle */}
+                  <rect x="10" y="12" width="4" height="10" rx="1" />
+                  <path d="M9 16h6" />
+                  <path d="M9 19h6" />
+                </motion.svg>
+              ) : (
+                <motion.svg
+                  key="moon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="absolute inset-0 text-[rgb(var(--color-primary))]"
+                  initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                  exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
+                >
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </motion.svg>
+              )
             ) : (
               <motion.svg
                 key="sun"

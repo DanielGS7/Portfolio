@@ -27,6 +27,8 @@ export function Header() {
     { href: `/${locale}/cv`, label: t('cv') },
   ];
 
+  const isHomepage = pathname === `/${locale}`;
+
   const isActive = (href: string) => {
     if (href === `/${locale}`) {
       return pathname === `/${locale}` || pathname === '/';
@@ -91,7 +93,7 @@ export function Header() {
           {/* Right side - Theme & Language */}
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <ThemeToggle />
+            <ThemeToggle showTorch={isHomepage} />
           </div>
         </nav>
 

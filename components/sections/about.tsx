@@ -6,7 +6,6 @@ import { useParams } from 'next/navigation';
 import { useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRocket, faRobot, faCode, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { SwirlSVG } from '../svg/underline';
 import type { Locale } from '@/lib/i18n/config';
 
 export function About() {
@@ -36,15 +35,6 @@ export function About() {
 
   return (
     <section ref={ref} className="py-32 relative overflow-hidden bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.02)] to-transparent w-full">
-      {/* Background decoration */}
-      <motion.div
-        className="absolute top-10 right-10 w-32 h-32 text-[rgb(var(--color-primary))]"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-      >
-        <SwirlSVG className="w-full h-full opacity-10" />
-      </motion.div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title */}
         <motion.div

@@ -171,14 +171,22 @@ export default function Home() {
         </AnimatePresence>
       </div>
 
-      {/* Footer - only visible on last section */}
-      {activeSection === timelineSections[timelineSections.length - 1].id && (
-        <div className="fixed bottom-0 left-0 right-0 z-20 pointer-events-none">
-          <div className="pointer-events-auto">
-            <Footer />
-          </div>
-        </div>
-      )}
+      {/* Footer - only visible on last section with animation */}
+      <AnimatePresence>
+        {activeSection === timelineSections[timelineSections.length - 1].id && (
+          <motion.div
+            className="fixed bottom-0 left-0 right-0 z-20 pointer-events-none"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="pointer-events-auto">
+              <Footer />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
