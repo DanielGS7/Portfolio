@@ -9,12 +9,13 @@ import { getTranslations } from 'next-intl/server';
 export default async function Home() {
   const t = await getTranslations('timeline');
 
+  // Timeline with realistic dates - will expand as we add content sections
   const timelineSections = [
-    { id: 'hero', year: '2025', date: '2025-01-01', label: t('intro'), category: 'story' as const },
-    { id: 'about', year: '2024', date: '2024-01-01', label: t('about'), category: 'story' as const },
-    { id: 'skills', year: '2023', date: '2023-01-01', label: t('skills'), category: 'education' as const },
-    { id: 'projects', year: '2022', date: '2022-01-01', label: t('projects'), category: 'projects' as const },
-    { id: 'services', year: '2021', date: '2021-01-01', label: t('services'), category: 'work' as const },
+    { id: 'hero', year: 'Now', date: '2024-11-01', label: t('intro'), category: 'story' as const },
+    { id: 'about', year: '2021', date: '2021-09-01', label: t('about'), category: 'story' as const },
+    { id: 'skills', year: '2015', date: '2015-01-01', label: t('skills'), category: 'education' as const },
+    { id: 'projects', year: '2015', date: '2015-09-01', label: t('projects'), category: 'projects' as const },
+    { id: 'services', year: '2014', date: '2014-01-01', label: t('services'), category: 'work' as const },
   ];
 
   return (

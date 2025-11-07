@@ -4,7 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRocket, faRobot, faCampground } from '@fortawesome/free-solid-svg-icons';
+import { faRocket, faRobot, faCode } from '@fortawesome/free-solid-svg-icons';
 import { SwirlSVG } from '../svg/underline';
 
 export function About() {
@@ -25,7 +25,7 @@ export function About() {
     },
     {
       key: 'youth',
-      icon: faCampground,
+      icon: faCode,
       gradient: 'from-[rgb(var(--color-secondary))] to-[rgb(var(--color-primary))]',
     },
   ];
