@@ -66,47 +66,67 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeSection, timelineSections]);
 
-  // Mouse wheel navigation with delta accumulation
+  // Mouse wheel navigation - STRICT: require multiple scroll events
   useEffect(() => {
-    let scrollAccumulator = 0;
+    let scrollCount = 0;
+    let scrollDirection: 'up' | 'down' | null = null;
     let isScrolling = false;
-    const scrollThreshold = 50; // Require 50px of scroll to trigger
+    let resetTimeout: NodeJS.Timeout;
+    const requiredScrolls = 3; // Need 3 scroll events in same direction
 
     const handleWheel = (e: WheelEvent) => {
+      // Completely ignore scroll during transition
       if (isScrolling) {
-        scrollAccumulator = 0; // Reset accumulator during transition
         return;
       }
 
-      scrollAccumulator += e.deltaY;
+      const currentDirection = e.deltaY > 0 ? 'down' : 'up';
 
-      const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
+      // Reset count if direction changed
+      if (scrollDirection !== currentDirection) {
+        scrollCount = 0;
+        scrollDirection = currentDirection;
+      }
 
-      if (scrollAccumulator > scrollThreshold) {
-        // Scrolling down - go deeper in the cave
-        if (currentIndex < timelineSections.length - 1) {
+      scrollCount++;
+
+      // Reset counter after 500ms of no scrolling
+      clearTimeout(resetTimeout);
+      resetTimeout = setTimeout(() => {
+        scrollCount = 0;
+        scrollDirection = null;
+      }, 500);
+
+      // Only trigger if we've reached required scroll count
+      if (scrollCount >= requiredScrolls) {
+        const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
+
+        if (currentDirection === 'down' && currentIndex < timelineSections.length - 1) {
+          // Scrolling down - go deeper
           isScrolling = true;
-          scrollAccumulator = 0;
+          scrollCount = 0;
+          scrollDirection = null;
           setActiveSection(timelineSections[currentIndex + 1].id);
-          setTimeout(() => { isScrolling = false; }, 1000);
-        } else {
-          scrollAccumulator = 0;
-        }
-      } else if (scrollAccumulator < -scrollThreshold) {
-        // Scrolling up - go back up
-        if (currentIndex > 0) {
+          setTimeout(() => { isScrolling = false; }, 1500);
+        } else if (currentDirection === 'up' && currentIndex > 0) {
+          // Scrolling up - go back
           isScrolling = true;
-          scrollAccumulator = 0;
+          scrollCount = 0;
+          scrollDirection = null;
           setActiveSection(timelineSections[currentIndex - 1].id);
-          setTimeout(() => { isScrolling = false; }, 1000);
+          setTimeout(() => { isScrolling = false; }, 1500);
         } else {
-          scrollAccumulator = 0;
+          // At boundary, reset count
+          scrollCount = 0;
         }
       }
     };
 
     window.addEventListener('wheel', handleWheel, { passive: true });
-    return () => window.removeEventListener('wheel', handleWheel);
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      clearTimeout(resetTimeout);
+    };
   }, [activeSection, timelineSections]);
 
   // Section components mapping
