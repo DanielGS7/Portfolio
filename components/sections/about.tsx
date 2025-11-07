@@ -29,7 +29,7 @@ export function About() {
   ];
 
   return (
-    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.02)] to-transparent w-full">
+    <section ref={ref} className="py-32 relative overflow-hidden bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.02)] to-transparent w-full">
       {/* Background decoration */}
       <motion.div
         className="absolute top-10 right-10 w-32 h-32 text-[rgb(var(--color-primary))]"
@@ -39,7 +39,7 @@ export function About() {
         <SwirlSVG className="w-full h-full opacity-10" />
       </motion.div>
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title */}
         <motion.div
           className="text-center mb-20"

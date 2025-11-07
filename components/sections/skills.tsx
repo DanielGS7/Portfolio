@@ -29,8 +29,8 @@ export function Skills() {
   ];
 
   return (
-    <section ref={ref} className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.03)] to-transparent w-full">
-      <div className="max-w-7xl mx-auto">
+    <section ref={ref} className="py-32 bg-gradient-to-b from-transparent via-[rgba(var(--color-primary)/0.03)] to-transparent w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title */}
         <motion.div
           className="text-center mb-20"
