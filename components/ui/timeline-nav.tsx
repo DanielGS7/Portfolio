@@ -11,7 +11,8 @@ import { useEffect, useRef, useState } from "react";
 
 interface TimelineSection {
   id: string;
-  year: string;
+  year: string; // Display year
+  date: Date; // Actual date for positioning
   label: string;
   category?: "story" | "education" | "projects" | "work";
 }
@@ -70,6 +71,16 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Calculate time-based position for each phase
+  const getTimeBasedPosition = (date: Date, minDate: Date, maxDate: Date): number => {
+    const totalTimeSpan = maxDate.getTime() - minDate.getTime();
+    if (totalTimeSpan === 0) return 50; // If all dates are the same, center everything
+
+    const datePosition = date.getTime() - minDate.getTime();
+    // Map to timeline range (10% to 90% to keep phases visible)
+    return 10 + (datePosition / totalTimeSpan) * 80;
+  };
+
   // Calculate position for each phase on the timeline
   const getPhasePosition = (
     sectionIndex: number
@@ -79,21 +90,38 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     const element = sectionsRef.current[sectionIndex];
     if (!element) return { y: 50, opacity: 0 };
 
-    const timelineHeight = timelineRef.current.clientHeight;
     const viewportHeight = window.innerHeight;
     const headerOffset = -50; // Header height + small breathing room
 
-    // The viewing position is where content appears below the header
+    // Find date range across all sections
+    const dates = sections.map(s => s.date);
+    const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
+    const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+
+    // Get time-based position for this phase (0-100%)
+    const timePosition = getTimeBasedPosition(sections[sectionIndex].date, minDate, maxDate);
+
+    // Calculate which section is currently in view
     const viewingPosition = scrollProgress + headerOffset;
+    let activeIndex = 0;
+    let minDistance = Infinity;
 
-    // Distance from section top to viewing position
-    const sectionTop = element.offsetTop;
-    const distanceFromViewingPosition = sectionTop - viewingPosition;
+    sectionsRef.current.forEach((el, idx) => {
+      if (el) {
+        const distance = Math.abs(el.offsetTop - viewingPosition);
+        if (distance < minDistance) {
+          minDistance = distance;
+          activeIndex = idx;
+        }
+      }
+    });
 
-    // Map distance to timeline position (center of timeline = 50%)
-    // Normalize by viewport height to get consistent movement
-    const normalizedDistance = distanceFromViewingPosition / viewportHeight;
-    const timelinePosition = 50 + normalizedDistance * 30; // 30% of timeline per viewport height
+    // Calculate scroll offset to position active phase at center
+    const activeTimePosition = getTimeBasedPosition(sections[activeIndex].date, minDate, maxDate);
+    const scrollOffset = 50 - activeTimePosition;
+
+    // Apply scroll offset to this phase's time position
+    const timelinePosition = timePosition + scrollOffset;
 
     // Calculate opacity based on distance from center (fade at edges)
     const opacity = Math.max(

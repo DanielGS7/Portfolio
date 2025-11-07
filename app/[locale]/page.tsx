@@ -10,11 +10,11 @@ export default async function Home() {
   const t = await getTranslations('timeline');
 
   const timelineSections = [
-    { id: 'hero', year: '2025', label: t('intro'), category: 'story' as const },
-    { id: 'about', year: '2024', label: t('about'), category: 'story' as const },
-    { id: 'skills', year: '2023', label: t('skills'), category: 'education' as const },
-    { id: 'projects', year: '2022', label: t('projects'), category: 'projects' as const },
-    { id: 'services', year: '2021', label: t('services'), category: 'work' as const },
+    { id: 'hero', year: '2025', date: new Date('2025-01-01'), label: t('intro'), category: 'story' as const },
+    { id: 'about', year: '2024', date: new Date('2024-01-01'), label: t('about'), category: 'story' as const },
+    { id: 'skills', year: '2023', date: new Date('2023-01-01'), label: t('skills'), category: 'education' as const },
+    { id: 'projects', year: '2022', date: new Date('2022-01-01'), label: t('projects'), category: 'projects' as const },
+    { id: 'services', year: '2021', date: new Date('2021-01-01'), label: t('services'), category: 'work' as const },
   ];
 
   return (
