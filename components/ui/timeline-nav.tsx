@@ -76,7 +76,8 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     const totalTimeSpan = maxDate.getTime() - minDate.getTime();
     if (totalTimeSpan === 0) return 50; // If all dates are the same, center everything
 
-    const datePosition = date.getTime() - minDate.getTime();
+    // Reverse: newer dates at top (lower %), older dates at bottom (higher %)
+    const datePosition = maxDate.getTime() - date.getTime();
     // Map to timeline range (10% to 90% to keep phases visible)
     return 10 + (datePosition / totalTimeSpan) * 80;
   };
