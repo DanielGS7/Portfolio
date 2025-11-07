@@ -19,11 +19,12 @@ interface TimelineSection {
 
 interface TimelineNavProps {
   sections: TimelineSection[];
+  mode?: 'time-based' | 'even-spacing'; // Mode for spacing calculation
 }
 
 type FilterCategory = "all" | "story" | "education" | "projects" | "work";
 
-export function TimelineNav({ sections }: TimelineNavProps) {
+export function TimelineNav({ sections, mode = 'even-spacing' }: TimelineNavProps) {
   const [filter, setFilter] = useState<FilterCategory>("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -94,15 +95,6 @@ export function TimelineNav({ sections }: TimelineNavProps) {
     const viewportHeight = window.innerHeight;
     const headerOffset = -50; // Header height + small breathing room
 
-    // Find date range across all sections (convert strings to Date objects)
-    const dates = sections.map(s => new Date(s.date));
-    const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
-    const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
-
-    // Get time-based position for this phase (0-100%)
-    const sectionDate = new Date(sections[sectionIndex].date);
-    const timePosition = getTimeBasedPosition(sectionDate, minDate, maxDate);
-
     // Calculate which section is currently in view
     const viewingPosition = scrollProgress + headerOffset;
     let activeIndex = 0;
@@ -118,13 +110,42 @@ export function TimelineNav({ sections }: TimelineNavProps) {
       }
     });
 
-    // Calculate scroll offset to position active phase at center
-    const activeSectionDate = new Date(sections[activeIndex].date);
-    const activeTimePosition = getTimeBasedPosition(activeSectionDate, minDate, maxDate);
-    const scrollOffset = 50 - activeTimePosition;
+    let timelinePosition: number;
 
-    // Apply scroll offset to this phase's time position
-    const timelinePosition = timePosition + scrollOffset;
+    if (mode === 'time-based') {
+      // Time-based positioning
+      const dates = sections.map(s => new Date(s.date));
+      const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
+      const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+
+      const sectionDate = new Date(sections[sectionIndex].date);
+      const timePosition = getTimeBasedPosition(sectionDate, minDate, maxDate);
+
+      const activeSectionDate = new Date(sections[activeIndex].date);
+      const activeTimePosition = getTimeBasedPosition(activeSectionDate, minDate, maxDate);
+      const scrollOffset = 50 - activeTimePosition;
+
+      timelinePosition = timePosition + scrollOffset;
+    } else {
+      // Even spacing mode - position based on array index
+      const totalSections = filteredSections.length;
+      const globalIndex = sections.findIndex(s => s.id === sections[sectionIndex].id);
+      const filteredIndex = filteredSections.findIndex(s => s.id === sections[sectionIndex].id);
+
+      // Calculate even position (10% to 90% range)
+      const evenPosition = totalSections > 1
+        ? 10 + (filteredIndex / (totalSections - 1)) * 80
+        : 50;
+
+      // Calculate active position
+      const activeFilteredIndex = filteredSections.findIndex(s => s.id === sections[activeIndex].id);
+      const activeEvenPosition = totalSections > 1
+        ? 10 + (activeFilteredIndex / (totalSections - 1)) * 80
+        : 50;
+
+      const scrollOffset = 50 - activeEvenPosition;
+      timelinePosition = evenPosition + scrollOffset;
+    }
 
     // Calculate opacity based on distance from center (fade at edges)
     const opacity = Math.max(
@@ -251,16 +272,18 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                     }`}
                   />
 
-                  {/* Year (right of dot) */}
-                  <span
-                    className={`font-mono text-xs ${
-                      position.y > 45 && position.y < 55
-                        ? "text-[rgb(var(--color-primary))] font-semibold"
-                        : "text-[rgb(var(--text-muted))]"
-                    }`}
-                  >
-                    {section.year}
-                  </span>
+                  {/* Year (right of dot) - only in time-based mode */}
+                  {mode === 'time-based' && section.year && (
+                    <span
+                      className={`font-mono text-xs ${
+                        position.y > 45 && position.y < 55
+                          ? "text-[rgb(var(--color-primary))] font-semibold"
+                          : "text-[rgb(var(--text-muted))]"
+                      }`}
+                    >
+                      {section.year}
+                    </span>
+                  )}
                 </motion.button>
               );
             })}

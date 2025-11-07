@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "story": "Mijn Verhaal",
     "contact": "Contact",
     "cv": "Curriculum Vitae",
     "linkedin": "LinkedIn"
@@ -122,5 +123,9 @@
     "skills": "Vaardigheden",
     "projects": "Projecten",
     "services": "Diensten"
+  },
+  "story": {
+    "title": "Mijn Verhaal",
+    "subtitle": "Een chronologisch overzicht van mijn reis door onderwijs, werk en ondernemerschap"
   }
 }
