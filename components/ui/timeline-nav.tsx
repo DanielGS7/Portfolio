@@ -105,12 +105,20 @@ export function TimelineNav({ sections }: TimelineNavProps) {
   const handleDrag = (event: any, info: any) => {
     if (!timelineRef.current) return;
 
-    const timelineHeight = timelineRef.current.clientHeight;
-    const dragProgress = Math.max(0, Math.min(1, info.point.y / timelineHeight));
+    // Get timeline bounds
+    const timelineRect = timelineRef.current.getBoundingClientRect();
+    const timelineHeight = timelineRect.height;
+
+    // Calculate relative Y position within timeline (0 to 1)
+    const relativeY = info.point.y - timelineRect.top;
+    const dragProgress = Math.max(0, Math.min(1, relativeY / timelineHeight));
+
+    // Calculate scroll position
     const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const targetScroll = dragProgress * documentHeight;
 
     window.scrollTo({
-      top: dragProgress * documentHeight,
+      top: targetScroll,
       behavior: 'auto' // No smooth during drag
     });
   };
@@ -203,9 +211,10 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                 : (index / (filteredSections.length - 1)) * 100;
 
               return (
-                <motion.div
+                <motion.button
                   key={section.id}
-                  className="absolute flex items-center gap-3"
+                  onClick={() => scrollToSection(section.id, globalIndex)}
+                  className="absolute flex items-center gap-3 cursor-pointer -mx-2 -my-1 px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all"
                   style={{
                     top: `${Math.min(95, Math.max(5, position))}%`,
                     right: '1.5rem',
@@ -213,20 +222,19 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
+                  whileHover={{ x: -5, scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {/* Title (left of dot) */}
-                  <motion.button
-                    onClick={() => scrollToSection(section.id, globalIndex)}
+                  <span
                     className={`text-left transition-all whitespace-nowrap ${
                       isActive
                         ? 'text-[rgb(var(--color-primary))] font-bold text-base'
-                        : 'text-[rgb(var(--text-muted))] text-xs hover:text-[rgb(var(--text-light))]'
+                        : 'text-[rgb(var(--text-muted))] text-xs'
                     }`}
-                    whileHover={{ x: -5, scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                   >
                     {section.label}
-                  </motion.button>
+                  </span>
 
                   {/* Dot indicator */}
                   <div
@@ -238,7 +246,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                   />
 
                   {/* Year (right of dot) */}
-                  <div
+                  <span
                     className={`font-mono text-xs ${
                       isActive
                         ? 'text-[rgb(var(--color-primary))] font-semibold'
@@ -246,8 +254,8 @@ export function TimelineNav({ sections }: TimelineNavProps) {
                     }`}
                   >
                     {section.year}
-                  </div>
-                </motion.div>
+                  </span>
+                </motion.button>
               );
             })}
           </div>
