@@ -632,7 +632,7 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
       ref={canvasRef}
       className={`fixed inset-0 pointer-events-none ${className}`}
       style={{
-        zIndex: 0,
+        zIndex: 2, // Above skybox (1) but below cave entrance overlay (5)
         transformOrigin: 'center 65%', // Match CaveEntranceOverlay transform origin
       }}
     />

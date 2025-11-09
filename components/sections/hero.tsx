@@ -51,9 +51,6 @@ export function Hero() {
   return (
     <section className="relative h-screen max-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 w-full">
 
-      {/* Blue sky gradient for light mode - transparent in dark mode */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-transparent dark:via-transparent dark:to-transparent transition-colors duration-500" />
-
       {/* Gradient orbs for additional atmosphere */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />
