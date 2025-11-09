@@ -93,59 +93,32 @@ export function ThemeToggle({ showTorch = false }: ThemeToggleProps) {
         {/* Icon container */}
         <div className="relative w-6 h-6">
           <AnimatePresence mode="wait">
-            {theme === 'dark' ? (
-              showTorch ? (
-                <motion.svg
-                  key="flashlight"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="absolute inset-0 text-[rgb(var(--color-primary))]"
-                  initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                  exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                  transition={{ duration: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
-                >
-                  {/* Flashlight body */}
-                  <path d="M8 2h8v4H8z" />
-                  <path d="M6 6h12l-2 16H8L6 6z" />
-                  {/* Light beam */}
-                  <path d="M12 10v8" />
-                  <circle cx="12" cy="4" r="1" fill="currentColor" />
-                  {/* Beam effect */}
-                  <path d="M10 22l-2 2M14 22l2 2" strokeOpacity="0.5" />
-                </motion.svg>
-              ) : (
-                <motion.svg
-                  key="sun"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="absolute inset-0 text-[rgb(var(--color-primary))]"
-                  initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                  exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                  transition={{ duration: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
-                >
-                  <circle cx="12" cy="12" r="5" />
-                  <line x1="12" y1="1" x2="12" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="23" />
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                  <line x1="1" y1="12" x2="3" y2="12" />
-                  <line x1="21" y1="12" x2="23" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                </motion.svg>
-              )
+            {theme === 'light' ? (
+              <motion.svg
+                key="sun"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="absolute inset-0 text-[rgb(var(--color-primary))]"
+                initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                transition={{ duration: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
+              >
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </motion.svg>
             ) : (
               <motion.svg
                 key="moon"

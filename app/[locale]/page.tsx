@@ -151,15 +151,18 @@ export default function Home() {
       {/* Skybox with stars - only visible on hero section */}
       {activeSection === 'hero' && (
         <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-          {/* Sky gradient */}
+          {/* Sky gradient - blue in light mode, dark in dark mode */}
           <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-500" />
 
-          {/* Stars for night sky */}
+          {/* Stars for night sky - deterministic positions to avoid hydration errors */}
           <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
             {[...Array(100)].map((_, i) => {
-              const top = Math.random() * 70;
-              const left = Math.random() * 100;
-              const size = Math.random() * 2 + 1;
+              // Use deterministic values based on index to avoid hydration mismatch
+              const top = ((i * 37) % 70);
+              const left = ((i * 73) % 100);
+              const size = 1 + ((i * 17) % 20) / 10;
+              const duration = 2 + ((i * 23) % 20) / 10;
+              const delay = ((i * 31) % 30) / 10;
 
               return (
                 <div
@@ -170,8 +173,8 @@ export default function Home() {
                     left: `${left}%`,
                     width: `${size}px`,
                     height: `${size}px`,
-                    animationDuration: `${2 + Math.random() * 2}s`,
-                    animationDelay: `${Math.random() * 3}s`,
+                    animationDuration: `${duration}s`,
+                    animationDelay: `${delay}s`,
                   }}
                 />
               );

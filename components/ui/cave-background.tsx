@@ -634,6 +634,8 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
       style={{
         zIndex: 2, // Above skybox (1) but below cave entrance overlay (5)
         transformOrigin: 'center 65%', // Match CaveEntranceOverlay transform origin
+        // Clip to circular area matching cave entrance hole (starts small, scales with depth)
+        clipPath: 'ellipse(30% 20% at 50% 65%)',
       }}
     />
   );
