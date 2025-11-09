@@ -7,24 +7,23 @@ import { useTheme } from '@/lib/hooks/use-theme';
 
 interface CaveEntranceOverlayProps {
   activeSection: string;
+  depth?: number;
+  maxDepth?: number;
 }
 
-export function CaveEntranceOverlay({ activeSection }: CaveEntranceOverlayProps) {
+export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: CaveEntranceOverlayProps) {
   const { theme } = useTheme();
-  const [isZoomed, setIsZoomed] = useState(false);
 
-  useEffect(() => {
-    // Zoom in when leaving hero section
-    if (activeSection !== 'hero') {
-      setIsZoomed(true);
-    } else {
-      setIsZoomed(false);
-    }
-  }, [activeSection]);
+  // Zoom origin: centered more downward (65% from top - closer to entrance center)
+  // Scale based on depth to sync with background (1.0 at entrance, increases as you go deeper)
+  // Opacity fades out as we zoom in (fully transparent when deep in cave)
+  const depthProgress = depth / Math.max(maxDepth, 1);
 
-  // Zoom origin: 4/9 from bottom center (55.56% from top)
-  // Scale dramatically (10x) so cave entrance fills and goes beyond viewport
-  const scale = isZoomed ? 10 : 1;
+  // Scale from 1.0 to 10.0 as you go deeper (matches background but faster for entrance to disappear)
+  const scale = 1.0 + depthProgress * 9.0;
+
+  // Fade out completely by 30% depth
+  const opacity = Math.max(0, 1 - depthProgress * 3.3);
 
   // Select image based on theme
   const caveEntranceImage = theme === 'light'
@@ -36,13 +35,14 @@ export function CaveEntranceOverlay({ activeSection }: CaveEntranceOverlayProps)
       className="fixed inset-0 pointer-events-none z-[5]"
       animate={{
         scale,
+        opacity,
       }}
       transition={{
         duration: 1.2,
         ease: [0.43, 0.13, 0.23, 0.96],
       }}
       style={{
-        transformOrigin: 'center 55.56%', // 4/9 from bottom
+        transformOrigin: 'center 65%', // More downward - center of entrance
       }}
     >
       <div className="relative w-full h-full">

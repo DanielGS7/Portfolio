@@ -242,7 +242,7 @@ export default function Home() {
       </div>
 
       {/* Cave entrance overlay with zoom transition */}
-      <CaveEntranceOverlay activeSection={activeSection} />
+      <CaveEntranceOverlay activeSection={activeSection} depth={getCurrentDepth()} maxDepth={timelineSections.length - 1} />
 
       {/* Timeline navigation */}
       <TimelineNav sections={timelineSections} onNavigate={setActiveSection} activeSection={activeSection} />
