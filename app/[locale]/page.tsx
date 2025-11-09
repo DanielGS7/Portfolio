@@ -70,66 +70,35 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeSection, timelineSections]);
 
-  // Mouse wheel navigation - STRICT: require multiple scroll events
+  // Mouse wheel navigation - smooth single section scrolling
   useEffect(() => {
-    let scrollCount = 0;
-    let scrollDirection: 'up' | 'down' | null = null;
     let isScrolling = false;
-    let resetTimeout: NodeJS.Timeout;
-    const requiredScrolls = 3; // Need 3 scroll events in same direction
 
     const handleWheel = (e: WheelEvent) => {
-      // Completely ignore scroll during transition
+      // Ignore scroll during cooldown period
       if (isScrolling) {
         return;
       }
 
-      const currentDirection = e.deltaY > 0 ? 'down' : 'up';
+      const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
+      const scrollingDown = e.deltaY > 0;
 
-      // Reset count if direction changed
-      if (scrollDirection !== currentDirection) {
-        scrollCount = 0;
-        scrollDirection = currentDirection;
-      }
-
-      scrollCount++;
-
-      // Reset counter after 500ms of no scrolling
-      clearTimeout(resetTimeout);
-      resetTimeout = setTimeout(() => {
-        scrollCount = 0;
-        scrollDirection = null;
-      }, 500);
-
-      // Only trigger if we've reached required scroll count
-      if (scrollCount >= requiredScrolls) {
-        const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
-
-        if (currentDirection === 'down' && currentIndex < timelineSections.length - 1) {
-          // Scrolling down - go deeper
-          isScrolling = true;
-          scrollCount = 0;
-          scrollDirection = null;
-          setActiveSection(timelineSections[currentIndex + 1].id);
-          setTimeout(() => { isScrolling = false; }, 1500);
-        } else if (currentDirection === 'up' && currentIndex > 0) {
-          // Scrolling up - go back
-          isScrolling = true;
-          scrollCount = 0;
-          scrollDirection = null;
-          setActiveSection(timelineSections[currentIndex - 1].id);
-          setTimeout(() => { isScrolling = false; }, 1500);
-        } else {
-          // At boundary, reset count
-          scrollCount = 0;
-        }
+      if (scrollingDown && currentIndex < timelineSections.length - 1) {
+        // Scrolling down - go to next section
+        isScrolling = true;
+        setActiveSection(timelineSections[currentIndex + 1].id);
+        setTimeout(() => { isScrolling = false; }, 500); // 500ms cooldown
+      } else if (!scrollingDown && currentIndex > 0) {
+        // Scrolling up - go to previous section
+        isScrolling = true;
+        setActiveSection(timelineSections[currentIndex - 1].id);
+        setTimeout(() => { isScrolling = false; }, 500); // 500ms cooldown
       }
     };
 
     window.addEventListener('wheel', handleWheel, { passive: true });
     return () => {
       window.removeEventListener('wheel', handleWheel);
-      clearTimeout(resetTimeout);
     };
   }, [activeSection, timelineSections]);
 
