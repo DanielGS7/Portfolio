@@ -25,10 +25,10 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
   // Fade out completely by 30% depth
   const opacity = Math.max(0, 1 - depthProgress * 3.3);
 
-  // Select image based on theme
+  // Select SVG based on theme
   const caveEntranceImage = theme === 'light'
-    ? '/images/cave-entrance-day.png'
-    : '/images/cave-entrance-night.png';
+    ? '/images/cave-entrance-day.svg'
+    : '/images/cave-entrance-night.svg';
 
   return (
     <motion.div
