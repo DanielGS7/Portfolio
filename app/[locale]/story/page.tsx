@@ -93,17 +93,18 @@ export default function StoryPage() {
   ];
 
   return (
-    <section className="min-h-screen py-32 relative overflow-hidden w-full">
-      {/* Matrix Rain Background Effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <MatrixRain maxDrops={2} fontSize={14} speed={0.3} glowRadius={120} />
+    <>
+      {/* Matrix Rain Background Effect - Fixed to cover entire viewport */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        <MatrixRain maxDrops={4} />
       </div>
 
-      {/* Background decoration - consistent with other pages */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[rgb(var(--color-accent))] opacity-10 blur-3xl rounded-full" />
-      </div>
+      <section className="min-h-screen py-32 relative overflow-hidden w-full">
+        {/* Background decoration - consistent with other pages */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />
+          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[rgb(var(--color-accent))] opacity-10 blur-3xl rounded-full" />
+        </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Title with animation */}
@@ -142,6 +143,7 @@ export default function StoryPage() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 

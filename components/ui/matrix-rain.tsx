@@ -12,16 +12,16 @@ interface MatrixRainProps {
 
 export default function MatrixRain({
   sentences = [
-    'WAKE UP NEO',
-    'THE MATRIX HAS YOU',
-    'FOLLOW THE WHITE RABBIT',
-    'KNOCK KNOCK NEO',
-    'FREE YOUR MIND',
-    'THERE IS NO SPOON'
+    'CODE CREATE BUILD',
+    'WEB DEVELOPER',
+    'MIXED REALITY',
+    'ALWAYS LEARNING',
+    'INNOVATION FIRST',
+    'DIGITAL DREAMS'
   ],
-  maxDrops = 2,
-  fontSize = 16,
-  speed = 0.4,
+  maxDrops = 4,
+  fontSize = 14,
+  speed = 0.15,
   glowRadius = 150
 }: MatrixRainProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -33,12 +33,20 @@ export default function MatrixRain({
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
-    const baseColor = { r: 0, g: 255, b: 0 };
-    const glowColor = { r: 0, g: 255, b: 255 };
+    // Detect theme
+    const isDarkMode = () => document.documentElement.classList.contains('dark');
+
+    const getColors = () => {
+      const dark = isDarkMode();
+      return {
+        base: dark ? { r: 0, g: 255, b: 0 } : { r: 0, g: 120, b: 0 },
+        glow: dark ? { r: 0, g: 255, b: 255 } : { r: 0, g: 80, b: 180 }
+      };
+    };
+
     const trailLength = 15;
     const colorVariation = 0.15;
     const glowIntensityMultiplier = 1.5;
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
 
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
@@ -55,27 +63,21 @@ export default function MatrixRain({
       sentence: string[];
       charIndex: number;
       trail: Array<{ char: string; y: number; colorVar: number }>;
-      useRandomChars: boolean;
 
       constructor(x: number) {
         this.x = x;
         this.y = 0;
-        this.speed = Math.random() * 0.3 + speed;
+        this.speed = Math.random() * 0.1 + speed;
         this.sentenceIndex = Math.floor(Math.random() * sentences.length);
         this.sentence = sentences[this.sentenceIndex].split('');
         this.charIndex = 0;
         this.trail = [];
-        this.useRandomChars = Math.random() > 0.95;
       }
 
       getNextChar(): string {
-        if (this.useRandomChars) {
-          return chars[Math.floor(Math.random() * chars.length)];
-        } else {
-          const char = this.sentence[this.charIndex % this.sentence.length];
-          this.charIndex++;
-          return char;
-        }
+        const char = this.sentence[this.charIndex % this.sentence.length];
+        this.charIndex++;
+        return char;
       }
 
       update(): void {
@@ -105,6 +107,7 @@ export default function MatrixRain({
       draw(): void {
         if (!ctx) return;
         const x = this.x * fontSize;
+        const colors = getColors();
 
         this.trail.forEach((item, i) => {
           const y = item.y * fontSize;
@@ -115,9 +118,9 @@ export default function MatrixRain({
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           let alpha = (1 - i / this.trail.length) * 0.5; // Reduced opacity for subtlety
-          let r = baseColor.r;
-          let g = baseColor.g;
-          let b = baseColor.b;
+          let r = colors.base.r;
+          let g = colors.base.g;
+          let b = colors.base.b;
 
           r += (Math.random() - 0.5) * colorVariation * 255;
           g += (Math.random() - 0.5) * colorVariation * 255 + item.colorVar * 50;
@@ -133,9 +136,9 @@ export default function MatrixRain({
             const proximity = 1 - (distance / glowRadius);
             glowIntensity = proximity * glowIntensityMultiplier;
 
-            r = Math.round(r + (glowColor.r - r) * proximity);
-            g = Math.round(g + (glowColor.g - g) * proximity);
-            b = Math.round(b + (glowColor.b - b) * proximity);
+            r = Math.round(r + (colors.glow.r - r) * proximity);
+            g = Math.round(g + (colors.glow.g - g) * proximity);
+            b = Math.round(b + (colors.glow.b - b) * proximity);
 
             alpha = Math.min(0.8, alpha + proximity * 0.5); // Still subtle even with glow
           }
@@ -153,7 +156,8 @@ export default function MatrixRain({
 
           ctx.fillStyle = color;
           ctx.globalAlpha = alpha;
-          ctx.font = `${fontSize}px monospace`;
+          ctx.textBaseline = 'top';
+          ctx.font = `${fontSize}px 'Courier New', monospace`;
           ctx.fillText(item.char, x, y);
         });
 
