@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView, type InViewOptions } from 'framer-motion';
+import { motion, useInView, type UseInViewOptions } from 'framer-motion';
 
 interface AnimatedSectionProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ interface AnimatedSectionProps {
    * Intersection observer margin
    * @default '-100px'
    */
-  margin?: InViewOptions['margin'];
+  margin?: UseInViewOptions['margin'];
   /**
    * Animation duration in seconds
    * @default 0.6
