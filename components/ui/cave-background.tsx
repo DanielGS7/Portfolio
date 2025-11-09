@@ -50,10 +50,11 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
     const formationLengthMultiplier = 2.5;
 
     // Calculate depth scale (1.0 at entrance, increases as you go deeper)
+    // IMPORTANT: This must match the CaveEntranceOverlay scaling (1.0 to 10.0)
     const getDepthScale = (currentDepth: number) => {
       const depthProgress = currentDepth / Math.max(maxDepth, 1);
-      // Scale from 1.0 to 2.5 as you go deeper (zooming in effect)
-      return 1.0 + depthProgress * 1.5;
+      // Scale from 1.0 to 10.0 as you go deeper (matching entrance overlay)
+      return 1.0 + depthProgress * 9.0;
     };
 
     // Check if we're in light or dark mode
@@ -152,8 +153,9 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
 
       generateRoughCircle() {
         const centerX = width / 2;
-        const centerY = height / 2;
-        const baseRadius = Math.max(width, height) * (0.3 + this.index * 0.15);
+        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin (entrance center)
+        // Smaller initial radius so background only shows through cave entrance hole
+        const baseRadius = Math.max(width, height) * (0.15 + this.index * 0.1);
         const segments = 40;
 
         this.basePoints = [];
@@ -177,10 +179,10 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
         this.offsetX += (targetX - this.offsetX) * 0.1;
         this.offsetY += (targetY - this.offsetY) * 0.1;
 
-        // Update depth animation - smoothly scale points from center
+        // Update depth animation - smoothly scale points from entrance center (65% vertical)
         const depthScale = getDepthScale(currentDepth);
         const centerX = width / 2;
-        const centerY = height / 2;
+        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin
 
         this.points = this.basePoints.map(point => ({
           x: centerX + (point.x - centerX) * depthScale,
@@ -249,9 +251,9 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
         ctx.save();
         ctx.translate(this.offsetX, this.offsetY);
 
-        // Scale from center for depth effect
+        // Scale from entrance center (65% vertical) for depth effect
         const centerX = width / 2;
-        const centerY = height / 2;
+        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin
         const scaledX = centerX + (x - centerX) * depthScale;
 
         ctx.translate(scaledX - x, 0);
@@ -299,9 +301,9 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
         ctx.save();
         ctx.translate(this.offsetX, this.offsetY);
 
-        // Scale from center for depth effect
+        // Scale from entrance center (65% vertical) for depth effect
         const centerX = width / 2;
-        const centerY = height / 2;
+        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin
         const scaledX = centerX + (x - centerX) * depthScale;
 
         ctx.translate(scaledX - x, 0);
@@ -399,9 +401,9 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
         ctx.save();
         ctx.translate(this.layer.offsetX, this.layer.offsetY);
 
-        // Scale crystal position from center
+        // Scale crystal position from entrance center (65% vertical)
         const centerX = width / 2;
-        const centerY = height / 2;
+        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin
         const scaledX = centerX + (this.x - centerX) * depthScale;
         const scaledY = centerY + (this.y - centerY) * depthScale;
 
@@ -629,7 +631,10 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
     <canvas
       ref={canvasRef}
       className={`fixed inset-0 pointer-events-none ${className}`}
-      style={{ zIndex: 0 }}
+      style={{
+        zIndex: 0,
+        transformOrigin: 'center 65%', // Match CaveEntranceOverlay transform origin
+      }}
     />
   );
 }
