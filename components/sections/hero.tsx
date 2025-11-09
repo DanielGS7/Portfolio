@@ -3,7 +3,7 @@
 import { motion, useScroll } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { UnderlineSVG, CircleDotsSVG } from '../svg/underline';
+import { UnderlineSVG } from '../svg/underline';
 import { ArrowSVG } from '../svg/underline';
 import type { Locale } from '@/lib/i18n/config';
 import { useEffect, useState } from 'react';
@@ -49,43 +49,12 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-20 w-full">
-      {/* Background sky - light mode: blue sky, dark mode: starry night */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-transparent dark:via-transparent dark:to-transparent" />
+    <section className="relative h-screen max-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 w-full">
 
-      {/* Background decorative elements */}
+      {/* Gradient orbs for additional atmosphere */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Gradient orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[rgb(var(--color-accent))] opacity-10 blur-3xl rounded-full" />
-
-        <motion.div
-          className="absolute top-20 right-20 w-64 h-64 text-[rgb(var(--color-primary))]"
-          animate={{
-            rotate: 360,
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            rotate: { duration: 20, repeat: Infinity, ease: 'linear' },
-            scale: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
-          }}
-        >
-          <CircleDotsSVG className="w-full h-full opacity-20" />
-        </motion.div>
-
-        <motion.div
-          className="absolute bottom-20 left-20 w-48 h-48 text-[rgb(var(--color-accent))]"
-          animate={{
-            rotate: -360,
-            y: [0, 20, 0],
-          }}
-          transition={{
-            rotate: { duration: 25, repeat: Infinity, ease: 'linear' },
-            y: { duration: 5, repeat: Infinity, ease: 'easeInOut' },
-          }}
-        >
-          <CircleDotsSVG className="w-full h-full opacity-10" />
-        </motion.div>
       </div>
 
       {/* Content */}

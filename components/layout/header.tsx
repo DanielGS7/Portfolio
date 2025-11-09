@@ -22,9 +22,12 @@ export function Header() {
 
   const navItems = [
     { href: `/${locale}`, label: t('home') },
+    { href: `/${locale}/story`, label: t('story') },
     { href: `/${locale}/contact`, label: t('contact') },
     { href: `/${locale}/cv`, label: t('cv') },
   ];
+
+  const isHomepage = pathname === `/${locale}`;
 
   const isActive = (href: string) => {
     if (href === `/${locale}`) {
@@ -35,9 +38,9 @@ export function Header() {
 
   return (
     <motion.header className="fixed inset-x-0 top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="rounded-full shadow-lg border border-[rgba(var(--border)/0.3)]"
+          className="rounded-b-3xl shadow-lg border-b border-x border-[rgba(var(--border)/0.3)]"
           style={{
             backgroundColor: useTransform(headerBgOpacity, (v) => `rgba(var(--surface), ${v})`),
             backdropFilter: useTransform(headerBlur, (v) => `blur(${v}px)`),
@@ -90,7 +93,7 @@ export function Header() {
           {/* Right side - Theme & Language */}
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <ThemeToggle />
+            <ThemeToggle showTorch={isHomepage} />
           </div>
         </nav>
 

@@ -8,18 +8,18 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 py-8 w-full">
+    <footer className="relative py-3 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top border with gradient */}
         <motion.div
-          className="h-px w-full mb-8 bg-gradient-to-r from-transparent via-[rgb(var(--color-primary))] to-transparent"
+          className="h-px w-full mb-3 bg-gradient-to-r from-transparent via-[rgb(var(--color-primary))] to-transparent"
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1, ease: 'easeInOut' }}
         />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-2">
           {/* Left - Brand */}
           <motion.div
             className="text-sm text-[rgb(var(--text-muted))]"
