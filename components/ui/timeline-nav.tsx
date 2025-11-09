@@ -1,253 +1,253 @@
-'use client';
+"use client";
 
-import { motion, useScroll, useMotionValue, useSpring } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import {
+  motion,
+  useScroll,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 interface TimelineSection {
   id: string;
-  year: string;
+  year: string; // Display year
+  date: string; // ISO date string for positioning
   label: string;
-  category?: 'story' | 'education' | 'projects' | 'work';
+  category?: "story" | "education" | "projects" | "work";
 }
 
 interface TimelineNavProps {
   sections: TimelineSection[];
+  mode?: 'time-based' | 'even-spacing'; // Mode for spacing calculation
+  onNavigate?: (sectionId: string) => void; // Callback for navigation (cave mode)
+  activeSection?: string; // Active section from parent (cave mode)
 }
 
-type FilterCategory = 'all' | 'story' | 'education' | 'projects' | 'work';
-
-export function TimelineNav({ sections }: TimelineNavProps) {
-  const [activeSection, setActiveSection] = useState(0);
-  const [filter, setFilter] = useState<FilterCategory>('all');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+export function TimelineNav({ sections, mode = 'even-spacing', onNavigate, activeSection: activeSectionProp }: TimelineNavProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
-  const { scrollY } = useScroll();
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState(sections[0]?.id || 'hero');
 
-  // Smooth spring animation for the indicator
-  const indicatorY = useSpring(0, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  // Use prop if provided (cave mode), otherwise use state (scroll mode)
+  const currentActiveSection = activeSectionProp || activeSection;
 
-  // Filter sections based on category
-  const filteredSections = filter === 'all'
-    ? sections
-    : sections.filter(s => s.category === filter);
+  // No filtering in cave mode
+  const filteredSections = sections;
 
-  // Get section elements and calculate positions
+  // Determine if we're in cave mode (overlay) or scroll mode
+  const isCaveMode = !!onNavigate;
+
+  // Get section elements
   useEffect(() => {
-    sectionsRef.current = sections.map(section =>
-      document.getElementById(section.id)
-    ).filter(Boolean) as HTMLElement[];
-  }, [sections]);
+    if (!isCaveMode) {
+      sectionsRef.current = sections
+        .map((section) => document.getElementById(section.id))
+        .filter(Boolean) as HTMLElement[];
+    }
+  }, [sections, isCaveMode]);
 
-  // Smooth scroll to section
-  const scrollToSection = (sectionId: string, index: number) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      // Calculate the exact position
-      const targetY = element.offsetTop;
+  // Navigate to section - either scroll or call onNavigate callback
+  const navigateToSection = (sectionId: string) => {
+    if (isCaveMode) {
+      // Cave mode: use callback
+      setActiveSection(sectionId);
+      onNavigate(sectionId);
 
-      // Use smooth scroll with custom easing
-      window.scrollTo({
-        top: targetY,
-        behavior: 'smooth'
-      });
+      // Emit custom event for page component to listen to
+      window.dispatchEvent(new CustomEvent('timelineNavigate', {
+        detail: { sectionId }
+      }));
+    } else {
+      // Scroll mode: traditional scrolling
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const headerOffset = -50;
+        const targetScroll = element.offsetTop - headerOffset;
 
-      setActiveSection(index);
+        window.scrollTo({
+          top: Math.max(0, targetScroll),
+          behavior: "smooth",
+        });
+      }
     }
   };
 
-  // Detect active section and sync indicator position
+  // Track scroll and update phase positions (only in scroll mode)
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 3;
-      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollProgress = Math.min(window.scrollY / documentHeight, 1);
+    if (isCaveMode) return; // Skip scroll tracking in cave mode
 
-      // Find active section
-      let newActiveSection = 0;
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setScrollProgress(scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial call
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isCaveMode]);
+
+  // Calculate time-based position for each phase
+  const getTimeBasedPosition = (date: Date, minDate: Date, maxDate: Date): number => {
+    const totalTimeSpan = maxDate.getTime() - minDate.getTime();
+    if (totalTimeSpan === 0) return 50; // If all dates are the same, center everything
+
+    // Reverse: newer dates at top (lower %), older dates at bottom (higher %)
+    const datePosition = maxDate.getTime() - date.getTime();
+    // Map to timeline range (10% to 90% to keep phases visible)
+    return 10 + (datePosition / totalTimeSpan) * 80;
+  };
+
+  // Calculate position for each phase on the timeline
+  const getPhasePosition = (
+    sectionIndex: number
+  ): { y: number; opacity: number } => {
+    if (!timelineRef.current) return { y: 50, opacity: 0 };
+
+    let activeIndex = 0;
+
+    if (isCaveMode) {
+      // In cave mode, use currentActiveSection
+      activeIndex = sections.findIndex(s => s.id === currentActiveSection);
+      if (activeIndex === -1) activeIndex = 0;
+    } else {
+      // In scroll mode, calculate from scroll position
+      const element = sectionsRef.current[sectionIndex];
+      if (!element) return { y: 50, opacity: 0 };
+
+      const headerOffset = -50;
+      const viewingPosition = scrollProgress + headerOffset;
       let minDistance = Infinity;
 
-      sectionsRef.current.forEach((element, index) => {
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const elementCenter = rect.top + rect.height / 2;
-          const viewportCenter = window.innerHeight / 2;
-          const distance = Math.abs(elementCenter - viewportCenter);
-
+      sectionsRef.current.forEach((el, idx) => {
+        if (el) {
+          const distance = Math.abs(el.offsetTop - viewingPosition);
           if (distance < minDistance) {
             minDistance = distance;
-            newActiveSection = index;
+            activeIndex = idx;
           }
         }
       });
+    }
 
-      setActiveSection(newActiveSection);
+    let timelinePosition: number;
 
-      // Calculate indicator position based on actual scroll progress
-      if (timelineRef.current) {
-        const timelineHeight = timelineRef.current.clientHeight;
-        const newY = scrollProgress * timelineHeight;
-        indicatorY.set(newY);
-      }
+    if (mode === 'time-based') {
+      // Time-based positioning
+      const dates = sections.map(s => new Date(s.date));
+      const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
+      const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+
+      const sectionDate = new Date(sections[sectionIndex].date);
+      const timePosition = getTimeBasedPosition(sectionDate, minDate, maxDate);
+
+      const activeSectionDate = new Date(sections[activeIndex].date);
+      const activeTimePosition = getTimeBasedPosition(activeSectionDate, minDate, maxDate);
+      const scrollOffset = 50 - activeTimePosition;
+
+      timelinePosition = timePosition + scrollOffset;
+    } else {
+      // Even spacing mode - position based on array index
+      const totalSections = filteredSections.length;
+      const filteredIndex = filteredSections.findIndex(s => s.id === sections[sectionIndex].id);
+
+      // Calculate even position (10% to 90% range)
+      const evenPosition = totalSections > 1
+        ? 10 + (filteredIndex / (totalSections - 1)) * 80
+        : 50;
+
+      // Calculate active position
+      const activeFilteredIndex = filteredSections.findIndex(s => s.id === sections[activeIndex].id);
+      const activeEvenPosition = totalSections > 1
+        ? 10 + (activeFilteredIndex / (totalSections - 1)) * 80
+        : 50;
+
+      const scrollOffset = 50 - activeEvenPosition;
+      timelinePosition = evenPosition + scrollOffset;
+    }
+
+    // Calculate opacity based on distance from center (fade at edges)
+    const opacity = Math.max(
+      0,
+      Math.min(1, 1 - Math.abs(timelinePosition - 50) / 50)
+    );
+
+    return {
+      y: Math.max(0, Math.min(100, timelinePosition)),
+      opacity,
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial call
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [sections, indicatorY]);
-
-  // Handle timeline drag
-  const handleDrag = (event: any, info: any) => {
-    if (!timelineRef.current) return;
-
-    const timelineHeight = timelineRef.current.clientHeight;
-    const dragProgress = Math.max(0, Math.min(1, info.point.y / timelineHeight));
-    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-
-    window.scrollTo({
-      top: dragProgress * documentHeight,
-      behavior: 'auto' // No smooth during drag
-    });
   };
 
   return (
     <>
-      {/* Timeline Filter Dropdown */}
-      <div className="fixed top-32 right-8 z-50 hidden lg:block">
-        <div className="relative">
-          <motion.button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="px-4 py-2 rounded-full glass-strong text-sm font-medium text-[rgb(var(--foreground))] border border-[rgba(var(--border)/0.3)] hover:border-[rgb(var(--color-primary))] transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {filter === 'all' ? 'Complete Story' : filter.charAt(0).toUpperCase() + filter.slice(1)}
-            <motion.span
-              className="ml-2 inline-block"
-              animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-            >
-              ▼
-            </motion.span>
-          </motion.button>
-
-          {isDropdownOpen && (
-            <motion.div
-              className="absolute top-full mt-2 right-0 w-48 glass-strong rounded-2xl border border-[rgba(var(--border)/0.3)] overflow-hidden shadow-xl"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-            >
-              {(['all', 'story', 'education', 'projects', 'work'] as FilterCategory[]).map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setFilter(cat);
-                    setIsDropdownOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left text-sm transition-colors ${
-                    filter === cat
-                      ? 'bg-[rgba(var(--color-primary)/0.2)] text-[rgb(var(--color-primary))] font-semibold'
-                      : 'text-[rgb(var(--text-light))] hover:bg-[rgba(var(--color-primary)/0.1)]'
-                  }`}
-                >
-                  {cat === 'all' ? 'Complete Story' : cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </button>
-              ))}
-            </motion.div>
-          )}
-        </div>
-      </div>
-
       {/* Timeline Navigation */}
       <div className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
-        <div
-          ref={timelineRef}
-          className="relative h-[60vh] w-1"
-        >
+        <div ref={timelineRef} className="relative h-[60vh] w-1">
           {/* Gradient timeline bar */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[rgb(var(--color-primary))] to-transparent opacity-30">
             {/* Cylindrical shadow effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-white/10" />
           </div>
 
-          {/* Draggable indicator */}
-          <motion.div
-            drag="y"
-            dragConstraints={timelineRef}
-            dragElastic={0}
-            dragMomentum={false}
-            onDrag={handleDrag}
-            className="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))] cursor-grab active:cursor-grabbing"
-            style={{
-              top: indicatorY,
-            }}
-            whileHover={{ scale: 1.3 }}
-            whileTap={{ scale: 1.1 }}
-          />
+          {/* Center indicator dot */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))]" />
 
-          {/* Timeline dates - positioned proportionally */}
+          {/* Timeline phases - moving along the bar */}
           <div className="absolute inset-0">
             {filteredSections.map((section, index) => {
-              const globalIndex = sections.findIndex(s => s.id === section.id);
-              const isActive = globalIndex === activeSection;
-
-              // Calculate position based on section position in document
-              const element = sectionsRef.current[globalIndex];
-              const position = element
-                ? (element.offsetTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100
-                : (index / (filteredSections.length - 1)) * 100;
+              const globalIndex = sections.findIndex(
+                (s) => s.id === section.id
+              );
+              const position = getPhasePosition(globalIndex);
 
               return (
-                <motion.div
+                <motion.button
                   key={section.id}
-                  className="absolute flex items-center gap-3"
+                  onClick={() => navigateToSection(section.id)}
+                  className="absolute flex items-center gap-3 cursor-pointer px-2 py-1 rounded-lg hover:bg-[rgba(var(--color-primary)/0.1)] transition-all -translate-y-1/2"
                   style={{
-                    top: `${Math.min(95, Math.max(5, position))}%`,
-                    right: '1.5rem',
+                    top: `${position.y}%`,
+                    right: "1.5rem",
+                    opacity: position.opacity,
                   }}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ x: -5, scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {/* Title (left of dot) */}
-                  <motion.button
-                    onClick={() => scrollToSection(section.id, globalIndex)}
+                  <span
                     className={`text-left transition-all whitespace-nowrap ${
-                      isActive
-                        ? 'text-[rgb(var(--color-primary))] font-bold text-base'
-                        : 'text-[rgb(var(--text-muted))] text-xs hover:text-[rgb(var(--text-light))]'
+                      position.y > 45 && position.y < 55
+                        ? "text-[rgb(var(--color-primary))] font-bold text-base"
+                        : "text-[rgb(var(--text-muted))] text-xs"
                     }`}
-                    whileHover={{ x: -5, scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                   >
                     {section.label}
-                  </motion.button>
+                  </span>
 
                   {/* Dot indicator */}
                   <div
                     className={`w-2 h-2 rounded-full transition-all ${
-                      isActive
-                        ? 'bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))]'
-                        : 'bg-[rgb(var(--text-muted))]'
+                      position.y > 45 && position.y < 55
+                        ? "bg-[rgb(var(--color-primary))] shadow-lg shadow-[rgb(var(--color-primary))]"
+                        : "bg-[rgb(var(--text-muted))]"
                     }`}
                   />
 
-                  {/* Year (right of dot) */}
-                  <div
-                    className={`font-mono text-xs ${
-                      isActive
-                        ? 'text-[rgb(var(--color-primary))] font-semibold'
-                        : 'text-[rgb(var(--text-muted))]'
-                    }`}
-                  >
-                    {section.year}
-                  </div>
-                </motion.div>
+                  {/* Year (right of dot) - only in time-based mode */}
+                  {mode === 'time-based' && section.year && (
+                    <span
+                      className={`font-mono text-xs ${
+                        position.y > 45 && position.y < 55
+                          ? "text-[rgb(var(--color-primary))] font-semibold"
+                          : "text-[rgb(var(--text-muted))]"
+                      }`}
+                    >
+                      {section.year}
+                    </span>
+                  )}
+                </motion.button>
               );
             })}
           </div>

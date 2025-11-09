@@ -9,13 +9,12 @@ export default function ContactPage() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
 
-  // Placeholder contact info - Daniel will fill these in
   const contactInfo = {
-    email: 'daniel@example.com',
-    phone: '+32 xxx xxx xxx',
+    email: 'daniel.gs7@protonmail.com',
+    phone: '+32 493 988 097',
     linkedin: 'https://linkedin.com/in/daniel-garriga-segui',
-    teams: 'daniel@example.com',
-    whatsapp: '+32xxxxxxxxx',
+    teams: 'daniel.garrigasegui@student.ap.be',
+    whatsapp: '+32493988097',
   };
 
   const copyToClipboard = (text: string, type: 'email' | 'phone') => {
@@ -93,7 +92,7 @@ export default function ContactPage() {
         </motion.div>
 
         {/* Contact Methods */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {contactMethods.map((method, index) => (
             <motion.div
               key={method.key}
@@ -133,18 +132,6 @@ export default function ContactPage() {
             </motion.div>
           ))}
         </div>
-
-        {/* Info Note */}
-        <motion.div
-          className="p-6 glass rounded-2xl border-2 border-[rgb(var(--color-accent))] border-dashed"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          <p className="text-sm text-[rgb(var(--text-light))] text-center">
-            💡 <strong>Note:</strong> Update contact information in /app/[locale]/contact/page.tsx
-          </p>
-        </motion.div>
       </div>
     </div>
   );

@@ -35,25 +35,25 @@ export function Projects() {
     <section
       id="projects"
       ref={ref}
-      className="py-32 relative overflow-hidden w-full"
+      className="h-screen max-h-screen py-8 relative overflow-hidden w-full flex items-center"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title */}
         <motion.div
-          className="text-center mb-20"
+          className="text-center mb-6"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
             <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
               {t('title')}
             </span>
           </h2>
         </motion.div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Projects Grid - 3 in a row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project, index) => (
             <motion.div
               key={project.key}
@@ -63,7 +63,7 @@ export function Projects() {
               transition={{ duration: 0.6, delay: index * 0.15 }}
             >
               {/* Image/Video Placeholder */}
-              <div className="relative aspect-video bg-gradient-to-br overflow-hidden">
+              <div className="relative aspect-[4/3] bg-gradient-to-br overflow-hidden">
                 <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-80`} />
 
                 {/* Placeholder Content */}
@@ -95,8 +95,8 @@ export function Projects() {
               </div>
 
               {/* Content */}
-              <div className="p-10">
-                <h3 className="text-2xl sm:text-3xl font-bold mb-3 text-[rgb(var(--foreground))]">
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2 text-[rgb(var(--foreground))]">
                   {t(`${project.key}.title`)}
                 </h3>
 

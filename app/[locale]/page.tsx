@@ -1,40 +1,268 @@
+'use client';
+
 import { Hero } from '@/components/sections/hero';
 import { About } from '@/components/sections/about';
 import { Skills } from '@/components/sections/skills';
 import { Projects } from '@/components/sections/projects';
 import { Services } from '@/components/sections/services';
+import { CTA } from '@/components/sections/cta';
+import { Footer } from '@/components/layout/footer';
 import { TimelineNav } from '@/components/ui/timeline-nav';
-import { getTranslations } from 'next-intl/server';
+import { CaveBackground } from '@/components/ui/cave-background';
+import { CaveEntranceOverlay } from '@/components/ui/cave-entrance-overlay';
+import { useTranslations } from 'next-intl';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/lib/hooks/use-theme';
+import Image from 'next/image';
 
-export default async function Home() {
-  const t = await getTranslations('timeline');
+export default function Home() {
+  const t = useTranslations('timeline');
+  const { theme } = useTheme();
+  const [activeSection, setActiveSection] = useState('hero');
 
+  // Timeline sections for homepage - using even spacing (no dates/years shown)
   const timelineSections = [
-    { id: 'hero', year: '2025', label: t('intro'), category: 'story' as const },
-    { id: 'about', year: '2024', label: t('about'), category: 'story' as const },
-    { id: 'skills', year: '2023', label: t('skills'), category: 'education' as const },
-    { id: 'projects', year: '2022', label: t('projects'), category: 'projects' as const },
-    { id: 'services', year: '2021', label: t('services'), category: 'work' as const },
+    { id: 'hero', year: '', date: '2024-11-01', label: t('intro'), category: 'story' as const },
+    { id: 'about', year: '', date: '2021-09-01', label: t('about'), category: 'story' as const },
+    { id: 'skills', year: '', date: '2015-01-01', label: t('skills'), category: 'education' as const },
+    { id: 'projects', year: '', date: '2015-09-01', label: t('projects'), category: 'projects' as const },
+    { id: 'services', year: '', date: '2014-01-01', label: t('services'), category: 'work' as const },
+    { id: 'cta', year: '', date: '2013-01-01', label: t('contact'), category: 'story' as const },
   ];
 
+  // Calculate depth based on section index (0 at entrance, increases as you go deeper)
+  const getCurrentDepth = () => {
+    const index = timelineSections.findIndex(s => s.id === activeSection);
+    return index >= 0 ? index : 0;
+  };
+
+  // Listen for section changes from TimelineNav
+  useEffect(() => {
+    const handleSectionChange = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setActiveSection(customEvent.detail.sectionId);
+    };
+
+    window.addEventListener('timelineNavigate', handleSectionChange);
+    return () => window.removeEventListener('timelineNavigate', handleSectionChange);
+  }, []);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
+
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        e.preventDefault();
+        if (currentIndex < timelineSections.length - 1) {
+          setActiveSection(timelineSections[currentIndex + 1].id);
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        if (currentIndex > 0) {
+          setActiveSection(timelineSections[currentIndex - 1].id);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeSection, timelineSections]);
+
+  // Mouse wheel navigation - STRICT: require multiple scroll events
+  useEffect(() => {
+    let scrollCount = 0;
+    let scrollDirection: 'up' | 'down' | null = null;
+    let isScrolling = false;
+    let resetTimeout: NodeJS.Timeout;
+    const requiredScrolls = 3; // Need 3 scroll events in same direction
+
+    const handleWheel = (e: WheelEvent) => {
+      // Completely ignore scroll during transition
+      if (isScrolling) {
+        return;
+      }
+
+      const currentDirection = e.deltaY > 0 ? 'down' : 'up';
+
+      // Reset count if direction changed
+      if (scrollDirection !== currentDirection) {
+        scrollCount = 0;
+        scrollDirection = currentDirection;
+      }
+
+      scrollCount++;
+
+      // Reset counter after 500ms of no scrolling
+      clearTimeout(resetTimeout);
+      resetTimeout = setTimeout(() => {
+        scrollCount = 0;
+        scrollDirection = null;
+      }, 500);
+
+      // Only trigger if we've reached required scroll count
+      if (scrollCount >= requiredScrolls) {
+        const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
+
+        if (currentDirection === 'down' && currentIndex < timelineSections.length - 1) {
+          // Scrolling down - go deeper
+          isScrolling = true;
+          scrollCount = 0;
+          scrollDirection = null;
+          setActiveSection(timelineSections[currentIndex + 1].id);
+          setTimeout(() => { isScrolling = false; }, 1500);
+        } else if (currentDirection === 'up' && currentIndex > 0) {
+          // Scrolling up - go back
+          isScrolling = true;
+          scrollCount = 0;
+          scrollDirection = null;
+          setActiveSection(timelineSections[currentIndex - 1].id);
+          setTimeout(() => { isScrolling = false; }, 1500);
+        } else {
+          // At boundary, reset count
+          scrollCount = 0;
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      clearTimeout(resetTimeout);
+    };
+  }, [activeSection, timelineSections]);
+
+  // Section components mapping
+  const sectionComponents = {
+    hero: <Hero />,
+    about: <About />,
+    skills: <Skills />,
+    projects: <Projects />,
+    services: <Services />,
+    cta: <CTA />,
+  };
+
   return (
-    <div className="relative">
-      <TimelineNav sections={timelineSections} />
-      <div id="hero">
-        <Hero />
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Cave background with depth progression */}
+      <CaveBackground depth={getCurrentDepth()} maxDepth={timelineSections.length - 1} />
+
+      {/* Skybox with stars - only visible on hero section */}
+      {activeSection === 'hero' && (
+        <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 1 }}>
+          {/* Sky gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-500" />
+
+          {/* Stars for night sky */}
+          <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
+            {[...Array(100)].map((_, i) => {
+              const top = Math.random() * 70;
+              const left = Math.random() * 100;
+              const size = Math.random() * 2 + 1;
+
+              return (
+                <div
+                  key={i}
+                  className="absolute bg-white rounded-full animate-pulse"
+                  style={{
+                    top: `${top}%`,
+                    left: `${left}%`,
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    animationDuration: `${2 + Math.random() * 2}s`,
+                    animationDelay: `${Math.random() * 3}s`,
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          {/* Sun/Moon decorative elements - top right corner */}
+          <div className="absolute top-8 right-8 sm:top-12 sm:right-12 w-24 h-24 sm:w-32 sm:h-32">
+            <AnimatePresence mode="wait">
+              {theme === 'light' ? (
+                <motion.div
+                  key="sun"
+                  className="absolute inset-0"
+                  initial={{ scale: 0, rotate: -180, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  exit={{ scale: 0, rotate: 180, opacity: 0 }}
+                  transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+                >
+                  <Image
+                    src="/images/sun.png"
+                    alt="Sun"
+                    fill
+                    className="object-contain drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]"
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="moon"
+                  className="absolute inset-0"
+                  initial={{ scale: 0, rotate: 180, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  exit={{ scale: 0, rotate: -180, opacity: 0 }}
+                  transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+                >
+                  <Image
+                    src="/images/moon.png"
+                    alt="Moon"
+                    fill
+                    className="object-contain drop-shadow-[0_0_20px_rgba(148,163,184,0.6)]"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      )}
+
+      {/* Overlaying sections with fade animations */}
+      <div className="relative">
+        <AnimatePresence initial={false}>
+          {timelineSections.map(section => (
+            activeSection === section.id && (
+              <motion.div
+                key={section.id}
+                id={section.id}
+                className="fixed inset-0 flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+                style={{ zIndex: 10 }}
+              >
+                {sectionComponents[section.id as keyof typeof sectionComponents]}
+              </motion.div>
+            )
+          ))}
+        </AnimatePresence>
       </div>
-      <div id="about">
-        <About />
-      </div>
-      <div id="skills">
-        <Skills />
-      </div>
-      <div id="projects">
-        <Projects />
-      </div>
-      <div id="services">
-        <Services />
-      </div>
+
+      {/* Cave entrance overlay with zoom transition */}
+      <CaveEntranceOverlay activeSection={activeSection} />
+
+      {/* Timeline navigation */}
+      <TimelineNav sections={timelineSections} onNavigate={setActiveSection} activeSection={activeSection} />
+
+      {/* Footer - only visible on last section with animation */}
+      <AnimatePresence>
+        {activeSection === timelineSections[timelineSections.length - 1].id && (
+          <motion.div
+            className="fixed bottom-0 left-0 right-0 z-20 pointer-events-none"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="pointer-events-auto">
+              <Footer />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

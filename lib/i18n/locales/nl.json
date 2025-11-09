@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "story": "Mijn Verhaal",
     "contact": "Contact",
     "cv": "Curriculum Vitae",
     "linkedin": "LinkedIn"
@@ -14,18 +15,19 @@
   },
   "about": {
     "title": "Over mij",
-    "intro": "Laatstejaarsstudent Computer Sciences aan AP Hogeschool met een passie voor innovatieve technologie en ondernemerschap.",
+    "intro": "Van kinds af aan gefascineerd door technologie. Student Toegepaste Informatica aan AP Hogeschool met focus op Web Development, Software Engineering en generatieve AI.",
+    "storyLink": "Lees Mijn Verhaal",
     "entrepreneurship": {
-      "title": "Ondernemerschap",
-      "description": "CEO van Empowered by YUM, een bedrijf dat superfoods verkoopt. Dit toont mijn initiatief en betrokkenheid bij projecten buiten de academische wereld."
+      "title": "Zaakvoerder sinds 2015",
+      "description": "Zaakvoerder en webontwikkelaar bij YUM (empoweredbyyum.com), een familiebedrijf gespecialiseerd in superfoods. Verantwoordelijk voor website, visuals, contentbeheer en Google Ads."
     },
     "llm": {
-      "title": "LLM Expertise",
-      "description": "Geïnteresseerd in Large Language Models sinds voor de release van ChatGPT. Ik volg actief de nieuwste ontwikkelingen en trends in AI."
+      "title": "AI & LLM Enthousiast",
+      "description": "Grote interesse in alle vormen van generatieve AI en Large Language Models. Focus op Web Development en Software Engineering met praktische AI-integraties."
     },
     "youth": {
-      "title": "Jeugdwerk",
-      "description": "Actief bij De Pioniers sinds mijn 8e jaar. Afgelopen zomer mijn eerste kamp als kampleidster geleid."
+      "title": "CoderDojo Pioneer",
+      "description": "Al vanaf de lagere school naar CoderDojo's gegaan - een geweldig initiatief voor kinderen om hun eerste stappen in de developer wereld te zetten."
     }
   },
   "skills": {
@@ -121,6 +123,17 @@
     "about": "Over mij",
     "skills": "Vaardigheden",
     "projects": "Projecten",
-    "services": "Diensten"
+    "services": "Diensten",
+    "contact": "Contact"
+  },
+  "story": {
+    "title": "Mijn Verhaal",
+    "subtitle": "Een chronologisch overzicht van mijn reis door onderwijs, werk en ondernemerschap"
+  },
+  "cta": {
+    "title": "Klaar om te starten?",
+    "subtitle": "Laten we samenwerken aan jouw volgende project. Neem contact op en we bespreken de mogelijkheden.",
+    "button": "Neem Contact Op",
+    "info": "Meestal antwoord binnen 24 uur"
   }
 }

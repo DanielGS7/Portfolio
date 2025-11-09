@@ -21,16 +21,22 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children, defaultTheme = 'dark' }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<ColorMode>(defaultTheme);
+  // Initialize theme from localStorage or default - runs synchronously
+  const getInitialTheme = (): ColorMode => {
+    if (typeof window === 'undefined') return defaultTheme;
+    try {
+      const savedTheme = localStorage.getItem('webcave-theme') as ColorMode | null;
+      return (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : defaultTheme;
+    } catch {
+      return defaultTheme;
+    }
+  };
+
+  const [theme, setThemeState] = useState<ColorMode>(getInitialTheme);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // Check localStorage for saved theme preference
-    const savedTheme = localStorage.getItem('webcave-theme') as ColorMode | null;
-    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-      setThemeState(savedTheme);
-    }
   }, []);
 
   useEffect(() => {
