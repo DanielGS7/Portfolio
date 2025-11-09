@@ -7,7 +7,12 @@ export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/nl');
+    // Detect user's preferred language from browser
+    const browserLang = navigator.language.split('-')[0];
+    const supportedLocales = ['nl', 'en', 'fr'];
+    const locale = supportedLocales.includes(browserLang) ? browserLang : 'nl';
+
+    router.replace(`/${locale}`);
   }, [router]);
 
   return (

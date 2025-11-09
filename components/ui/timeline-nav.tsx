@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useScroll, useMotionValue, useSpring, type PanInfo } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 interface TimelineSection {
@@ -102,7 +102,7 @@ export function TimelineNav({ sections }: TimelineNavProps) {
   }, [sections, indicatorY]);
 
   // Handle timeline drag
-  const handleDrag = (event: any, info: any) => {
+  const handleDrag = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (!timelineRef.current) return;
 
     const timelineHeight = timelineRef.current.clientHeight;

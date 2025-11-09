@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { locales, localeNames, localeFlags, type Locale } from '@/lib/i18n/config';
@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils/cn';
 export function LanguageSwitcher() {
   const params = useParams();
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   const currentLocale = (params?.locale as Locale) || 'nl';
@@ -31,7 +32,8 @@ export function LanguageSwitcher() {
       newPath = `/${newLocale}${pathname}`;
     }
 
-    window.location.href = newPath;
+    router.push(newPath);
+    setIsOpen(false);
   };
 
   return (

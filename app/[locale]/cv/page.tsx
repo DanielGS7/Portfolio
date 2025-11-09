@@ -3,18 +3,16 @@
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { FILES } from '@/lib/constants/files';
 
 export default function CVPage() {
   const t = useTranslations('cv');
   const [pdfError, setPdfError] = useState(false);
 
-  // Path to CV file - Daniel will upload his CV here
-  const cvPath = '/cv/Daniel_Garriga_Segui_CV.pdf';
-
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = cvPath;
-    link.download = 'Daniel_Garriga_Segui_CV.pdf';
+    link.href = FILES.CV;
+    link.download = FILES.CV_FILENAME;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -70,7 +68,7 @@ export default function CVPage() {
         >
           {!pdfError ? (
             <iframe
-              src={cvPath}
+              src={FILES.CV}
               className="w-full h-[80vh] bg-white"
               title="CV Viewer"
               onError={() => setPdfError(true)}
@@ -83,13 +81,13 @@ export default function CVPage() {
                   CV Not Found
                 </h3>
                 <p className="text-[rgb(var(--text-light))] mb-6 max-w-md">
-                  Please upload your CV (PDF format) to <code className="px-2 py-1 rounded bg-[rgba(var(--color-primary)/0.1)] text-[rgb(var(--color-primary))]">/public/cv/Daniel_Garriga_Segui_CV.pdf</code>
+                  Please upload your CV (PDF format) to <code className="px-2 py-1 rounded bg-[rgba(var(--color-primary)/0.1)] text-[rgb(var(--color-primary))]">/public{FILES.CV}</code>
                 </p>
                 <div className="p-4 bg-[rgba(var(--color-accent)/0.1)] rounded-xl text-left text-sm text-[rgb(var(--text-light))] max-w-lg mx-auto">
                   <p className="font-semibold mb-2">Steps:</p>
                   <ol className="list-decimal list-inside space-y-1">
                     <li>Create folder: <code className="text-[rgb(var(--color-accent))]">/public/cv/</code></li>
-                    <li>Upload your PDF as: <code className="text-[rgb(var(--color-accent))]">Daniel_Garriga_Segui_CV.pdf</code></li>
+                    <li>Upload your PDF as: <code className="text-[rgb(var(--color-accent))]">{FILES.CV_FILENAME}</code></li>
                     <li>Refresh this page</li>
                   </ol>
                 </div>

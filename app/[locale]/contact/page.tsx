@@ -9,13 +9,13 @@ export default function ContactPage() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
 
-  // Placeholder contact info - Daniel will fill these in
+  // Contact info from environment variables
   const contactInfo = {
-    email: 'daniel@example.com',
-    phone: '+32 xxx xxx xxx',
-    linkedin: 'https://linkedin.com/in/daniel-garriga-segui',
-    teams: 'daniel@example.com',
-    whatsapp: '+32xxxxxxxxx',
+    email: process.env.NEXT_PUBLIC_EMAIL || 'contact@example.com',
+    phone: process.env.NEXT_PUBLIC_PHONE || '+32 XXX XXX XXX',
+    linkedin: process.env.NEXT_PUBLIC_LINKEDIN || 'https://linkedin.com/in/your-profile',
+    teams: process.env.NEXT_PUBLIC_TEAMS || 'contact@example.com',
+    whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || '+32XXXXXXXXX',
   };
 
   const copyToClipboard = (text: string, type: 'email' | 'phone') => {
@@ -142,7 +142,7 @@ export default function ContactPage() {
           transition={{ delay: 0.8 }}
         >
           <p className="text-sm text-[rgb(var(--text-light))] text-center">
-            💡 <strong>Note:</strong> Update contact information in /app/[locale]/contact/page.tsx
+            💡 <strong>Note:</strong> Update contact information in .env.local file (see .env.example)
           </p>
         </motion.div>
       </div>
