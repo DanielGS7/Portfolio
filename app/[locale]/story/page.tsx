@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
+import MatrixRain from '@/components/ui/matrix-rain';
 
 export default function StoryPage() {
   const t = useTranslations('story');
@@ -93,6 +94,11 @@ export default function StoryPage() {
 
   return (
     <section className="min-h-screen py-32 relative overflow-hidden w-full">
+      {/* Matrix Rain Background Effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <MatrixRain maxDrops={2} fontSize={14} speed={0.3} glowRadius={120} />
+      </div>
+
       {/* Background decoration - consistent with other pages */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[rgb(var(--color-primary))] opacity-10 blur-3xl rounded-full" />
