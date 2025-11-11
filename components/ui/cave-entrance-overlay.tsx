@@ -24,14 +24,15 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
   // Scale based on depth to sync with background (1.0 at entrance, increases as you go deeper)
   const depthProgress = depth / Math.max(maxDepth, 1);
 
-  // At third section (depth >= 2), zoom 3x faster
+  // At skills section (depth >= 2), zoom 3x faster
   let scale;
   if (depth >= 2) {
-    // Third section onwards: multiply by 3 for extra zoom
-    const extraZoom = (depth - 2) * 3; // Additional zoom starting from third section
-    scale = 1.0 + (2 / Math.max(maxDepth, 1)) * 9.0 + extraZoom * 9.0;
+    // Skills section onwards: multiply by 3 for extra zoom
+    // Shift the calculation so projects zoom happens at skills
+    const extraZoom = (depth - 1) * 3; // Start 3x zoom one section earlier
+    scale = 1.0 + (1 / Math.max(maxDepth, 1)) * 9.0 + extraZoom * 9.0;
   } else {
-    // Before third section: normal zoom (1.0 to scale based on depth)
+    // Before skills section: normal zoom (1.0 to scale based on depth)
     scale = 1.0 + depthProgress * 9.0;
   }
 
