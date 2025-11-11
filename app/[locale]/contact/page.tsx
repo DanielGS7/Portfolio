@@ -12,7 +12,6 @@ export default function ContactPage() {
   const contactInfo = {
     email: 'daniel.gs7@protonmail.com',
     phone: '+32 493 988 097',
-    linkedin: 'https://linkedin.com/in/daniel-garriga-segui',
     teams: 'daniel.garrigasegui@student.ap.be',
     whatsapp: '+32493988097',
   };
@@ -46,12 +45,12 @@ export default function ContactPage() {
       color: 'var(--color-accent)',
     },
     {
-      key: 'linkedin',
-      icon: '💼',
-      value: 'LinkedIn',
-      action: () => window.open(contactInfo.linkedin, '_blank'),
+      key: 'whatsapp',
+      icon: '💬',
+      value: t('available'),
+      action: () => window.open(`https://wa.me/${contactInfo.whatsapp.replace(/\s/g, '')}`, '_blank'),
       actionLabel: t('open'),
-      color: 'var(--color-tertiary)',
+      color: '37, 211, 102',
     },
     {
       key: 'teams',
@@ -60,14 +59,6 @@ export default function ContactPage() {
       action: () => window.open(`https://teams.microsoft.com/l/chat/0/0?users=${contactInfo.teams}`, '_blank'),
       actionLabel: t('open'),
       color: 'var(--color-secondary)',
-    },
-    {
-      key: 'whatsapp',
-      icon: '💬',
-      value: t('available'),
-      action: () => window.open(`https://wa.me/${contactInfo.whatsapp.replace(/\s/g, '')}`, '_blank'),
-      actionLabel: t('open'),
-      color: 'var(--color-accent)',
     },
   ];
 
