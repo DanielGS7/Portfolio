@@ -102,6 +102,8 @@ export default function Home() {
     let isScrolling = false;
 
     const handleWheel = (e: WheelEvent) => {
+      e.preventDefault(); // Prevent default scrolling behavior
+
       // Ignore scroll during cooldown period
       if (isScrolling) {
         return;
@@ -123,7 +125,7 @@ export default function Home() {
       }
     };
 
-    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       window.removeEventListener('wheel', handleWheel);
     };
