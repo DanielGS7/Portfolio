@@ -49,10 +49,13 @@ export default function MatrixRain({
     const colorVariation = 0.15;
     const glowIntensityMultiplier = 1.5;
 
-    // Use parent container dimensions instead of viewport
+    // Use full document dimensions for scrollable pages, viewport for fixed pages
     const parent = canvas.parentElement;
-    let width = canvas.width = parent?.scrollWidth || window.innerWidth;
-    let height = canvas.height = parent?.scrollHeight || window.innerHeight;
+    const isFixed = parent && window.getComputedStyle(parent).position === 'fixed';
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = isFixed
+      ? Math.max(document.documentElement.scrollHeight, window.innerHeight)
+      : (parent?.scrollHeight || window.innerHeight);
     let columns = Math.floor(width / fontSize);
     let drops: Drop[] = [];
     let mouse = { x: -1000, y: -1000 };
@@ -187,8 +190,11 @@ export default function MatrixRain({
     function handleResize(): void {
       if (!canvas) return;
       const parent = canvas.parentElement;
-      width = canvas.width = parent?.scrollWidth || window.innerWidth;
-      height = canvas.height = parent?.scrollHeight || window.innerHeight;
+      const isFixed = parent && window.getComputedStyle(parent).position === 'fixed';
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = isFixed
+        ? Math.max(document.documentElement.scrollHeight, window.innerHeight)
+        : (parent?.scrollHeight || window.innerHeight);
       columns = Math.floor(width / fontSize);
     }
 
