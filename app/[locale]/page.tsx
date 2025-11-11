@@ -33,8 +33,7 @@ export default function Home() {
   ], [t]);
 
   // Use refs to persist scroll state across renders
-  const isScrollingRef = useRef(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollTime = useRef(0);
   const activeSectionRef = useRef(activeSection);
   const timelineSectionsRef = useRef(timelineSections);
 
@@ -118,8 +117,12 @@ export default function Home() {
       e.preventDefault(); // Prevent default scrolling behavior
       e.stopPropagation(); // Stop event from bubbling
 
-      // Ignore scroll during cooldown period - this is the KEY lock
-      if (isScrollingRef.current) {
+      // Timestamp-based cooldown - reject scrolls within 500ms of last scroll
+      const now = Date.now();
+      const timeSinceLastScroll = now - lastScrollTime.current;
+
+      if (timeSinceLastScroll < 500) {
+        // Still in cooldown period - ignore this scroll
         return;
       }
 
@@ -130,32 +133,12 @@ export default function Home() {
 
       if (scrollingDown && currentIndex < sections.length - 1) {
         // Scrolling down - go to next section
-        isScrollingRef.current = true; // Lock immediately
+        lastScrollTime.current = now; // Update timestamp
         setActiveSection(sections[currentIndex + 1].id);
-
-        // Clear existing timeout if any
-        if (scrollTimeoutRef.current) {
-          clearTimeout(scrollTimeoutRef.current);
-        }
-
-        // Set new timeout to reset scrolling flag
-        scrollTimeoutRef.current = setTimeout(() => {
-          isScrollingRef.current = false; // Unlock after 500ms
-        }, 500);
       } else if (!scrollingDown && currentIndex > 0) {
         // Scrolling up - go to previous section
-        isScrollingRef.current = true; // Lock immediately
+        lastScrollTime.current = now; // Update timestamp
         setActiveSection(sections[currentIndex - 1].id);
-
-        // Clear existing timeout if any
-        if (scrollTimeoutRef.current) {
-          clearTimeout(scrollTimeoutRef.current);
-        }
-
-        // Set new timeout to reset scrolling flag
-        scrollTimeoutRef.current = setTimeout(() => {
-          isScrollingRef.current = false; // Unlock after 500ms
-        }, 500);
       }
     };
 
@@ -163,10 +146,6 @@ export default function Home() {
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       window.removeEventListener('wheel', handleWheel);
-      // Clean up timeout on unmount
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
     };
   }, []); // Empty deps - only register once!
 
