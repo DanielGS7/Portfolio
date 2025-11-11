@@ -43,6 +43,21 @@ export default function Home() {
     return index >= 0 ? index : 0;
   };
 
+  // Calculate scale for cave entrance (matching CaveEntranceOverlay logic)
+  const getCurrentScale = () => {
+    const depth = getCurrentDepth();
+    const maxDepth = timelineSections.length - 1;
+    const depthProgress = depth / Math.max(maxDepth, 1);
+
+    // At skills section (depth >= 2), zoom 3x faster
+    if (depth >= 2) {
+      const extraZoom = (depth - 1) * 3;
+      return 1.0 + (1 / Math.max(maxDepth, 1)) * 9.0 + extraZoom * 9.0;
+    } else {
+      return 1.0 + depthProgress * 9.0;
+    }
+  };
+
   // Listen for section changes from TimelineNav
   useEffect(() => {
     const handleSectionChange = (e: Event) => {
@@ -121,7 +136,7 @@ export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Cave background with depth progression */}
-      <CaveBackground depth={getCurrentDepth()} maxDepth={timelineSections.length - 1} />
+      <CaveBackground depth={getCurrentDepth()} maxDepth={timelineSections.length - 1} scale={getCurrentScale()} />
 
       {/* Skybox with stars - only visible on hero section */}
       {activeSection === 'hero' && (

@@ -6,11 +6,26 @@ interface CaveBackgroundProps {
   className?: string;
   depth?: number; // Current depth level (0 = entrance, higher = deeper)
   maxDepth?: number; // Maximum depth level
+  scale?: number; // Current scale from entrance overlay
 }
 
-export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: CaveBackgroundProps) {
+export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale = 1.0 }: CaveBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const depthRef = useRef(depth);
+
+  // Calculate dynamic clip-path based on scale
+  // At scale 1.0: small circle (30% radius)
+  // At scale ~10+: full screen (no clipping needed)
+  const getClipPath = () => {
+    if (scale >= 10) {
+      // Fully zoomed in - no clipping, show full cave background
+      return 'none';
+    }
+    // Scale the circle radius from 30% to 100% as zoom increases
+    // Using same scale for both width and height (circular, not elliptical)
+    const radiusPercent = Math.min(100, 30 * scale);
+    return `circle(${radiusPercent}% at 50% 65%)`;
+  };
 
   // Update depth ref when prop changes
   useEffect(() => {
@@ -634,8 +649,8 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4 }: Cave
       style={{
         zIndex: 2, // Above skybox (1) but below cave entrance overlay (5)
         transformOrigin: 'center 65%', // Match CaveEntranceOverlay transform origin
-        // Clip to circular area matching cave entrance hole (starts small, scales with depth)
-        clipPath: 'ellipse(30% 20% at 50% 65%)',
+        // Dynamic circular clip that grows with zoom to simulate entering through cave hole
+        clipPath: getClipPath(),
       }}
     />
   );
