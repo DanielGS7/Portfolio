@@ -95,8 +95,15 @@ export default function StoryPage() {
 
   return (
     <section className="min-h-screen pb-32 relative w-full">
-      {/* Matrix Rain Background Effect - Fixed to cover entire viewport including header/footer */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+      {/* Matrix Rain Background Effect - Absolute positioned, extended to cover header/footer */}
+      <div
+        className="absolute inset-x-0 overflow-hidden pointer-events-none"
+        style={{
+          zIndex: 0,
+          top: '-6rem', // Extend upward to cover header (pt-24 = 6rem)
+          bottom: '-6rem', // Extend downward to cover any footer space
+        }}
+      >
         <MatrixRain sentences={matrixSentencesData.sentences} maxDrops={25} />
       </div>
         {/* Background decoration - consistent with other pages */}
