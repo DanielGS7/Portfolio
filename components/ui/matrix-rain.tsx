@@ -35,12 +35,13 @@ export default function MatrixRain({
 
     // Detect theme
     const isDarkMode = () => document.documentElement.classList.contains('dark');
+    let currentTheme = isDarkMode();
 
     const getColors = () => {
       const dark = isDarkMode();
       return {
-        base: dark ? { r: 0, g: 255, b: 0 } : { r: 0, g: 120, b: 0 },
-        glow: dark ? { r: 0, g: 255, b: 255 } : { r: 0, g: 80, b: 180 }
+        base: dark ? { r: 0, g: 255, b: 0 } : { r: 30, g: 60, b: 140 }, // Light mode: dark blue
+        glow: dark ? { r: 0, g: 255, b: 255 } : { r: 20, g: 80, b: 200 } // Light mode: medium blue
       };
     };
 
@@ -48,8 +49,10 @@ export default function MatrixRain({
     const colorVariation = 0.15;
     const glowIntensityMultiplier = 1.5;
 
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+    // Use parent container dimensions instead of viewport
+    const parent = canvas.parentElement;
+    let width = canvas.width = parent?.scrollWidth || window.innerWidth;
+    let height = canvas.height = parent?.scrollHeight || window.innerHeight;
     let columns = Math.floor(width / fontSize);
     let drops: Drop[] = [];
     let mouse = { x: -1000, y: -1000 };
@@ -183,14 +186,15 @@ export default function MatrixRain({
 
     function handleResize(): void {
       if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      const parent = canvas.parentElement;
+      width = canvas.width = parent?.scrollWidth || window.innerWidth;
+      height = canvas.height = parent?.scrollHeight || window.innerHeight;
       columns = Math.floor(width / fontSize);
     }
 
     function handleMouseMove(e: MouseEvent): void {
       mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      mouse.y = e.clientY + window.scrollY; // Account for page scroll
     }
 
     function handleMouseLeave(): void {
@@ -202,7 +206,7 @@ export default function MatrixRain({
     let lastSpawnTime = 0;
     const targetFPS = 60;
     const frameInterval = 1000 / targetFPS;
-    const spawnInterval = 3000; // Spawn a new drop every 3 seconds
+    const spawnInterval = 600; // Spawn frequently to reach maxDrops quickly
 
     function animate(currentTime: number): void {
       if (!ctx) return;
@@ -218,9 +222,20 @@ export default function MatrixRain({
         lastSpawnTime = currentTime;
       }
 
-      // Clear with moderate transparency for fade effect
+      // Detect theme change and do full opaque clear to instantly switch backgrounds
+      const dark = isDarkMode();
+      if (dark !== currentTheme) {
+        currentTheme = dark;
+        // Full opaque clear for instant theme transition
+        ctx.fillStyle = dark ? 'rgb(0, 0, 0)' : 'rgb(230, 240, 255)';
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      // Clear with moderate transparency for fade effect - theme-aware background
       // Higher alpha = faster fade, which clears glow effects properly
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+      ctx.fillStyle = dark
+        ? 'rgba(0, 0, 0, 0.15)' // Dark mode: black background
+        : 'rgba(230, 240, 255, 0.15)'; // Light mode: light blue background
       ctx.fillRect(0, 0, width, height);
 
       drops.forEach(drop => {
