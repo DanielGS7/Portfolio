@@ -70,7 +70,8 @@ export default function MatrixRain({
         this.y = 0;
         this.speed = Math.random() * 0.1 + speed;
         this.sentenceIndex = Math.floor(Math.random() * sentences.length);
-        this.sentence = sentences[this.sentenceIndex].split('');
+        // Add space at end so when sentence loops, there's separation
+        this.sentence = (sentences[this.sentenceIndex] + ' ').split('');
         this.charIndex = 0;
         this.trail = [];
         this.lastFloorY = -1; // Track last integer position to ensure one char per row
