@@ -59,6 +59,8 @@ export function ThemeToggle({ showTorch = false }: ThemeToggleProps) {
             animate={{
               width: '200vmax',
               height: '200vmax',
+              x: '-50%',
+              y: '-50%',
               transition: {
                 duration: 0.8,
                 ease: [0.43, 0.13, 0.23, 0.96]
