@@ -15,15 +15,33 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
   // Calculate canvas scale to match cave entrance scaling
   // Cave entrance and background both scale from the same origin point
-  // Background scales proportionally to entrance: entrance 1.0 → bg 0.20, entrance ~5.0 → bg 1.0
-  // This ensures background grows through the entrance hole at the same rate
+  // Section 1 (depth 0-1): top 10% to 0%, scale 0.25+
+  // Section 2-3 (depth 1-2): top 0%, double zoom speed
+  // Section 3+ (depth 2+): continue until full screen
   const getCanvasTransform = () => {
-    // Scale proportionally to cave entrance, cap at 1.0 for full screen
-    const canvasScale = Math.min(1.0, scale * 0.20);
+    let canvasScale: number;
+    let top: string;
+
+    if (depth < 1) {
+      // Section 1 (hero): top 10%, scale 0.25, interpolate to section 2
+      const progress = depth; // 0 to 1
+      top = `${10 - progress * 10}%`; // 10% to 0%
+      canvasScale = 0.25 + progress * (scale * 0.20 - 0.25); // Start at 0.25, grow towards next section
+    } else if (depth < 2) {
+      // Section 2 (about): top 0%, continue scaling
+      top = '0%';
+      canvasScale = scale * 0.20; // Normal speed
+    } else {
+      // Section 3+ (skills onwards): top 0%, double zoom speed from section 2 to 3
+      top = '0%';
+      // Double the scaling speed for depth >= 2
+      const extraScale = (depth - 2) * 0.4; // Double speed: 0.4 instead of 0.2
+      canvasScale = Math.min(1.0, scale * 0.20 + extraScale);
+    }
 
     return {
       scale: canvasScale,
-      top: '0vh', // No offset needed - alignment via transform origin
+      top,
     };
   };
 
