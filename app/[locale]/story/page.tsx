@@ -95,8 +95,8 @@ export default function StoryPage() {
 
   return (
     <section className="min-h-screen pb-32 relative overflow-hidden w-full">
-      {/* Matrix Rain Background Effect - Absolute positioned to scroll with page */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+      {/* Matrix Rain Background Effect - Extended to cover header padding */}
+      <div className="absolute inset-x-0 bottom-0 overflow-hidden pointer-events-none" style={{ zIndex: 0, top: '-6rem' }}>
         <MatrixRain sentences={matrixSentencesData.sentences} maxDrops={20} />
       </div>
         {/* Background decoration - consistent with other pages */}
