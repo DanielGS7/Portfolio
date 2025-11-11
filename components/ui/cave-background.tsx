@@ -14,30 +14,33 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
   const depthRef = useRef(depth);
 
   // Calculate canvas scale to match cave entrance scaling
-  // Cave entrance and background both scale from the same origin point
-  // Section 1 (depth 0-1): top 10% to 0%, scale 0.25+
-  // Section 2-3 (depth 1-2): top 0%, double zoom speed
-  // Section 3+ (depth 2+): continue until full screen
+  // Background scales proportionally to entrance to maintain sync on all screen sizes
+  // Formula: bg = (entrance - 1.0) * factor + initial
+  // This ensures they scale at the same rate regardless of viewport
   const getCanvasTransform = () => {
-    let canvasScale: number;
     let top: string;
 
+    // Position: section 1 starts at 10%, transitions to 0% at section 2
     if (depth < 1) {
-      // Section 1 (hero): top 10%, scale 0.25, interpolate to section 2
       const progress = depth; // 0 to 1
       top = `${10 - progress * 10}%`; // 10% to 0%
-      canvasScale = 0.25 + progress * (scale * 0.20 - 0.25); // Start at 0.25, grow towards next section
-    } else if (depth < 2) {
-      // Section 2 (about): top 0%, continue scaling
-      top = '0%';
-      canvasScale = scale * 0.20; // Normal speed
     } else {
-      // Section 3+ (skills onwards): top 0%, double zoom speed from section 2 to 3
       top = '0%';
-      // Double the scaling speed for depth >= 2
-      const extraScale = (depth - 2) * 0.4; // Double speed: 0.4 instead of 0.2
-      canvasScale = Math.min(1.0, scale * 0.20 + extraScale);
     }
+
+    // Scale: proportional to entrance scale, starts at 0.25 when entrance is 1.0
+    // At depth 0: entrance ≈ 1.0, background = 0.25
+    // At depth 2+: accelerated scaling (double speed)
+    let scaleFactor: number;
+    if (depth >= 2) {
+      // Double scaling speed from section 2 onwards
+      scaleFactor = 0.50; // Double the base factor
+    } else {
+      scaleFactor = 0.25; // Base factor
+    }
+
+    // Linear relationship: as entrance scales, background scales proportionally
+    const canvasScale = Math.min(1.0, (scale - 1.0) * scaleFactor + 0.25);
 
     return {
       scale: canvasScale,
