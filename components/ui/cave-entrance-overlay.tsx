@@ -13,6 +13,12 @@ interface CaveEntranceOverlayProps {
 
 export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: CaveEntranceOverlayProps) {
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by only rendering theme-dependent image after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Zoom origin: centered more downward (65% from top - closer to entrance center)
   // Scale based on depth to sync with background (1.0 at entrance, increases as you go deeper)
@@ -25,10 +31,12 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
   // Fade out completely by 30% depth
   const opacity = Math.max(0, 1 - depthProgress * 3.3);
 
-  // Select SVG based on theme
-  const caveEntranceImage = theme === 'light'
-    ? '/images/cave-entrance-day.svg'
-    : '/images/cave-entrance-night.svg';
+  // Select SVG based on theme (only after mount to avoid hydration mismatch)
+  const caveEntranceImage = !mounted ? '/images/cave-entrance-night.svg' : (
+    theme === 'light'
+      ? '/images/cave-entrance-day.svg'
+      : '/images/cave-entrance-night.svg'
+  );
 
   return (
     <motion.div
@@ -57,7 +65,7 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
           >
             <Image
               src={caveEntranceImage}
-              alt={`Cave entrance - ${theme} mode`}
+              alt={mounted && theme === 'light' ? 'Cave entrance - light mode' : 'Cave entrance - dark mode'}
               fill
               className="object-cover"
               priority

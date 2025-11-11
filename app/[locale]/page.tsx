@@ -20,6 +20,12 @@ export default function Home() {
   const t = useTranslations('timeline');
   const { theme } = useTheme();
   const [activeSection, setActiveSection] = useState('hero');
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by only rendering theme-dependent content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Timeline sections for homepage - using even spacing (no dates/years shown)
   const timelineSections = [
@@ -150,44 +156,46 @@ export default function Home() {
             })}
           </div>
 
-          {/* Sun/Moon decorative elements - top right corner */}
-          <div className="absolute top-8 right-8 sm:top-12 sm:right-12 w-24 h-24 sm:w-32 sm:h-32">
-            <AnimatePresence mode="wait">
-              {theme === 'light' ? (
-                <motion.div
-                  key="sun"
-                  className="absolute inset-0"
-                  initial={{ scale: 0, rotate: -180, opacity: 0 }}
-                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                  exit={{ scale: 0, rotate: 180, opacity: 0 }}
-                  transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-                >
-                  <Image
-                    src="/images/sun.png"
-                    alt="Sun"
-                    fill
-                    className="object-contain drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]"
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="moon"
-                  className="absolute inset-0"
-                  initial={{ scale: 0, rotate: 180, opacity: 0 }}
-                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                  exit={{ scale: 0, rotate: -180, opacity: 0 }}
-                  transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-                >
-                  <Image
-                    src="/images/moon.png"
-                    alt="Moon"
-                    fill
-                    className="object-contain drop-shadow-[0_0_20px_rgba(148,163,184,0.6)]"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          {/* Sun/Moon decorative elements - top right corner (only after hydration) */}
+          {mounted && (
+            <div className="absolute top-8 right-8 sm:top-12 sm:right-12 w-24 h-24 sm:w-32 sm:h-32">
+              <AnimatePresence mode="wait">
+                {theme === 'light' ? (
+                  <motion.div
+                    key="sun"
+                    className="absolute inset-0"
+                    initial={{ scale: 0, rotate: -180, opacity: 0 }}
+                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                    exit={{ scale: 0, rotate: 180, opacity: 0 }}
+                    transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+                  >
+                    <Image
+                      src="/images/sun.png"
+                      alt="Sun"
+                      fill
+                      className="object-contain drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]"
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="moon"
+                    className="absolute inset-0"
+                    initial={{ scale: 0, rotate: 180, opacity: 0 }}
+                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                    exit={{ scale: 0, rotate: -180, opacity: 0 }}
+                    transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+                  >
+                    <Image
+                      src="/images/moon.png"
+                      alt="Moon"
+                      fill
+                      className="object-contain drop-shadow-[0_0_20px_rgba(148,163,184,0.6)]"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       )}
 
