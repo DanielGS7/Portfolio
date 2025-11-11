@@ -11,7 +11,7 @@ import { TimelineNav } from '@/components/ui/timeline-nav';
 import { CaveBackground } from '@/components/ui/cave-background';
 import { CaveEntranceOverlay } from '@/components/ui/cave-entrance-overlay';
 import { useTranslations } from 'next-intl';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/lib/hooks/use-theme';
 import Image from 'next/image';
@@ -21,6 +21,10 @@ export default function Home() {
   const { theme } = useTheme();
   const [activeSection, setActiveSection] = useState('hero');
   const [mounted, setMounted] = useState(false);
+
+  // Use refs to persist scroll state across renders
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Prevent hydration mismatch by only rendering theme-dependent content after mount
   useEffect(() => {
@@ -99,13 +103,12 @@ export default function Home() {
 
   // Mouse wheel navigation - smooth single section scrolling
   useEffect(() => {
-    let isScrolling = false;
-
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault(); // Prevent default scrolling behavior
+      e.stopPropagation(); // Stop event from bubbling
 
       // Ignore scroll during cooldown period
-      if (isScrolling) {
+      if (isScrollingRef.current) {
         return;
       }
 
@@ -114,20 +117,42 @@ export default function Home() {
 
       if (scrollingDown && currentIndex < timelineSections.length - 1) {
         // Scrolling down - go to next section
-        isScrolling = true;
+        isScrollingRef.current = true;
         setActiveSection(timelineSections[currentIndex + 1].id);
-        setTimeout(() => { isScrolling = false; }, 500); // 500ms cooldown
+
+        // Clear existing timeout if any
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+
+        // Set new timeout to reset scrolling flag
+        scrollTimeoutRef.current = setTimeout(() => {
+          isScrollingRef.current = false;
+        }, 500); // 500ms cooldown
       } else if (!scrollingDown && currentIndex > 0) {
         // Scrolling up - go to previous section
-        isScrolling = true;
+        isScrollingRef.current = true;
         setActiveSection(timelineSections[currentIndex - 1].id);
-        setTimeout(() => { isScrolling = false; }, 500); // 500ms cooldown
+
+        // Clear existing timeout if any
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+
+        // Set new timeout to reset scrolling flag
+        scrollTimeoutRef.current = setTimeout(() => {
+          isScrollingRef.current = false;
+        }, 500); // 500ms cooldown
       }
     };
 
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       window.removeEventListener('wheel', handleWheel);
+      // Clean up timeout on unmount
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
     };
   }, [activeSection, timelineSections]);
 
