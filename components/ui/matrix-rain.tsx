@@ -218,8 +218,9 @@ export default function MatrixRain({
         lastSpawnTime = currentTime;
       }
 
-      // Clear with very high transparency for subtle fade
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      // Clear with moderate transparency for fade effect
+      // Higher alpha = faster fade, which clears glow effects properly
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
       ctx.fillRect(0, 0, width, height);
 
       drops.forEach(drop => {
