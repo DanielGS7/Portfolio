@@ -13,24 +13,35 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const depthRef = useRef(depth);
 
-  // Calculate canvas scale and position
-  // At hero: smaller, top edge at 50% vertical
-  // At skills+: full screen (100vh/vw)
+  // Calculate canvas scale and position to match cave entrance
+  // depth 0 (hero): scale 0.17, top 11vh
+  // depth 1 (about): scale 0.50, top 5vh
+  // depth 2+ (skills onwards): scale with entrance overlay, capped at 1.0 (full screen), top 0
   const getCanvasTransform = () => {
+    let canvasScale: number;
+    let top: string;
+
     if (depth >= 2) {
-      // Skills section onwards: full screen, no scaling
-      return {
-        scale: 1,
-        translateY: 0,
-      };
+      // Skills section onwards: scale with entrance overlay but cap at 1.0 for full screen
+      canvasScale = Math.min(1.0, scale * 0.17);
+      top = '0vh';
+    } else if (depth === 1) {
+      // About section: interpolate between depth 0 and depth 2
+      // As depth transitions from 1.0 to 2.0, smoothly scale
+      const progress = depth - 1; // 0 to 1
+      canvasScale = 0.50 + progress * (Math.min(1.0, scale * 0.17) - 0.50);
+      top = `${5 - progress * 5}vh`;
+    } else {
+      // Hero section (depth 0 to 1)
+      // Interpolate from scale 0.17 to 0.50 and top 11vh to 5vh
+      const progress = depth; // 0 to 1
+      canvasScale = 0.17 + progress * (0.50 - 0.17);
+      top = `${11 - progress * 6}vh`;
     }
-    // Before skills: scale with entrance overlay, capped at 1.0
-    const canvasScale = Math.min(1.0, scale * 0.3); // Scale from 0.3 to 1.0
-    const translateY = depth >= 2 ? 0 : `${50 * (1 - canvasScale)}vh`; // Top edge moves down
 
     return {
       scale: canvasScale,
-      translateY,
+      top,
     };
   };
 
@@ -83,11 +94,11 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
           'rgb(45, 45, 60)'
         ],
         depthRings: [
-          'rgba(20, 25, 40, 0.4)',
-          'rgba(25, 30, 45, 0.35)',
-          'rgba(30, 35, 50, 0.3)',
-          'rgba(35, 40, 55, 0.25)',
-          'rgba(40, 45, 60, 0.2)'
+          'rgba(20, 25, 40, 0.15)',
+          'rgba(25, 30, 45, 0.12)',
+          'rgba(30, 35, 50, 0.1)',
+          'rgba(35, 40, 55, 0.08)',
+          'rgba(40, 45, 60, 0.05)'
         ]
       },
       day: {
@@ -101,11 +112,11 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
           'rgb(120, 85, 60)'
         ],
         depthRings: [
-          'rgba(200, 160, 120, 0.3)',
-          'rgba(180, 140, 100, 0.25)',
-          'rgba(160, 120, 85, 0.2)',
-          'rgba(140, 100, 70, 0.15)',
-          'rgba(120, 85, 60, 0.1)'
+          'rgba(140, 110, 80, 0.08)',
+          'rgba(130, 100, 70, 0.06)',
+          'rgba(120, 90, 65, 0.05)',
+          'rgba(110, 80, 55, 0.04)',
+          'rgba(100, 70, 50, 0.03)'
         ]
       }
     };
@@ -210,9 +221,10 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
         ctx.fillStyle = currentPalette.depthRings[this.index];
         ctx.fill();
 
-        ctx.strokeStyle = currentPalette.depthRings[this.index].replace(/[\d.]+\)/, '0.6)');
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        // Remove stroke to eliminate "white outline" effect
+        // ctx.strokeStyle = currentPalette.depthRings[this.index].replace(/[\d.]+\)/, '0.6)');
+        // ctx.lineWidth = 2;
+        // ctx.stroke();
 
         ctx.restore();
       }
@@ -466,20 +478,23 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
       mouse.x += (mouse.targetX - mouse.x) * 0.1;
       mouse.y += (mouse.targetY - mouse.y) * 0.1;
 
+      // Clear background with solid color
       const bgColor = currentPalette.background;
       ctx.fillStyle = `rgb(${bgColor.r}, ${bgColor.g}, ${bgColor.b})`;
       ctx.fillRect(0, 0, width, height);
 
+      // Subtle ambient lighting without visible gradient oval
       const ambientColor = currentPalette.ambient;
       const ambientGradient = ctx.createRadialGradient(
         width / 2, height / 2, 0,
         width / 2, height / 2, Math.max(width, height)
       );
-      ambientGradient.addColorStop(0, `rgba(${ambientColor.r}, ${ambientColor.g}, ${ambientColor.b}, 0.3)`);
+      ambientGradient.addColorStop(0, `rgba(${ambientColor.r}, ${ambientColor.g}, ${ambientColor.b}, 0.1)`);
       ambientGradient.addColorStop(1, `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0)`);
       ctx.fillStyle = ambientGradient;
       ctx.fillRect(0, 0, width, height);
 
+      // Draw depth rings
       depthRings.forEach(ring => {
         ring.update();
         ring.draw();
@@ -487,16 +502,19 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
       layers.forEach(layer => layer.update());
 
+      // Draw stalactites (from ceiling)
       for (let i = layers.length - 1; i >= 0; i--) {
         stalactites.filter(s => s.layer === layers[i]).forEach(stalactite => {
           stalactite.layer.drawStalactite(stalactite.x, stalactite.width, stalactite.length);
         });
 
-        stalagmites.filter(s => s.layer === layers[i]).forEach(stalagmite => {
-          stalagmite.layer.drawStalagmite(stalagmite.x, stalagmite.width, stalagmite.length);
-        });
+        // Skip stalagmites to avoid "grass" effect
+        // stalagmites.filter(s => s.layer === layers[i]).forEach(stalagmite => {
+        //   stalagmite.layer.drawStalagmite(stalagmite.x, stalagmite.width, stalagmite.length);
+        // });
       }
 
+      // Draw crystals
       crystals.forEach(crystal => {
         crystal.update();
         crystal.draw();
@@ -525,9 +543,9 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
       style={{
         zIndex: 2,
         left: '50%',
-        top: typeof transform.translateY === 'string' ? transform.translateY : 0,
+        top: transform.top,
         transform: `translateX(-50%) scale(${transform.scale})`,
-        transformOrigin: 'top center',
+        transformOrigin: 'center center',
         width: '100vw',
         height: '100vh',
         transition: 'transform 1.2s cubic-bezier(0.43, 0.13, 0.23, 0.96)',
