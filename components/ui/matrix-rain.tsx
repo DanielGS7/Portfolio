@@ -44,7 +44,7 @@ export default function MatrixRain({
       };
     };
 
-    const trailLength = 105; // 3x longer trails for better readability and visual impact
+    const trailLength = 52; // Halved from 105 for faster visual refresh
     const colorVariation = 0.15;
     const glowIntensityMultiplier = 1.5;
 
@@ -68,7 +68,8 @@ export default function MatrixRain({
       constructor(x: number) {
         this.x = x;
         this.y = 0;
-        this.speed = Math.random() * 0.1 + speed;
+        // Increased minimum speed: base 0.25 + random 0.15 = range 0.25 to 0.4
+        this.speed = Math.random() * 0.15 + 0.25;
         this.sentenceIndex = Math.floor(Math.random() * sentences.length);
         // Add space at end so when sentence loops, there's separation
         this.sentence = (sentences[this.sentenceIndex] + ' ').split('');
