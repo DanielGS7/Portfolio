@@ -206,7 +206,16 @@ export default function MatrixRain({
     let lastSpawnTime = 0;
     const targetFPS = 60;
     const frameInterval = 1000 / targetFPS;
-    const spawnInterval = 350; // Continuous spawning to prevent batch effect
+
+    // Calculate steady-state spawn rate to maintain continuous flow
+    // Average drop lifetime: (total_rows / avg_speed) / fps
+    // total_rows = (height/fontSize) + trailLength
+    // avg_speed = (0.25 + 0.4) / 2 = 0.325
+    const avgSpeed = (0.25 + 0.4) / 2;
+    const totalRows = (height / fontSize) + trailLength;
+    const avgDropLifetimeMs = (totalRows / avgSpeed / targetFPS) * 1000;
+    // To maintain continuous coverage, spawn rate = lifetime / desired_count
+    const spawnInterval = Math.max(500, avgDropLifetimeMs / maxDrops);
 
     function animate(currentTime: number): void {
       if (!ctx) return;
