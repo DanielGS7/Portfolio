@@ -4,30 +4,38 @@ import { useEffect, useRef } from 'react';
 
 interface CaveBackgroundProps {
   className?: string;
-  depth?: number; // Current depth level (0 = entrance, higher = deeper)
-  maxDepth?: number; // Maximum depth level
-  scale?: number; // Current scale from entrance overlay
+  depth?: number;
+  maxDepth?: number;
+  scale?: number;
 }
 
 export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale = 1.0 }: CaveBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const depthRef = useRef(depth);
 
-  // Calculate dynamic clip-path based on scale
-  // At scale 1.0: small circle (30% radius)
-  // At scale ~10+: full screen (no clipping needed)
-  const getClipPath = () => {
-    if (scale >= 10) {
-      // Fully zoomed in - no clipping, show full cave background
-      return 'none';
+  // Calculate canvas scale and position
+  // At hero: smaller, top edge at 50% vertical
+  // At skills+: full screen (100vh/vw)
+  const getCanvasTransform = () => {
+    if (depth >= 2) {
+      // Skills section onwards: full screen, no scaling
+      return {
+        scale: 1,
+        translateY: 0,
+      };
     }
-    // Scale the circle radius from 30% to 100% as zoom increases
-    // Using same scale for both width and height (circular, not elliptical)
-    const radiusPercent = Math.min(100, 30 * scale);
-    return `circle(${radiusPercent}% at 50% 65%)`;
+    // Before skills: scale with entrance overlay, capped at 1.0
+    const canvasScale = Math.min(1.0, scale * 0.3); // Scale from 0.3 to 1.0
+    const translateY = depth >= 2 ? 0 : `${50 * (1 - canvasScale)}vh`; // Top edge moves down
+
+    return {
+      scale: canvasScale,
+      translateY,
+    };
   };
 
-  // Update depth ref when prop changes
+  const transform = getCanvasTransform();
+
   useEffect(() => {
     depthRef.current = depth;
   }, [depth]);
@@ -45,10 +53,6 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
     let time = 0;
     let animationId: number;
 
-    // Depth animation - smoothly transition to target depth
-    let currentDepth = depthRef.current;
-    let targetDepth = depthRef.current;
-
     // Configuration
     const parallaxStrength = 0.05;
     const stalactiteCount = 15;
@@ -64,14 +68,6 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
     const depthRingRoughness = 0.15;
     const formationLengthMultiplier = 2.5;
 
-    // Calculate depth scale (1.0 at entrance, increases as you go deeper)
-    // IMPORTANT: This must match the CaveEntranceOverlay scaling (1.0 to 10.0)
-    const getDepthScale = (currentDepth: number) => {
-      const depthProgress = currentDepth / Math.max(maxDepth, 1);
-      // Scale from 1.0 to 10.0 as you go deeper (matching entrance overlay)
-      return 1.0 + depthProgress * 9.0;
-    };
-
     // Check if we're in light or dark mode
     const isDarkMode = () => document.documentElement.classList.contains('dark');
 
@@ -79,7 +75,7 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
       night: {
         background: { r: 10, g: 10, b: 10 },
         ambient: { r: 20, g: 30, b: 50 },
-        crystal: { r: 245, g: 200, b: 66 }, // Using primary color
+        crystal: { r: 245, g: 200, b: 66 }, // Primary color
         layers: [
           'rgb(15, 15, 25)',
           'rgb(25, 25, 35)',
@@ -95,21 +91,21 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
         ]
       },
       day: {
-        background: { r: 255, g: 249, b: 246 },
-        ambient: { r: 226, g: 174, b: 43 },
+        background: { r: 245, g: 230, b: 211 },
+        ambient: { r: 220, g: 180, b: 140 },
         crystal: { r: 226, g: 174, b: 43 }, // Primary color for day
         layers: [
-          'rgb(240, 235, 230)',
-          'rgb(230, 220, 210)',
-          'rgb(220, 205, 190)',
-          'rgb(210, 190, 170)'
+          'rgb(180, 140, 100)',
+          'rgb(160, 120, 85)',
+          'rgb(140, 100, 70)',
+          'rgb(120, 85, 60)'
         ],
         depthRings: [
-          'rgba(226, 174, 43, 0.15)',
-          'rgba(226, 174, 43, 0.12)',
-          'rgba(226, 174, 43, 0.09)',
-          'rgba(226, 174, 43, 0.06)',
-          'rgba(226, 174, 43, 0.03)'
+          'rgba(200, 160, 120, 0.3)',
+          'rgba(180, 140, 100, 0.25)',
+          'rgba(160, 120, 85, 0.2)',
+          'rgba(140, 100, 70, 0.15)',
+          'rgba(120, 85, 60, 0.1)'
         ]
       }
     };
@@ -140,7 +136,6 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
     function updatePalette() {
       if (transitionProgress < 1) {
         transitionProgress = Math.min(1, transitionProgress + 0.02);
-        const sourcePalette = isDarkMode() ? colorPalettes.day : colorPalettes.night;
 
         currentPalette = {
           background: lerpColor(currentPalette.background, targetPalette.background, 0.02),
@@ -158,7 +153,6 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
       offsetX: number = 0;
       offsetY: number = 0;
       points: Array<{ x: number; y: number }> = [];
-      basePoints: Array<{ x: number; y: number }> = [];
 
       constructor(depth: number, index: number) {
         this.depth = depth;
@@ -168,23 +162,21 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
       generateRoughCircle() {
         const centerX = width / 2;
-        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin (entrance center)
-        // Smaller initial radius so background only shows through cave entrance hole
-        const baseRadius = Math.max(width, height) * (0.15 + this.index * 0.1);
+        const centerY = height / 2;
+        const baseRadius = Math.max(width, height) * (0.3 + this.index * 0.15);
         const segments = 40;
 
-        this.basePoints = [];
+        this.points = [];
         for (let i = 0; i < segments; i++) {
           const angle = (i / segments) * Math.PI * 2;
           const roughness = (Math.random() - 0.5) * baseRadius * depthRingRoughness;
           const radius = baseRadius + roughness;
 
-          this.basePoints.push({
+          this.points.push({
             x: centerX + Math.cos(angle) * radius,
             y: centerY + Math.sin(angle) * radius
           });
         }
-        this.points = [...this.basePoints];
       }
 
       update() {
@@ -193,16 +185,6 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
         this.offsetX += (targetX - this.offsetX) * 0.1;
         this.offsetY += (targetY - this.offsetY) * 0.1;
-
-        // Update depth animation - smoothly scale points from entrance center (65% vertical)
-        const depthScale = getDepthScale(currentDepth);
-        const centerX = width / 2;
-        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin
-
-        this.points = this.basePoints.map(point => ({
-          x: centerX + (point.x - centerX) * depthScale,
-          y: centerY + (point.y - centerY) * depthScale
-        }));
       }
 
       draw() {
@@ -261,18 +243,8 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
       drawStalactite(x: number, baseWidth: number, length: number) {
         if (!ctx) return;
-        const depthScale = getDepthScale(currentDepth);
-
         ctx.save();
         ctx.translate(this.offsetX, this.offsetY);
-
-        // Scale from entrance center (65% vertical) for depth effect
-        const centerX = width / 2;
-        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin
-        const scaledX = centerX + (x - centerX) * depthScale;
-
-        ctx.translate(scaledX - x, 0);
-        ctx.scale(depthScale, depthScale);
 
         ctx.beginPath();
         ctx.moveTo(x, -length * 0.5);
@@ -311,18 +283,8 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
       drawStalagmite(x: number, baseWidth: number, length: number) {
         if (!ctx) return;
-        const depthScale = getDepthScale(currentDepth);
-
         ctx.save();
         ctx.translate(this.offsetX, this.offsetY);
-
-        // Scale from entrance center (65% vertical) for depth effect
-        const centerX = width / 2;
-        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin
-        const scaledX = centerX + (x - centerX) * depthScale;
-
-        ctx.translate(scaledX - x, 0);
-        ctx.scale(depthScale, depthScale);
 
         ctx.beginPath();
         ctx.moveTo(x, height + length * 0.5);
@@ -411,33 +373,24 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
       draw() {
         if (!ctx) return;
-        const depthScale = getDepthScale(currentDepth);
-
         ctx.save();
         ctx.translate(this.layer.offsetX, this.layer.offsetY);
 
-        // Scale crystal position from entrance center (65% vertical)
-        const centerX = width / 2;
-        const centerY = height * 0.65; // Match CaveEntranceOverlay transform origin
-        const scaledX = centerX + (this.x - centerX) * depthScale;
-        const scaledY = centerY + (this.y - centerY) * depthScale;
-
         const crystalColor = currentPalette.crystal;
-        const scaledSize = this.size * depthScale;
 
-        const gradient = ctx.createRadialGradient(scaledX, scaledY, 0, scaledX, scaledY, scaledSize * 3);
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
         gradient.addColorStop(0, `rgba(${crystalColor.r}, ${crystalColor.g}, ${crystalColor.b}, ${this.glowIntensity * 0.8})`);
         gradient.addColorStop(0.3, `rgba(${crystalColor.r}, ${crystalColor.g}, ${crystalColor.b}, ${this.glowIntensity * 0.4})`);
         gradient.addColorStop(1, `rgba(${crystalColor.r}, ${crystalColor.g}, ${crystalColor.b}, 0)`);
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(scaledX, scaledY, scaledSize * 3, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = `rgba(${Math.min(255, crystalColor.r + 50)}, ${Math.min(255, crystalColor.g + 50)}, ${Math.min(255, crystalColor.b + 50)}, ${this.glowIntensity})`;
         ctx.beginPath();
-        ctx.arc(scaledX, scaledY, scaledSize, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.restore();
@@ -504,85 +457,11 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
       depthRings.forEach(ring => ring.generateRoughCircle());
     }
 
-    function drawEntranceScene() {
-      if (!ctx || currentDepth > 0.5) return; // Only draw when at entrance
-
-      const opacity = Math.max(0, 1 - currentDepth * 2); // Fade out as we enter cave
-
-      // Sky/background
-      const isDark = isDarkMode();
-      const skyColor = isDark ? 'rgba(20, 30, 50' : 'rgba(135, 206, 235';
-      const mountainColor = isDark ? 'rgba(40, 45, 55' : 'rgba(90, 100, 110';
-      const grassColor = isDark ? 'rgba(20, 40, 20' : 'rgba(60, 120, 60';
-      const caveColor = isDark ? 'rgba(10, 10, 10' : 'rgba(40, 35, 30';
-
-      ctx.save();
-      ctx.globalAlpha = opacity;
-
-      // Grass at bottom
-      const grassHeight = height * 0.15;
-      const grassGradient = ctx.createLinearGradient(0, height - grassHeight, 0, height);
-      grassGradient.addColorStop(0, grassColor + ', 0.8)');
-      grassGradient.addColorStop(1, grassColor + ', 1)');
-      ctx.fillStyle = grassGradient;
-      ctx.fillRect(0, height - grassHeight, width, grassHeight);
-
-      // Mountain rocks around cave (left side)
-      ctx.fillStyle = mountainColor + ', 0.9)';
-      ctx.beginPath();
-      ctx.moveTo(0, height - grassHeight);
-      ctx.lineTo(0, height * 0.3);
-      ctx.quadraticCurveTo(width * 0.15, height * 0.4, width * 0.25, height * 0.5);
-      ctx.lineTo(width * 0.2, height - grassHeight);
-      ctx.closePath();
-      ctx.fill();
-
-      // Mountain rocks (right side)
-      ctx.beginPath();
-      ctx.moveTo(width, height - grassHeight);
-      ctx.lineTo(width, height * 0.3);
-      ctx.quadraticCurveTo(width * 0.85, height * 0.4, width * 0.75, height * 0.5);
-      ctx.lineTo(width * 0.8, height - grassHeight);
-      ctx.closePath();
-      ctx.fill();
-
-      // Cave entrance (takes up ~2/3rds of screen)
-      const caveWidth = width * 0.55;
-      const caveHeight = height * 0.65;
-      const caveX = width / 2;
-      const caveY = height * 0.55;
-
-      // Cave opening with gradient (dark in center)
-      const caveGradient = ctx.createRadialGradient(
-        caveX, caveY, 0,
-        caveX, caveY, Math.max(caveWidth, caveHeight) / 2
-      );
-      caveGradient.addColorStop(0, caveColor + ', 1)');
-      caveGradient.addColorStop(0.7, caveColor + ', 0.8)');
-      caveGradient.addColorStop(1, mountainColor + ', 0.9)');
-
-      ctx.fillStyle = caveGradient;
-      ctx.beginPath();
-      ctx.ellipse(caveX, caveY, caveWidth / 2, caveHeight / 2, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Add rocky texture around cave entrance
-      ctx.strokeStyle = mountainColor + ', 0.6)';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
     function animate() {
       if (!ctx) return;
 
       time++;
       updatePalette();
-
-      // Smoothly animate depth
-      targetDepth = depthRef.current;
-      currentDepth += (targetDepth - currentDepth) * 0.08;
 
       mouse.x += (mouse.targetX - mouse.x) * 0.1;
       mouse.y += (mouse.targetY - mouse.y) * 0.1;
@@ -600,9 +479,6 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
       ambientGradient.addColorStop(1, `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0)`);
       ctx.fillStyle = ambientGradient;
       ctx.fillRect(0, 0, width, height);
-
-      // Draw entrance scene if at cave entrance
-      drawEntranceScene();
 
       depthRings.forEach(ring => {
         ring.update();
@@ -640,17 +516,21 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
       cancelAnimationFrame(animationId);
       observer.disconnect();
     };
-  }, []); // Only run once on mount
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 pointer-events-none ${className}`}
+      className={`fixed pointer-events-none ${className}`}
       style={{
-        zIndex: 2, // Above skybox (1) but below cave entrance overlay (5)
-        transformOrigin: 'center 65%', // Match CaveEntranceOverlay transform origin
-        // Dynamic circular clip that grows with zoom to simulate entering through cave hole
-        clipPath: getClipPath(),
+        zIndex: 2,
+        left: '50%',
+        top: typeof transform.translateY === 'string' ? transform.translateY : 0,
+        transform: `translateX(-50%) scale(${transform.scale})`,
+        transformOrigin: 'top center',
+        width: '100vw',
+        height: '100vh',
+        transition: 'transform 1.2s cubic-bezier(0.43, 0.13, 0.23, 0.96)',
       }}
     />
   );
