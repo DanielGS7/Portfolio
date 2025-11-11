@@ -97,7 +97,7 @@ export default function StoryPage() {
     <>
       {/* Matrix Rain Background Effect - Fixed to cover entire viewport */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-        <MatrixRain sentences={matrixSentencesData.sentences} maxDrops={8} />
+        <MatrixRain sentences={matrixSentencesData.sentences} maxDrops={12} />
       </div>
 
       <section className="min-h-screen py-32 relative overflow-hidden w-full">
