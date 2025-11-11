@@ -44,7 +44,7 @@ export default function MatrixRain({
       };
     };
 
-    const trailLength = 15;
+    const trailLength = 35; // Increased for longer falling rain trails
     const colorVariation = 0.15;
     const glowIntensityMultiplier = 1.5;
 
@@ -83,6 +83,7 @@ export default function MatrixRain({
       update(): void {
         this.y += this.speed;
 
+        // Only add character when crossing into a new row (ensures single character per position)
         if (this.y > Math.floor(this.y)) {
           this.trail.unshift({
             char: this.getNextChar(),

@@ -4,6 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 import MatrixRain from '@/components/ui/matrix-rain';
+import matrixSentencesData from '@/lib/constants/matrix-sentences.json';
 
 export default function StoryPage() {
   const t = useTranslations('story');
@@ -96,7 +97,7 @@ export default function StoryPage() {
     <>
       {/* Matrix Rain Background Effect - Fixed to cover entire viewport */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-        <MatrixRain maxDrops={4} />
+        <MatrixRain sentences={matrixSentencesData.sentences} maxDrops={4} />
       </div>
 
       <section className="min-h-screen py-32 relative overflow-hidden w-full">
