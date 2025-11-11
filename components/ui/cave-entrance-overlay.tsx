@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@/lib/hooks/use-theme';
@@ -39,13 +39,6 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
   // Keep opacity at 1.0 (no transparency)
   const opacity = 1.0;
 
-  // Select SVG based on theme (only after mount to avoid hydration mismatch)
-  const caveEntranceImage = !mounted ? '/images/cave-entrance-night.svg' : (
-    theme === 'light'
-      ? '/images/cave-entrance-day.svg'
-      : '/images/cave-entrance-night.svg'
-  );
-
   return (
     <motion.div
       className="fixed inset-0 pointer-events-none z-[5]"
@@ -62,24 +55,35 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
       }}
     >
       <div className="relative w-full h-full">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={theme}
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Image
-              src={caveEntranceImage}
-              alt={mounted && theme === 'light' ? 'Cave entrance - light mode' : 'Cave entrance - dark mode'}
-              fill
-              className="object-cover"
-              priority
-            />
-          </motion.div>
-        </AnimatePresence>
+        {/* Day version - fades in when light mode */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ opacity: mounted && theme === 'light' ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Image
+            src="/images/cave-entrance-day.svg"
+            alt="Cave entrance - light mode"
+            fill
+            className="object-cover"
+            priority
+          />
+        </motion.div>
+
+        {/* Night version - fades in when dark mode */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ opacity: mounted && theme === 'dark' ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Image
+            src="/images/cave-entrance-night.svg"
+            alt="Cave entrance - dark mode"
+            fill
+            className="object-cover"
+            priority
+          />
+        </motion.div>
       </div>
     </motion.div>
   );
