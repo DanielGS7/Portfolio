@@ -26,13 +26,15 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5, sc
   if (externalScale !== undefined) {
     scale = externalScale;
   } else {
-    // Fallback: calculate scale based on depth
+    // Fallback: calculate scale based on depth (should match page.tsx logic)
     const depthProgress = depth / Math.max(maxDepth, 1);
+    scale = 1.0 + depthProgress * 9.0;
+
+    // Add 3x acceleration starting at depth 2
     if (depth >= 2) {
-      const extraZoom = (depth - 1) * 3;
-      scale = 1.0 + (1 / Math.max(maxDepth, 1)) * 9.0 + extraZoom * 9.0;
-    } else {
-      scale = 1.0 + depthProgress * 9.0;
+      const extraDepth = depth - 2;
+      const extraZoom = extraDepth * 3;
+      scale += extraZoom * 9.0;
     }
   }
 

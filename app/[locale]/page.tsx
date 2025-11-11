@@ -49,13 +49,19 @@ export default function Home() {
     const maxDepth = timelineSections.length - 1;
     const depthProgress = depth / Math.max(maxDepth, 1);
 
-    // At skills section (depth >= 2), zoom 3x faster
+    // Base scale that increases linearly with depth
+    let scale = 1.0 + depthProgress * 9.0;
+
+    // At skills section (depth >= 2), add 3x acceleration
     if (depth >= 2) {
-      const extraZoom = (depth - 1) * 3;
-      return 1.0 + (1 / Math.max(maxDepth, 1)) * 9.0 + extraZoom * 9.0;
-    } else {
-      return 1.0 + depthProgress * 9.0;
+      // Add extra zoom starting from depth 2
+      // Calculate how much we've progressed beyond depth 2
+      const extraDepth = depth - 2;
+      const extraZoom = extraDepth * 3;
+      scale += extraZoom * 9.0;
     }
+
+    return scale;
   };
 
   // Listen for section changes from TimelineNav

@@ -29,15 +29,9 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
     }
 
     // Scale: proportional to entrance scale, starts at 0.25 when entrance is 1.0
-    // At depth 0: entrance ≈ 1.0, background = 0.25
-    // At depth 2+: accelerated scaling (double speed)
-    let scaleFactor: number;
-    if (depth >= 2) {
-      // Double scaling speed from section 2 onwards
-      scaleFactor = 0.50; // Double the base factor
-    } else {
-      scaleFactor = 0.25; // Base factor
-    }
+    // Use consistent multiplier - entrance already has built-in acceleration at depth >= 2
+    // so background will automatically accelerate with it
+    const scaleFactor = 0.25;
 
     // Linear relationship: as entrance scales, background scales proportionally
     const canvasScale = Math.min(1.0, (scale - 1.0) * scaleFactor + 0.25);
