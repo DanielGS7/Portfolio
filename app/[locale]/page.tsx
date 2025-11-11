@@ -34,6 +34,7 @@ export default function Home() {
 
   // Use refs to persist scroll state across renders
   const lastScrollTime = useRef(0);
+  const isTransitioning = useRef(false);
   const activeSectionRef = useRef(activeSection);
   const timelineSectionsRef = useRef(timelineSections);
 
@@ -78,31 +79,53 @@ export default function Home() {
     return scale;
   };
 
-  // Listen for section changes from TimelineNav
+  // Listen for section changes from TimelineNav with transition lock
   useEffect(() => {
     const handleSectionChange = (e: Event) => {
+      // Block navigation during transitions
+      if (isTransitioning.current) {
+        return;
+      }
+
       const customEvent = e as CustomEvent;
+      isTransitioning.current = true;
       setActiveSection(customEvent.detail.sectionId);
+      setTimeout(() => {
+        isTransitioning.current = false;
+      }, 1000);
     };
 
     window.addEventListener('timelineNavigate', handleSectionChange);
     return () => window.removeEventListener('timelineNavigate', handleSectionChange);
   }, []);
 
-  // Keyboard navigation
+  // Keyboard navigation with transition lock
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Block navigation during transitions
+      if (isTransitioning.current) {
+        return;
+      }
+
       const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
 
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         e.preventDefault();
         if (currentIndex < timelineSections.length - 1) {
+          isTransitioning.current = true;
           setActiveSection(timelineSections[currentIndex + 1].id);
+          setTimeout(() => {
+            isTransitioning.current = false;
+          }, 1000);
         }
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
         e.preventDefault();
         if (currentIndex > 0) {
+          isTransitioning.current = true;
           setActiveSection(timelineSections[currentIndex - 1].id);
+          setTimeout(() => {
+            isTransitioning.current = false;
+          }, 1000);
         }
       }
     };
@@ -111,17 +134,23 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeSection, timelineSections]);
 
-  // Mouse wheel navigation - smooth single section scrolling
+  // Mouse wheel navigation - smooth single section scrolling with dual-lock mechanism
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault(); // Prevent default scrolling behavior
       e.stopPropagation(); // Stop event from bubbling
 
-      // Timestamp-based cooldown - reject scrolls within 500ms of last scroll
+      // LOCK 1: Block all scrolls during transitions
+      if (isTransitioning.current) {
+        return;
+      }
+
+      // LOCK 2: Timestamp-based cooldown - reject scrolls within 1000ms of last scroll
+      // This matches our 800ms transition + 200ms buffer for safety
       const now = Date.now();
       const timeSinceLastScroll = now - lastScrollTime.current;
 
-      if (timeSinceLastScroll < 500) {
+      if (timeSinceLastScroll < 1000) {
         // Still in cooldown period - ignore this scroll
         return;
       }
@@ -133,12 +162,24 @@ export default function Home() {
 
       if (scrollingDown && currentIndex < sections.length - 1) {
         // Scrolling down - go to next section
+        isTransitioning.current = true; // Set transition lock
         lastScrollTime.current = now; // Update timestamp
         setActiveSection(sections[currentIndex + 1].id);
+
+        // Release transition lock after animation completes (800ms) + small buffer
+        setTimeout(() => {
+          isTransitioning.current = false;
+        }, 1000);
       } else if (!scrollingDown && currentIndex > 0) {
         // Scrolling up - go to previous section
+        isTransitioning.current = true; // Set transition lock
         lastScrollTime.current = now; // Update timestamp
         setActiveSection(sections[currentIndex - 1].id);
+
+        // Release transition lock after animation completes (800ms) + small buffer
+        setTimeout(() => {
+          isTransitioning.current = false;
+        }, 1000);
       }
     };
 
