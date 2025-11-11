@@ -7,6 +7,11 @@ html,
 body {
   width: 100%;
   max-width: 100%;
+}
+
+/* Only apply overflow:hidden to homepage with custom scrolling */
+html.homepage,
+body.homepage {
   overflow: hidden; /* Hide all scrollbars */
   height: 100vh; /* Prevent vertical scrolling */
 }

@@ -52,6 +52,17 @@ export default function Home() {
     setMounted(true);
   }, []);
 
+  // Apply homepage class to enable overflow:hidden only on homepage
+  useEffect(() => {
+    document.documentElement.classList.add('homepage');
+    document.body.classList.add('homepage');
+
+    return () => {
+      document.documentElement.classList.remove('homepage');
+      document.body.classList.remove('homepage');
+    };
+  }, []);
+
   // Calculate depth based on section index (0 at entrance, increases as you go deeper)
   const getCurrentDepth = () => {
     const index = timelineSections.findIndex(s => s.id === activeSection);
