@@ -149,12 +149,18 @@ export default function Home() {
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       window.removeEventListener('wheel', handleWheel);
-      // Clean up timeout on unmount
+      // DON'T clear timeout here - let it finish to unlock scrolling
+    };
+  }, [activeSection, timelineSections]);
+
+  // Cleanup timeout only on component unmount
+  useEffect(() => {
+    return () => {
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [activeSection, timelineSections]);
+  }, []);
 
   // Section components mapping
   const sectionComponents = {
