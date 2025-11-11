@@ -11,7 +11,7 @@ import { TimelineNav } from '@/components/ui/timeline-nav';
 import { CaveBackground } from '@/components/ui/cave-background';
 import { CaveEntranceOverlay } from '@/components/ui/cave-entrance-overlay';
 import { useTranslations } from 'next-intl';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/lib/hooks/use-theme';
 import Image from 'next/image';
@@ -22,24 +22,35 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState('hero');
   const [mounted, setMounted] = useState(false);
 
-  // Use refs to persist scroll state across renders
-  const isScrollingRef = useRef(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Prevent hydration mismatch by only rendering theme-dependent content after mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // Timeline sections for homepage - using even spacing (no dates/years shown)
-  const timelineSections = [
+  const timelineSections = useMemo(() => [
     { id: 'hero', year: '', date: '2024-11-01', label: t('intro'), category: 'story' as const },
     { id: 'about', year: '', date: '2021-09-01', label: t('about'), category: 'story' as const },
     { id: 'skills', year: '', date: '2015-01-01', label: t('skills'), category: 'education' as const },
     { id: 'projects', year: '', date: '2015-09-01', label: t('projects'), category: 'projects' as const },
     { id: 'services', year: '', date: '2014-01-01', label: t('services'), category: 'work' as const },
     { id: 'cta', year: '', date: '2013-01-01', label: t('contact'), category: 'story' as const },
-  ];
+  ], [t]);
+
+  // Use refs to persist scroll state across renders
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const activeSectionRef = useRef(activeSection);
+  const timelineSectionsRef = useRef(timelineSections);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    activeSectionRef.current = activeSection;
+  }, [activeSection]);
+
+  useEffect(() => {
+    timelineSectionsRef.current = timelineSections;
+  }, [timelineSections]);
+
+  // Prevent hydration mismatch by only rendering theme-dependent content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Calculate depth based on section index (0 at entrance, increases as you go deeper)
   const getCurrentDepth = () => {
@@ -107,18 +118,20 @@ export default function Home() {
       e.preventDefault(); // Prevent default scrolling behavior
       e.stopPropagation(); // Stop event from bubbling
 
-      // Ignore scroll during cooldown period
+      // Ignore scroll during cooldown period - this is the KEY lock
       if (isScrollingRef.current) {
         return;
       }
 
-      const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
+      // Use ref to get current section without causing re-renders
+      const sections = timelineSectionsRef.current;
+      const currentIndex = sections.findIndex(s => s.id === activeSectionRef.current);
       const scrollingDown = e.deltaY > 0;
 
-      if (scrollingDown && currentIndex < timelineSections.length - 1) {
+      if (scrollingDown && currentIndex < sections.length - 1) {
         // Scrolling down - go to next section
-        isScrollingRef.current = true;
-        setActiveSection(timelineSections[currentIndex + 1].id);
+        isScrollingRef.current = true; // Lock immediately
+        setActiveSection(sections[currentIndex + 1].id);
 
         // Clear existing timeout if any
         if (scrollTimeoutRef.current) {
@@ -127,12 +140,12 @@ export default function Home() {
 
         // Set new timeout to reset scrolling flag
         scrollTimeoutRef.current = setTimeout(() => {
-          isScrollingRef.current = false;
-        }, 500); // 500ms cooldown
+          isScrollingRef.current = false; // Unlock after 500ms
+        }, 500);
       } else if (!scrollingDown && currentIndex > 0) {
         // Scrolling up - go to previous section
-        isScrollingRef.current = true;
-        setActiveSection(timelineSections[currentIndex - 1].id);
+        isScrollingRef.current = true; // Lock immediately
+        setActiveSection(sections[currentIndex - 1].id);
 
         // Clear existing timeout if any
         if (scrollTimeoutRef.current) {
@@ -141,26 +154,21 @@ export default function Home() {
 
         // Set new timeout to reset scrolling flag
         scrollTimeoutRef.current = setTimeout(() => {
-          isScrollingRef.current = false;
-        }, 500); // 500ms cooldown
+          isScrollingRef.current = false; // Unlock after 500ms
+        }, 500);
       }
     };
 
+    // Register event listener ONCE - no dependencies on activeSection
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       window.removeEventListener('wheel', handleWheel);
-      // DON'T clear timeout here - let it finish to unlock scrolling
-    };
-  }, [activeSection, timelineSections]);
-
-  // Cleanup timeout only on component unmount
-  useEffect(() => {
-    return () => {
+      // Clean up timeout on unmount
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, []);
+  }, []); // Empty deps - only register once!
 
   // Section components mapping
   const sectionComponents = {
