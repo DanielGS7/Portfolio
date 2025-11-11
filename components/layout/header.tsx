@@ -18,7 +18,7 @@ export function Header() {
 
   // Transform scroll to header background opacity and blur
   const headerBgOpacity = useTransform(scrollY, [0, 100], [0.7, 0.95]);
-  const headerBlur = useTransform(scrollY, [0, 100], [12, 20]);
+  const headerBlur = useTransform(scrollY, [0, 100], [6, 10]);
 
   const navItems = [
     { href: `/${locale}`, label: t('home') },
