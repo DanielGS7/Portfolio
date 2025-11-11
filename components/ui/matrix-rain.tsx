@@ -206,7 +206,7 @@ export default function MatrixRain({
     let lastSpawnTime = 0;
     const targetFPS = 60;
     const frameInterval = 1000 / targetFPS;
-    const spawnInterval = 600; // Spawn frequently to reach maxDrops quickly
+    const spawnInterval = 350; // Continuous spawning to prevent batch effect
 
     function animate(currentTime: number): void {
       if (!ctx) return;
