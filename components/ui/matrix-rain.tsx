@@ -44,7 +44,7 @@ export default function MatrixRain({
       };
     };
 
-    const trailLength = 35; // Increased for longer falling rain trails
+    const trailLength = 105; // 3x longer trails for better readability and visual impact
     const colorVariation = 0.15;
     const glowIntensityMultiplier = 1.5;
 
@@ -63,6 +63,7 @@ export default function MatrixRain({
       sentence: string[];
       charIndex: number;
       trail: Array<{ char: string; y: number; colorVar: number }>;
+      lastFloorY: number;
 
       constructor(x: number) {
         this.x = x;
@@ -72,6 +73,7 @@ export default function MatrixRain({
         this.sentence = sentences[this.sentenceIndex].split('');
         this.charIndex = 0;
         this.trail = [];
+        this.lastFloorY = -1; // Track last integer position to ensure one char per row
       }
 
       getNextChar(): string {
@@ -83,13 +85,16 @@ export default function MatrixRain({
       update(): void {
         this.y += this.speed;
 
-        // Only add character when crossing into a new row (ensures single character per position)
-        if (this.y > Math.floor(this.y)) {
+        // Only add character when crossing into a new integer row
+        const currentFloorY = Math.floor(this.y);
+        if (currentFloorY !== this.lastFloorY) {
           this.trail.unshift({
             char: this.getNextChar(),
-            y: Math.floor(this.y),
+            y: currentFloorY,
             colorVar: (Math.random() - 0.5) * colorVariation
           });
+
+          this.lastFloorY = currentFloorY;
 
           if (this.trail.length > trailLength) {
             this.trail.pop();
