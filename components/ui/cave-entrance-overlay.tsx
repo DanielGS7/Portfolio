@@ -51,7 +51,7 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
         ease: [0.43, 0.13, 0.23, 0.96],
       }}
       style={{
-        transformOrigin: 'center 65%', // More downward - center of entrance
+        transformOrigin: 'center 65%', // Scale from entrance hole center
       }}
     >
       <div className="relative w-full h-full">
@@ -65,7 +65,7 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
             src="/images/cave-entrance-day.svg"
             alt="Cave entrance - light mode"
             fill
-            className="object-cover"
+            className="object-cover object-bottom"
             priority
           />
         </motion.div>
@@ -80,7 +80,7 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
             src="/images/cave-entrance-night.svg"
             alt="Cave entrance - dark mode"
             fill
-            className="object-cover"
+            className="object-cover object-bottom"
             priority
           />
         </motion.div>

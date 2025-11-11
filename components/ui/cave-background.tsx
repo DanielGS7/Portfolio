@@ -13,35 +13,17 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const depthRef = useRef(depth);
 
-  // Calculate canvas scale and position to match cave entrance
-  // depth 0 (hero): scale 0.17, top 11vh
-  // depth 1 (about): scale 0.50, top 5vh
-  // depth 2+ (skills onwards): scale with entrance overlay, capped at 1.0 (full screen), top 0
+  // Calculate canvas scale to match cave entrance scaling
+  // Cave entrance and background both scale from the same origin point
+  // Background scales proportionally to entrance: entrance 1.0 → bg 0.17, entrance ~6.0 → bg 1.0
+  // This ensures background grows through the entrance hole at the same rate
   const getCanvasTransform = () => {
-    let canvasScale: number;
-    let top: string;
-
-    if (depth >= 2) {
-      // Skills section onwards: scale with entrance overlay but cap at 1.0 for full screen
-      canvasScale = Math.min(1.0, scale * 0.17);
-      top = '0vh';
-    } else if (depth === 1) {
-      // About section: interpolate between depth 0 and depth 2
-      // As depth transitions from 1.0 to 2.0, smoothly scale
-      const progress = depth - 1; // 0 to 1
-      canvasScale = 0.50 + progress * (Math.min(1.0, scale * 0.17) - 0.50);
-      top = `${5 - progress * 5}vh`;
-    } else {
-      // Hero section (depth 0 to 1)
-      // Interpolate from scale 0.17 to 0.50 and top 11vh to 5vh
-      const progress = depth; // 0 to 1
-      canvasScale = 0.17 + progress * (0.50 - 0.17);
-      top = `${11 - progress * 6}vh`;
-    }
+    // Scale proportionally to cave entrance, cap at 1.0 for full screen
+    const canvasScale = Math.min(1.0, scale * 0.17);
 
     return {
       scale: canvasScale,
-      top,
+      top: '0vh', // No offset needed - alignment via transform origin
     };
   };
 
@@ -545,7 +527,7 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
         left: '50%',
         top: transform.top,
         transform: `translateX(-50%) scale(${transform.scale})`,
-        transformOrigin: 'center center',
+        transformOrigin: 'center 65%', // Match cave entrance transform origin for aligned scaling
         width: '100vw',
         height: '100vh',
         transition: 'transform 1.2s cubic-bezier(0.43, 0.13, 0.23, 0.96)',

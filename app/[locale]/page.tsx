@@ -140,8 +140,8 @@ export default function Home() {
 
       {/* Skybox with stars - only visible on hero section */}
       {activeSection === 'hero' && (
-        <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-          {/* Sky gradient - blue in light mode, dark in dark mode */}
+        <div className="fixed inset-x-0 top-0 pointer-events-none" style={{ zIndex: 1, height: '66.67vh' }}>
+          {/* Sky gradient - blue in light mode, dark in dark mode - takes top 2/3 of screen */}
           <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-500" />
 
           {/* Stars for night sky - deterministic positions to avoid hydration errors */}
