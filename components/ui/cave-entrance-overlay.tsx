@@ -9,9 +9,10 @@ interface CaveEntranceOverlayProps {
   activeSection: string;
   depth?: number;
   maxDepth?: number;
+  scale?: number; // Scale prop passed from parent for synchronization
 }
 
-export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: CaveEntranceOverlayProps) {
+export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5, scale: externalScale }: CaveEntranceOverlayProps) {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -20,20 +21,19 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
     setMounted(true);
   }, []);
 
-  // Zoom origin: centered more downward (65% from top - closer to entrance center)
-  // Scale based on depth to sync with background (1.0 at entrance, increases as you go deeper)
-  const depthProgress = depth / Math.max(maxDepth, 1);
-
-  // At skills section (depth >= 2), zoom 3x faster
-  let scale;
-  if (depth >= 2) {
-    // Skills section onwards: multiply by 3 for extra zoom
-    // Shift the calculation so projects zoom happens at skills
-    const extraZoom = (depth - 1) * 3; // Start 3x zoom one section earlier
-    scale = 1.0 + (1 / Math.max(maxDepth, 1)) * 9.0 + extraZoom * 9.0;
+  // Use external scale if provided, otherwise calculate internally
+  let scale: number;
+  if (externalScale !== undefined) {
+    scale = externalScale;
   } else {
-    // Before skills section: normal zoom (1.0 to scale based on depth)
-    scale = 1.0 + depthProgress * 9.0;
+    // Fallback: calculate scale based on depth
+    const depthProgress = depth / Math.max(maxDepth, 1);
+    if (depth >= 2) {
+      const extraZoom = (depth - 1) * 3;
+      scale = 1.0 + (1 / Math.max(maxDepth, 1)) * 9.0 + extraZoom * 9.0;
+    } else {
+      scale = 1.0 + depthProgress * 9.0;
+    }
   }
 
   // Keep opacity at 1.0 (no transparency)
@@ -65,7 +65,7 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
             src="/images/cave-entrance-day.svg"
             alt="Cave entrance - light mode"
             fill
-            className="object-cover object-bottom"
+            className="object-cover"
             priority
           />
         </motion.div>
@@ -80,7 +80,7 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
             src="/images/cave-entrance-night.svg"
             alt="Cave entrance - dark mode"
             fill
-            className="object-cover object-bottom"
+            className="object-cover"
             priority
           />
         </motion.div>

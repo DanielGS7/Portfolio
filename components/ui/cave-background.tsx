@@ -15,11 +15,11 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
   // Calculate canvas scale to match cave entrance scaling
   // Cave entrance and background both scale from the same origin point
-  // Background scales proportionally to entrance: entrance 1.0 → bg 0.17, entrance ~6.0 → bg 1.0
+  // Background scales proportionally to entrance: entrance 1.0 → bg 0.20, entrance ~5.0 → bg 1.0
   // This ensures background grows through the entrance hole at the same rate
   const getCanvasTransform = () => {
     // Scale proportionally to cave entrance, cap at 1.0 for full screen
-    const canvasScale = Math.min(1.0, scale * 0.17);
+    const canvasScale = Math.min(1.0, scale * 0.20);
 
     return {
       scale: canvasScale,
