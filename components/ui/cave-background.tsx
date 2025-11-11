@@ -18,16 +18,6 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
   // Formula: bg = (entrance - 1.0) * factor + initial
   // This ensures they scale at the same rate regardless of viewport
   const getCanvasTransform = () => {
-    let top: string;
-
-    // Position: section 1 starts at 10%, transitions to 0% at section 2
-    if (depth < 1) {
-      const progress = depth; // 0 to 1
-      top = `${10 - progress * 10}%`; // 10% to 0%
-    } else {
-      top = '0%';
-    }
-
     // Scale: proportional to entrance scale, starts at 0.25 when entrance is 1.0
     // Use consistent multiplier - entrance already has built-in acceleration at depth >= 2
     // so background will automatically accelerate with it
@@ -38,7 +28,7 @@ export function CaveBackground({ className = '', depth = 0, maxDepth = 4, scale 
 
     return {
       scale: canvasScale,
-      top,
+      top: '0%', // Always at top
     };
   };
 
