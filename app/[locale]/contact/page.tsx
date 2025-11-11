@@ -50,7 +50,7 @@ export default function ContactPage() {
       value: t('available'),
       action: () => window.open(`https://wa.me/${contactInfo.whatsapp.replace(/\s/g, '')}`, '_blank'),
       actionLabel: t('open'),
-      color: 'var(--color-accent)',
+      color: '37, 211, 102',
     },
     {
       key: 'teams',
