@@ -57,7 +57,18 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5, sc
       }}
     >
       <div className="relative w-full h-full">
-        {/* Day version - fades in when light mode */}
+        {/* Night version - always visible at 100% opacity as base layer */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/cave-entrance-night.svg"
+            alt="Cave entrance - dark mode"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
+        {/* Day version - fades in/out over the night version */}
         <motion.div
           className="absolute inset-0"
           animate={{ opacity: mounted && theme === 'light' ? 1 : 0 }}
@@ -66,21 +77,6 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5, sc
           <Image
             src="/images/cave-entrance-day.svg"
             alt="Cave entrance - light mode"
-            fill
-            className="object-cover"
-            priority
-          />
-        </motion.div>
-
-        {/* Night version - fades in when dark mode */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{ opacity: mounted && theme === 'dark' ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Image
-            src="/images/cave-entrance-night.svg"
-            alt="Cave entrance - dark mode"
             fill
             className="object-cover"
             priority
