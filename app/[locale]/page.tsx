@@ -34,6 +34,7 @@ export default function Home() {
 
   // Use refs to persist scroll state across renders
   const lastScrollTime = useRef(0);
+  const isTransitioning = useRef(false);
   const activeSectionRef = useRef(activeSection);
   const timelineSectionsRef = useRef(timelineSections);
 
@@ -81,8 +82,15 @@ export default function Home() {
   // Listen for section changes from TimelineNav
   useEffect(() => {
     const handleSectionChange = (e: Event) => {
+      if (isTransitioning.current) return;
+
       const customEvent = e as CustomEvent;
+      isTransitioning.current = true;
       setActiveSection(customEvent.detail.sectionId);
+
+      setTimeout(() => {
+        isTransitioning.current = false;
+      }, 1000);
     };
 
     window.addEventListener('timelineNavigate', handleSectionChange);
@@ -92,17 +100,27 @@ export default function Home() {
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isTransitioning.current) return;
+
       const currentIndex = timelineSections.findIndex(s => s.id === activeSection);
 
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         e.preventDefault();
         if (currentIndex < timelineSections.length - 1) {
+          isTransitioning.current = true;
           setActiveSection(timelineSections[currentIndex + 1].id);
+          setTimeout(() => {
+            isTransitioning.current = false;
+          }, 1000);
         }
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
         e.preventDefault();
         if (currentIndex > 0) {
+          isTransitioning.current = true;
           setActiveSection(timelineSections[currentIndex - 1].id);
+          setTimeout(() => {
+            isTransitioning.current = false;
+          }, 1000);
         }
       }
     };
@@ -114,17 +132,17 @@ export default function Home() {
   // Mouse wheel navigation - smooth single section scrolling
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault(); // Prevent default scrolling behavior
-      e.stopPropagation(); // Stop event from bubbling
+      e.preventDefault();
+      e.stopPropagation();
 
-      // Timestamp-based cooldown - reject scrolls within 500ms of last scroll
+      // LOCK 1: Block all scrolls during transitions
+      if (isTransitioning.current) return;
+
+      // LOCK 2: Timestamp-based cooldown - 1000ms to match 800ms transition + 200ms buffer
       const now = Date.now();
       const timeSinceLastScroll = now - lastScrollTime.current;
 
-      if (timeSinceLastScroll < 500) {
-        // Still in cooldown period - ignore this scroll
-        return;
-      }
+      if (timeSinceLastScroll < 1000) return;
 
       // Use ref to get current section without causing re-renders
       const sections = timelineSectionsRef.current;
@@ -132,22 +150,27 @@ export default function Home() {
       const scrollingDown = e.deltaY > 0;
 
       if (scrollingDown && currentIndex < sections.length - 1) {
-        // Scrolling down - go to next section
-        lastScrollTime.current = now; // Update timestamp
+        isTransitioning.current = true;
+        lastScrollTime.current = now;
         setActiveSection(sections[currentIndex + 1].id);
+        setTimeout(() => {
+          isTransitioning.current = false;
+        }, 1000);
       } else if (!scrollingDown && currentIndex > 0) {
-        // Scrolling up - go to previous section
-        lastScrollTime.current = now; // Update timestamp
+        isTransitioning.current = true;
+        lastScrollTime.current = now;
         setActiveSection(sections[currentIndex - 1].id);
+        setTimeout(() => {
+          isTransitioning.current = false;
+        }, 1000);
       }
     };
 
-    // Register event listener ONCE - no dependencies on activeSection
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       window.removeEventListener('wheel', handleWheel);
     };
-  }, []); // Empty deps - only register once!
+  }, []);
 
   // Section components mapping
   const sectionComponents = {
