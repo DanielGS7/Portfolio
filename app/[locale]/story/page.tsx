@@ -94,7 +94,7 @@ export default function StoryPage() {
   ];
 
   return (
-    <section className="min-h-screen py-32 relative overflow-hidden w-full">
+    <section className="min-h-screen pb-32 relative overflow-hidden w-full">
       {/* Matrix Rain Background Effect - Absolute positioned to scroll with page */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
         <MatrixRain sentences={matrixSentencesData.sentences} maxDrops={12} />
@@ -105,7 +105,7 @@ export default function StoryPage() {
           <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[rgb(var(--color-accent))] opacity-10 blur-3xl rounded-full" />
         </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-32">
         {/* Title with animation */}
         <motion.div
           className="text-center mb-20"
