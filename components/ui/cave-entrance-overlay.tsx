@@ -22,14 +22,21 @@ export function CaveEntranceOverlay({ activeSection, depth = 0, maxDepth = 5 }: 
 
   // Zoom origin: centered more downward (65% from top - closer to entrance center)
   // Scale based on depth to sync with background (1.0 at entrance, increases as you go deeper)
-  // Opacity fades out as we zoom in (fully transparent when deep in cave)
   const depthProgress = depth / Math.max(maxDepth, 1);
 
-  // Scale from 1.0 to 10.0 as you go deeper (matches background but faster for entrance to disappear)
-  const scale = 1.0 + depthProgress * 9.0;
+  // At third section (depth >= 2), zoom 3x faster
+  let scale;
+  if (depth >= 2) {
+    // Third section onwards: multiply by 3 for extra zoom
+    const extraZoom = (depth - 2) * 3; // Additional zoom starting from third section
+    scale = 1.0 + (2 / Math.max(maxDepth, 1)) * 9.0 + extraZoom * 9.0;
+  } else {
+    // Before third section: normal zoom (1.0 to scale based on depth)
+    scale = 1.0 + depthProgress * 9.0;
+  }
 
-  // Fade out completely by 30% depth
-  const opacity = Math.max(0, 1 - depthProgress * 3.3);
+  // Keep opacity at 1.0 (no transparency)
+  const opacity = 1.0;
 
   // Select SVG based on theme (only after mount to avoid hydration mismatch)
   const caveEntranceImage = !mounted ? '/images/cave-entrance-night.svg' : (
