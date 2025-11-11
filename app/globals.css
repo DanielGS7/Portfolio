@@ -7,8 +7,6 @@ html,
 body {
   width: 100%;
   max-width: 100%;
-  overflow: hidden; /* Hide all scrollbars */
-  height: 100vh; /* Prevent vertical scrolling */
 }
 
 @import "tailwindcss";

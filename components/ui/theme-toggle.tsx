@@ -18,9 +18,10 @@ export function ThemeToggle({ showTorch = false }: ThemeToggleProps) {
   }, []);
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
+    // Get exact click position in viewport
+    // Use clientX/clientY which are relative to the viewport, perfect for fixed positioning
+    const x = e.clientX;
+    const y = e.clientY;
 
     // Create ripple effect
     const id = Date.now();

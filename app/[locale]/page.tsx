@@ -183,7 +183,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden" style={{ height: '100vh', width: '100vw', position: 'fixed', inset: 0 }}>
       {/* Cave background with depth progression */}
       <CaveBackground depth={getCurrentDepth()} maxDepth={timelineSections.length - 1} scale={getCurrentScale()} />
 
