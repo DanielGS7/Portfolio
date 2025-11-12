@@ -1,35 +1,34 @@
 /**
  * Color palette for Webcave portfolio
  *
- * Light mode inspired by empoweredbysuperfoods.com
- * Dark mode adjusted using color theory for accessibility and visual harmony
+ * Modern Developer palette - professional and clean
  */
 
 export const colors = {
   light: {
-    // Primary colors
-    primary: '#e2ae2b',        // Gold/Amber - main accent
-    primaryDark: '#7f6700',    // Dark brown
-    secondary: '#7d185e',      // Purple accent
-    tertiary: '#0036aa',       // Navy blue
+    // Primary colors - Indigo/Violet professional palette
+    primary: '#6366f1',        // Indigo 500
+    primaryDark: '#4f46e5',    // Indigo 600
+    secondary: '#8b5cf6',      // Violet 500
+    tertiary: '#06b6d4',       // Cyan 500
 
     // Backgrounds
-    background: '#fff9f6',     // Cream background
-    backgroundAlt: '#ffffff',  // White secondary
+    background: '#fafafa',     // Neutral 50
+    backgroundAlt: '#ffffff',  // White
     surface: 'rgba(255, 255, 255, 0.8)', // Glassmorphism surface
 
     // Text
-    text: '#474747',           // Dark gray text
-    textLight: '#666666',      // Lighter text
-    textMuted: '#999999',      // Muted text
+    text: '#171717',           // Neutral 900
+    textLight: '#404040',      // Neutral 700
+    textMuted: '#737373',      // Neutral 500
 
     // Accent
-    accent: '#00b5dd',         // Cyan accent
-    accentHover: '#0096b8',    // Darker cyan
+    accent: '#8b5cf6',         // Violet 500
+    accentHover: '#7c3aed',    // Violet 600
 
     // UI Elements
-    border: '#e0e0e0',
-    borderHover: '#c0c0c0',
+    border: '#e5e5e5',         // Neutral 200
+    borderHover: '#d4d4d4',    // Neutral 300
 
     // Shadows
     shadow: 'rgba(0, 0, 0, 0.1)',
@@ -37,29 +36,29 @@ export const colors = {
   },
 
   dark: {
-    // Primary colors (adjusted for dark mode)
-    primary: '#f5c842',        // Brighter gold for dark bg
-    primaryDark: '#d4a528',    // Medium gold
-    secondary: '#b5549f',      // Lighter purple for dark bg
-    tertiary: '#4d7fff',       // Brighter blue for visibility
+    // Primary colors
+    primary: '#6366f1',        // Indigo 500
+    primaryDark: '#818cf8',    // Indigo 400
+    secondary: '#8b5cf6',      // Violet 500
+    tertiary: '#06b6d4',       // Cyan 500
 
     // Backgrounds
-    background: '#0a0a0a',     // Near black
-    backgroundAlt: '#141414',  // Dark gray
-    surface: 'rgba(20, 20, 20, 0.8)', // Glassmorphism dark surface
+    background: '#09090b',     // Zinc 950
+    backgroundAlt: '#18181b',  // Zinc 900
+    surface: 'rgba(24, 24, 27, 0.8)', // Glassmorphism dark surface
 
     // Text
-    text: '#e8e8e8',           // Light gray text
-    textLight: '#b8b8b8',      // Medium gray
-    textMuted: '#888888',      // Muted gray
+    text: '#fafafa',           // Neutral 50
+    textLight: '#d4d4d4',      // Neutral 300
+    textMuted: '#a1a1aa',      // Zinc 400
 
     // Accent
-    accent: '#1dd1ff',         // Brighter cyan for dark mode
-    accentHover: '#00b8e6',    // Hover cyan
+    accent: '#8b5cf6',         // Violet 500
+    accentHover: '#a78bfa',    // Violet 400
 
     // UI Elements
-    border: '#2a2a2a',
-    borderHover: '#404040',
+    border: '#27272a',         // Zinc 800
+    borderHover: '#3f3f46',    // Zinc 700
 
     // Shadows
     shadow: 'rgba(0, 0, 0, 0.4)',

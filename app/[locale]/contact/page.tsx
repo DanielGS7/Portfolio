@@ -81,10 +81,8 @@ export default function ContactPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
-              {t('title')}
-            </span>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 text-[rgb(var(--color-primary))]" style={{ fontFamily: 'var(--font-display)' }}>
+            {t('title')}
           </h1>
           <p className="text-xl text-[rgb(var(--text-light))] max-w-2xl mx-auto">
             {t('subtitle')}

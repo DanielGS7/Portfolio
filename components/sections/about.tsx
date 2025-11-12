@@ -43,17 +43,15 @@ export function About() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
-              {t('title')}
-            </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-[rgb(var(--color-primary))]" style={{ fontFamily: 'var(--font-display)' }}>
+            {t('title')}
           </h2>
           <p className="text-lg text-[rgb(var(--text-light))] max-w-3xl mx-auto leading-relaxed mb-4">
             {t('intro')}
           </p>
           <motion.a
             href={`/${locale}/story`}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] text-white font-semibold hover:scale-105 transition-transform shadow-lg"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[rgb(var(--color-primary))] text-white font-semibold hover:scale-105 transition-transform shadow-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}

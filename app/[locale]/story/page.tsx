@@ -120,10 +120,8 @@ export default function StoryPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
-              {t('title')}
-            </span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-[rgb(var(--color-primary))]" style={{ fontFamily: 'var(--font-display)' }}>
+            {t('title')}
           </h1>
           <p className="text-xl text-[rgb(var(--text-light))] max-w-3xl mx-auto">
             {t('subtitle')}

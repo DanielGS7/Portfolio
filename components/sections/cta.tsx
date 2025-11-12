@@ -39,14 +39,13 @@ export function CTA() {
 
         {/* Title */}
         <motion.h2
-          className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6"
+          className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-[rgb(var(--color-primary))]"
+          style={{ fontFamily: 'var(--font-display)' }}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] via-[rgb(var(--color-accent))] to-[rgb(var(--color-secondary))] bg-clip-text text-transparent">
-            {t('title')}
-          </span>
+          {t('title')}
         </motion.h2>
 
         {/* Subtitle */}
@@ -62,23 +61,17 @@ export function CTA() {
         {/* CTA Button */}
         <motion.button
           onClick={handleContactClick}
-          className="group relative px-12 py-6 rounded-full bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] text-white text-xl font-bold overflow-hidden shadow-2xl shadow-[rgba(var(--color-primary)/0.4)]"
+          className="px-12 py-6 rounded-full bg-[rgb(var(--color-primary))] text-white text-xl font-bold shadow-lg hover:shadow-xl transition-shadow"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          whileHover={{ scale: 1.05, boxShadow: '0 25px 50px -12px rgba(var(--color-primary), 0.5)' }}
+          whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.95 }}
         >
-          <span className="relative z-10 flex items-center gap-3">
+          <span className="flex items-center gap-3">
             <FontAwesomeIcon icon={faEnvelope} />
             {t('button')}
           </span>
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-[rgb(var(--color-accent))] to-[rgb(var(--color-primary))]"
-            initial={{ x: '100%' }}
-            whileHover={{ x: 0 }}
-            transition={{ duration: 0.3 }}
-          />
         </motion.button>
 
         {/* Additional info */}

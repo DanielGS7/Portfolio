@@ -71,14 +71,13 @@ export function Hero() {
 
         {/* Name */}
         <motion.h1
-          className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold mb-8"
+          className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold mb-8 text-[rgb(var(--color-primary))]"
+          style={{ fontFamily: 'var(--font-display)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] via-[rgb(var(--color-accent))] to-[rgb(var(--color-secondary))] bg-clip-text text-transparent drop-shadow-lg">
-            {t('name')}
-          </span>
+          {t('name')}
         </motion.h1>
 
         {/* Underline decoration */}
@@ -110,20 +109,14 @@ export function Hero() {
         >
           <motion.button
             onClick={scrollToWork}
-            className="group relative px-10 py-5 rounded-full bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] text-white text-lg font-semibold overflow-hidden shadow-2xl shadow-[rgba(var(--color-primary)/0.4)]"
-            whileHover={{ scale: 1.05, boxShadow: '0 25px 50px -12px rgba(var(--color-primary), 0.5)' }}
+            className="group relative px-10 py-5 rounded-full bg-[rgb(var(--color-primary))] text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-shadow"
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="relative z-10 flex items-center gap-2">
+            <span className="flex items-center gap-2">
               {t('cta')}
               <ArrowSVG className="w-5 h-5" />
             </span>
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-[rgb(var(--color-accent))] to-[rgb(var(--color-primary))]"
-              initial={{ x: '100%' }}
-              whileHover={{ x: 0 }}
-              transition={{ duration: 0.3 }}
-            />
           </motion.button>
 
           <motion.button

@@ -28,16 +28,14 @@ export default function CVPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-5xl sm:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
-              {t('title')}
-            </span>
+          <h1 className="text-5xl sm:text-6xl font-bold mb-6 text-[rgb(var(--color-primary))]" style={{ fontFamily: 'var(--font-display)' }}>
+            {t('title')}
           </h1>
 
           <motion.button
             onClick={handleDownload}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] text-white font-semibold"
-            whileHover={{ scale: 1.05 }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[rgb(var(--color-primary))] text-white font-semibold shadow-lg hover:shadow-xl transition-shadow"
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.95 }}
           >
             <svg

@@ -28,10 +28,8 @@ export function Services() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
-            <span className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-accent))] bg-clip-text text-transparent">
-              {t('title')}
-            </span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 text-[rgb(var(--color-primary))]" style={{ fontFamily: 'var(--font-display)' }}>
+            {t('title')}
           </h2>
           <p className="text-lg text-[rgb(var(--text-light))] max-w-3xl mx-auto">
             {t('subtitle')}
